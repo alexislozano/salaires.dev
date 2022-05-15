@@ -1,0 +1,14 @@
+{
+  "name": "salaires.dev",
+  "source": "src/index.html",
+  "scripts": {
+    "dev": "parcel",
+    "build": "parcel build"
+  },
+  "devDependencies": {
+    "@parcel/transformer-elm": "^2.5.0",
+    "elm": "^0.19.1-5",
+    "elm-format": "^0.8.5",
+    "parcel": "^2.5.0"
+  }
+}
