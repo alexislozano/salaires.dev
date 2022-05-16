@@ -1,14 +1,15 @@
 module Pages.Index exposing (..)
 
 import Element exposing (Element)
+import Flags exposing (Flags)
 
 
 type alias Model =
     ()
 
 
-init : Model
-init =
+init : Flags -> Model
+init _ =
     ()
 
 

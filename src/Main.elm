@@ -26,6 +26,7 @@ type alias Model =
     { key : Key
     , route : Route
     , page : Page
+    , flags : Flags
     }
 
 
@@ -40,7 +41,7 @@ type Msg
 
 
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
-init _ url key =
+init flags url key =
     let
         route =
             Route.parse url
@@ -48,12 +49,12 @@ init _ url key =
         page =
             case route of
                 Route.Index ->
-                    IndexPage Index.init
+                    IndexPage <| Index.init flags
 
                 Route.NotFound ->
                     NotFoundPage
     in
-    ( Model key route page
+    ( Model key route page flags
     , Cmd.none
     )
 
