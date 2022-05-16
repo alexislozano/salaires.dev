@@ -1,8 +1,12 @@
 module Main exposing (..)
 
 import Browser exposing (Document, UrlRequest)
-import Browser.Navigation exposing (Key)
+import Browser.Navigation as Nav exposing (Key)
+import Element
 import Flags exposing (Flags)
+import Pages.Index as Index
+import Pages.NotFound as NotFound
+import Route exposing (Route)
 import Url exposing (Url)
 
 
@@ -10,8 +14,8 @@ main : Program Flags Model Msg
 main =
     Browser.application
         { init = init
-        , onUrlChange = onUrlChange
-        , onUrlRequest = onUrlRequest
+        , onUrlChange = UrlChanged
+        , onUrlRequest = LinkClicked
         , subscriptions = subscriptions
         , update = update
         , view = view
@@ -19,26 +23,39 @@ main =
 
 
 type alias Model =
-    ()
+    { key : Key
+    , route : Route
+    , page : Page
+    }
+
+
+type Page
+    = IndexPage Index.Model
+    | NotFoundPage
 
 
 type Msg
-    = NoOp
+    = LinkClicked UrlRequest
+    | UrlChanged Url
 
 
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
-init _ _ _ =
-    ( (), Cmd.none )
+init _ url key =
+    let
+        route =
+            Route.parse url
 
+        page =
+            case route of
+                Route.Index ->
+                    IndexPage Index.init
 
-onUrlChange : Url -> Msg
-onUrlChange _ =
-    NoOp
-
-
-onUrlRequest : UrlRequest -> Msg
-onUrlRequest _ =
-    NoOp
+                Route.NotFound ->
+                    NotFoundPage
+    in
+    ( Model key route page
+    , Cmd.none
+    )
 
 
 subscriptions : Model -> Sub Msg
@@ -47,12 +64,36 @@ subscriptions _ =
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update _ model =
-    ( model, Cmd.none )
+update msg model =
+    case msg of
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key <| Url.toString url )
+
+                Browser.External href ->
+                    ( model, Nav.load href )
+
+        UrlChanged url ->
+            ( { model | route = Route.parse url }
+            , Cmd.none
+            )
 
 
 view : Model -> Document Msg
-view _ =
+view model =
     { title = "salaires.dev"
-    , body = []
+    , body =
+        [ Element.layout
+            [ Element.width Element.fill
+            , Element.height Element.fill
+            ]
+          <|
+            case ( model.route, model.page ) of
+                ( Route.Index, IndexPage pageModel ) ->
+                    Index.view pageModel
+
+                ( _, _ ) ->
+                    NotFound.view
+        ]
     }
