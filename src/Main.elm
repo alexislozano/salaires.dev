@@ -4,10 +4,9 @@ import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav exposing (Key)
 import Element
 import Flags exposing (Flags)
-import Pages.Index as Index
-import Pages.NotFound as NotFound
-import Route exposing (Route)
+import Page
 import Url exposing (Url)
+import Utils
 
 
 main : Program Flags Model Msg
@@ -24,39 +23,21 @@ main =
 
 type alias Model =
     { key : Key
-    , route : Route
-    , page : Page
     , flags : Flags
+    , page : Page.Model
     }
-
-
-type Page
-    = IndexPage Index.Model
-    | NotFoundPage
 
 
 type Msg
     = LinkClicked UrlRequest
     | UrlChanged Url
+    | PageMsg Page.Msg
 
 
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
 init flags url key =
-    let
-        route =
-            Route.parse url
-
-        page =
-            case route of
-                Route.Index ->
-                    IndexPage <| Index.init flags
-
-                Route.NotFound ->
-                    NotFoundPage
-    in
-    ( Model key route page flags
-    , Cmd.none
-    )
+    Page.init flags url
+        |> Utils.map (Model key flags) PageMsg
 
 
 subscriptions : Model -> Sub Msg
@@ -76,9 +57,12 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            ( { model | route = Route.parse url }
-            , Cmd.none
-            )
+            Page.init model.flags url
+                |> Utils.map (Model model.key model.flags) PageMsg
+
+        PageMsg pageMsg ->
+            Page.update pageMsg model.page
+                |> Utils.map (Model model.key model.flags) PageMsg
 
 
 view : Model -> Document Msg
@@ -90,11 +74,6 @@ view model =
             , Element.height Element.fill
             ]
           <|
-            case ( model.route, model.page ) of
-                ( Route.Index, IndexPage pageModel ) ->
-                    Index.view pageModel
-
-                ( _, _ ) ->
-                    NotFound.view
+            Page.view model.page
         ]
     }
