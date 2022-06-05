@@ -3,6 +3,7 @@ module Main exposing (..)
 import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav exposing (Key)
 import Element
+import Element.Font as Font
 import Flags exposing (Flags)
 import Page
 import Url exposing (Url)
@@ -72,8 +73,10 @@ view model =
         [ Element.layout
             [ Element.width Element.fill
             , Element.height Element.fill
+            , Font.size 14
             ]
-          <|
-            Page.view model.page
+            (Page.view model.page
+                |> Element.map PageMsg
+            )
         ]
     }

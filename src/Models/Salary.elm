@@ -32,11 +32,11 @@ decode : Decode.Decoder Salary
 decode =
     Decode.succeed Salary
         |> required "id" SalaryId.decode
-        |> required "companyName" CompanyName.decode
-        |> required "locationName" LocationName.decode
+        |> required "company_name" CompanyName.decode
+        |> required "location_name" LocationName.decode
         |> required "compensation" Compensation.decode
         |> required "date" Decode.string
         |> required "stock" (Decode.maybe Stock.decode)
         |> required "level" (Decode.maybe Level.decode)
-        |> required "companyXp" (Decode.maybe CompanyXp.decode)
-        |> required "totalXp" (Decode.maybe TotalXp.decode)
+        |> required "company_xp" (Decode.maybe CompanyXp.decode)
+        |> required "total_xp" (Decode.maybe TotalXp.decode)

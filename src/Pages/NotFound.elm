@@ -31,4 +31,4 @@ view _ =
         , Element.centerY
         ]
     <|
-        Element.text "Not found"
+        Element.text "Cette page n'existe pas"
