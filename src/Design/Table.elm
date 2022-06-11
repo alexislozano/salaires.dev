@@ -1,10 +1,10 @@
 module Design.Table exposing (..)
 
-import Models.CompanyName
+import Models.Company
 import Models.CompanyXp
 import Models.Compensation
 import Models.Level
-import Models.LocationName
+import Models.Location
 import Models.Salary exposing (Salary)
 import Models.Stock
 import Models.TotalXp
@@ -12,8 +12,8 @@ import Utils
 
 
 type Column
-    = CompanyName
-    | LocationName
+    = Company
+    | Location
     | Level
     | CompanyXp
     | TotalXp
@@ -28,7 +28,7 @@ type Direction
 
 defaultColumn : Column
 defaultColumn =
-    CompanyName
+    Company
 
 
 defaultDirection : Direction
@@ -39,10 +39,10 @@ defaultDirection =
 title : Column -> String
 title column =
     case column of
-        CompanyName ->
+        Company ->
             "Entreprise"
 
-        LocationName ->
+        Location ->
             "Localisation"
 
         Level ->
@@ -91,11 +91,11 @@ sort { column, direction } salaries =
     let
         sortFn =
             case column of
-                CompanyName ->
-                    \s1 s2 -> Models.CompanyName.compare s1.companyName s2.companyName
+                Company ->
+                    \s1 s2 -> Models.Company.compare s1.company s2.company
 
-                LocationName ->
-                    \s1 s2 -> Models.LocationName.compare s1.locationName s2.locationName
+                Location ->
+                    \s1 s2 -> Models.Location.compare s1.location s2.location
 
                 Level ->
                     \s1 s2 -> Utils.compareMaybe Models.Level.compare s1.level s2.level
@@ -136,10 +136,10 @@ sort { column, direction } salaries =
 equal : Column -> Column -> Bool
 equal c1 c2 =
     case ( c1, c2 ) of
-        ( CompanyName, CompanyName ) ->
+        ( Company, Company ) ->
             True
 
-        ( LocationName, LocationName ) ->
+        ( Location, Location ) ->
             True
 
         ( Level, Level ) ->

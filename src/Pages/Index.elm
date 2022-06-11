@@ -6,11 +6,11 @@ import Element.Font as Font
 import Element.Input as Input
 import Flags exposing (Flags)
 import Http
-import Models.CompanyName as CompanyName
+import Models.Company as Company
 import Models.CompanyXp as CompanyXp
 import Models.Compensation as Compensation
 import Models.Level as Level
-import Models.LocationName as LocationName
+import Models.Location as Location
 import Models.Salary exposing (Salary)
 import Models.Stock as Stock
 import Models.TotalXp as TotalXp
@@ -86,25 +86,25 @@ table model =
                 { data = salaries |> Table.sort model.sort
                 , columns =
                     [ { header =
-                            Table.CompanyName
+                            Table.Company
                                 |> Table.header model.sort
-                                |> header Table.CompanyName
+                                |> header Table.Company
                       , width = Element.fill
                       , view =
                             \salary ->
-                                salary.companyName
-                                    |> CompanyName.toString
+                                salary.company
+                                    |> Company.toString
                                     |> cell
                       }
                     , { header =
-                            Table.LocationName
+                            Table.Location
                                 |> Table.header model.sort
-                                |> header Table.LocationName
+                                |> header Table.Location
                       , width = Element.fill
                       , view =
                             \salary ->
-                                salary.locationName
-                                    |> LocationName.toString
+                                salary.location
+                                    |> Location.toString
                                     |> cell
                       }
                     , { header =

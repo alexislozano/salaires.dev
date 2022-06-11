@@ -1,15 +1,24 @@
 module Models.Location exposing (..)
 
 import Json.Decode as Decode
-import Json.Decode.Pipeline exposing (required)
-import Models.LocationName as LocationName exposing (LocationName)
 
 
-type alias Location =
-    { name : LocationName }
+type Location
+    = Location String
 
 
 decode : Decode.Decoder Location
 decode =
-    Decode.succeed Location
-        |> required "name" LocationName.decode
+    Decode.map Location Decode.string
+
+
+toString : Location -> String
+toString location =
+    case location of
+        Location l ->
+            l
+
+
+compare : Location -> Location -> Order
+compare a b =
+    Basics.compare (toString a) (toString b)
