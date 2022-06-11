@@ -6,6 +6,7 @@ import Url.Parser
 
 type Route
     = Index
+    | Insert
     | NotFound
 
 
@@ -21,4 +22,7 @@ parse url =
 
 parser : Url.Parser.Parser (Route -> a) a
 parser =
-    Url.Parser.oneOf [ Url.Parser.map Index <| Url.Parser.top ]
+    Url.Parser.oneOf
+        [ Url.Parser.map Index <| Url.Parser.top
+        , Url.Parser.map Insert <| Url.Parser.s "insert"
+        ]
