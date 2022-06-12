@@ -13,10 +13,8 @@ decode =
 
 
 toString : Company -> String
-toString company =
-    case company of
-        Company c ->
-            c
+toString (Company company) =
+    company
 
 
 compare : Company -> Company -> Order

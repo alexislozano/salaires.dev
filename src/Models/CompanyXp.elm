@@ -13,10 +13,8 @@ decode =
 
 
 toInt : CompanyXp -> Int
-toInt companyXp =
-    case companyXp of
-        CompanyXp xp ->
-            xp
+toInt (CompanyXp companyXp) =
+    companyXp
 
 
 toString : CompanyXp -> String

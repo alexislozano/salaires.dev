@@ -13,10 +13,8 @@ decode =
 
 
 toString : Location -> String
-toString location =
-    case location of
-        Location l ->
-            l
+toString (Location location) =
+    location
 
 
 compare : Location -> Location -> Order

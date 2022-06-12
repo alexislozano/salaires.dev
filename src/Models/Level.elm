@@ -13,10 +13,8 @@ decode =
 
 
 toString : Level -> String
-toString level =
-    case level of
-        Level l ->
-            l
+toString (Level level) =
+    level
 
 
 compare : Level -> Level -> Order

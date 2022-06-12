@@ -13,10 +13,8 @@ decode =
 
 
 toInt : TotalXp -> Int
-toInt totalXp =
-    case totalXp of
-        TotalXp xp ->
-            xp
+toInt (TotalXp totalXp) =
+    totalXp
 
 
 toString : TotalXp -> String

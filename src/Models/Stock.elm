@@ -14,16 +14,13 @@ decode =
 
 
 toInt : Stock -> Int
-toInt stock =
-    case stock of
-        Stock s ->
-            s
+toInt (Stock stock) =
+    stock
 
 
 toString : Stock -> String
 toString stock =
-    toInt stock
-        |> Utils.toK
+    toInt stock |> Utils.toK
 
 
 compare : Stock -> Stock -> Order

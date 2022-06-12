@@ -15,14 +15,12 @@ decode =
 
 
 toString : Date -> String
-toString date =
-    case date of
-        Date d ->
-            String.fromInt (Time.toYear utc d)
-                ++ "-"
-                ++ padWithZero (String.fromInt (monthToInt (Time.toMonth utc d)))
-                ++ "-"
-                ++ padWithZero (String.fromInt (Time.toDay utc d))
+toString (Date date) =
+    String.fromInt (Time.toYear utc date)
+        ++ "-"
+        ++ padWithZero (String.fromInt (monthToInt (Time.toMonth utc date)))
+        ++ "-"
+        ++ padWithZero (String.fromInt (Time.toDay utc date))
 
 
 monthToInt : Month -> Int
@@ -74,6 +72,11 @@ padWithZero s =
         s
 
 
+toInt : Date -> Int
+toInt (Date date) =
+    posixToMillis date
+
+
 compare : Date -> Date -> Order
-compare (Date a) (Date b) =
-    Basics.compare (posixToMillis a) (posixToMillis b)
+compare a b =
+    Basics.compare (toInt a) (toInt b)

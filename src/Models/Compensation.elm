@@ -14,10 +14,8 @@ decode =
 
 
 toInt : Compensation -> Int
-toInt compensation =
-    case compensation of
-        Compensation c ->
-            c
+toInt (Compensation compensation) =
+    compensation
 
 
 toString : Compensation -> String
