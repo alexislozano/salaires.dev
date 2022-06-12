@@ -9,6 +9,7 @@ import Http
 import Models.Company as Company
 import Models.CompanyXp as CompanyXp
 import Models.Compensation as Compensation
+import Models.Date as Date
 import Models.Level as Level
 import Models.Location as Location
 import Models.Salary exposing (Salary)
@@ -164,6 +165,17 @@ table model =
                                 salary.stock
                                     |> Maybe.map Stock.toString
                                     |> Maybe.withDefault ""
+                                    |> cell
+                      }
+                    , { header =
+                            Table.Date
+                                |> Table.header model.sort
+                                |> header Table.Date
+                      , width = Element.fill
+                      , view =
+                            \salary ->
+                                salary.date
+                                    |> Date.toString
                                     |> cell
                       }
                     ]

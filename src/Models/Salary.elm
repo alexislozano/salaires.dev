@@ -5,6 +5,7 @@ import Json.Decode.Pipeline exposing (required)
 import Models.Company as Company exposing (Company)
 import Models.CompanyXp as CompanyXp exposing (CompanyXp)
 import Models.Compensation as Compensation exposing (Compensation)
+import Models.Date as Date exposing (Date)
 import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
 import Models.SalaryId as SalaryId exposing (SalaryId)
@@ -18,7 +19,7 @@ type alias Salary =
     , company : Company
     , location : Location
     , compensation : Compensation
-    , date : String
+    , date : Date
 
     -- optional
     , stock : Maybe Stock
@@ -35,7 +36,7 @@ decode =
         |> required "company" Company.decode
         |> required "location" Location.decode
         |> required "compensation" Compensation.decode
-        |> required "date" Decode.string
+        |> required "date" Date.decode
         |> required "stock" (Decode.maybe Stock.decode)
         |> required "level" (Decode.maybe Level.decode)
         |> required "company_xp" (Decode.maybe CompanyXp.decode)

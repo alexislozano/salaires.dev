@@ -3,6 +3,7 @@ module Design.Table exposing (..)
 import Models.Company
 import Models.CompanyXp
 import Models.Compensation
+import Models.Date
 import Models.Level
 import Models.Location
 import Models.Salary exposing (Salary)
@@ -19,6 +20,7 @@ type Column
     | TotalXp
     | Compensation
     | Stock
+    | Date
 
 
 type Direction
@@ -28,12 +30,12 @@ type Direction
 
 defaultColumn : Column
 defaultColumn =
-    Company
+    Date
 
 
 defaultDirection : Direction
 defaultDirection =
-    Asc
+    Desc
 
 
 title : Column -> String
@@ -59,6 +61,9 @@ title column =
 
         Stock ->
             "Stock"
+
+        Date ->
+            "Date d'ajout"
 
 
 header : { column : Column, direction : Direction } -> Column -> String
@@ -111,6 +116,9 @@ sort { column, direction } salaries =
 
                 Stock ->
                     \s1 s2 -> Utils.compareMaybe Models.Stock.compare s1.stock s2.stock
+
+                Date ->
+                    \s1 s2 -> Models.Date.compare s1.date s2.date
     in
     salaries
         |> (case direction of
@@ -155,6 +163,9 @@ equal c1 c2 =
             True
 
         ( Stock, Stock ) ->
+            True
+
+        ( Date, Date ) ->
             True
 
         _ ->
