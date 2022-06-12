@@ -26,3 +26,16 @@ parser =
         [ Url.Parser.map Index <| Url.Parser.top
         , Url.Parser.map Insert <| Url.Parser.s "insert"
         ]
+
+
+toString : Route -> String
+toString route =
+    case route of
+        Index ->
+            "/"
+
+        Insert ->
+            "/insert"
+
+        NotFound ->
+            "/notfound"

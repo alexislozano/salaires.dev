@@ -92,9 +92,17 @@ header =
         , Element.width Element.fill
         , Border.widthEach { top = 0, right = 0, bottom = 1, left = 0 }
         ]
-        [ Element.el
+        [ Element.link
             [ Element.paddingEach { top = 0, right = 16, bottom = 0, left = 16 }
             ]
-          <|
-            Element.text "salaires.dev"
+            { label = Element.text "salaires.dev"
+            , url = Route.toString Route.Index
+            }
+        , Element.link
+            [ Element.alignRight
+            , Element.paddingEach { top = 0, right = 16, bottom = 0, left = 16 }
+            ]
+            { label = Element.text "J'ajoute mon salaire"
+            , url = Route.toString Route.Insert
+            }
         ]
