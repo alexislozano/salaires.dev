@@ -1,14 +1,13 @@
 module Design.Table exposing (..)
 
 import Models.Company
-import Models.CompanyXp
 import Models.Compensation
 import Models.Date
 import Models.Level
 import Models.Location
-import Models.Salary exposing (Salary)
+import Models.Salary as Salary exposing (Salary(..))
 import Models.Stock
-import Models.TotalXp
+import Models.Xp
 import Utils
 
 
@@ -106,10 +105,10 @@ sort { column, direction } salaries =
                     \s1 s2 -> Utils.compareMaybe Models.Level.compare s1.level s2.level
 
                 CompanyXp ->
-                    \s1 s2 -> Utils.compareMaybe Models.CompanyXp.compare s1.companyXp s2.companyXp
+                    \s1 s2 -> Utils.compareMaybe Models.Xp.compare s1.companyXp s2.companyXp
 
                 TotalXp ->
-                    \s1 s2 -> Utils.compareMaybe Models.TotalXp.compare s1.totalXp s2.totalXp
+                    \s1 s2 -> Utils.compareMaybe Models.Xp.compare s1.totalXp s2.totalXp
 
                 Compensation ->
                     \s1 s2 -> Models.Compensation.compare s1.compensation s2.compensation
@@ -121,6 +120,7 @@ sort { column, direction } salaries =
                     \s1 s2 -> Models.Date.compare s1.date s2.date
     in
     salaries
+        |> List.map Salary.toFields
         |> (case direction of
                 Asc ->
                     List.sortWith sortFn
@@ -139,6 +139,7 @@ sort { column, direction } salaries =
                                     LT
                         )
            )
+        |> List.map Salary
 
 
 equal : Column -> Column -> Bool

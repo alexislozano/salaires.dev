@@ -1,15 +1,27 @@
 module Models.Location exposing (..)
 
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (Decoder)
+import Utils
 
 
 type Location
     = Location String
 
 
-decode : Decode.Decoder Location
-decode =
-    Decode.map Location Decode.string
+tryNew : String -> Result String Location
+tryNew location =
+    if String.length location > 0 then
+        Ok (Location location)
+
+    else
+        Err "La localisation ne peut pas être vide"
+
+
+decoder : Decoder Location
+decoder =
+    Decode.string
+        |> Decode.map tryNew
+        |> Decode.andThen Utils.resultDecoder
 
 
 toString : Location -> String

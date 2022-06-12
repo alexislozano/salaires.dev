@@ -7,14 +7,13 @@ import Element.Input as Input
 import Flags exposing (Flags)
 import Http
 import Models.Company as Company
-import Models.CompanyXp as CompanyXp
 import Models.Compensation as Compensation
 import Models.Date as Date
 import Models.Level as Level
 import Models.Location as Location
-import Models.Salary exposing (Salary)
+import Models.Salary as Salary exposing (Salary)
 import Models.Stock as Stock
-import Models.TotalXp as TotalXp
+import Models.Xp as Xp
 import Result exposing (Result(..))
 import Services.Salaries as Salaries
 import Utils exposing (HttpData(..))
@@ -93,7 +92,8 @@ table model =
                       , width = Element.fill
                       , view =
                             \salary ->
-                                salary.company
+                                Salary.toFields salary
+                                    |> .company
                                     |> Company.toString
                                     |> cell
                       }
@@ -104,7 +104,8 @@ table model =
                       , width = Element.fill
                       , view =
                             \salary ->
-                                salary.location
+                                Salary.toFields salary
+                                    |> .location
                                     |> Location.toString
                                     |> cell
                       }
@@ -115,7 +116,8 @@ table model =
                       , width = Element.fill
                       , view =
                             \salary ->
-                                salary.level
+                                Salary.toFields salary
+                                    |> .level
                                     |> Maybe.map Level.toString
                                     |> Maybe.withDefault ""
                                     |> cell
@@ -127,8 +129,9 @@ table model =
                       , width = Element.fill
                       , view =
                             \salary ->
-                                salary.companyXp
-                                    |> Maybe.map CompanyXp.toString
+                                Salary.toFields salary
+                                    |> .companyXp
+                                    |> Maybe.map Xp.toString
                                     |> Maybe.withDefault ""
                                     |> cell
                       }
@@ -139,8 +142,9 @@ table model =
                       , width = Element.fill
                       , view =
                             \salary ->
-                                salary.totalXp
-                                    |> Maybe.map TotalXp.toString
+                                Salary.toFields salary
+                                    |> .totalXp
+                                    |> Maybe.map Xp.toString
                                     |> Maybe.withDefault ""
                                     |> cell
                       }
@@ -151,7 +155,8 @@ table model =
                       , width = Element.fill
                       , view =
                             \salary ->
-                                salary.compensation
+                                Salary.toFields salary
+                                    |> .compensation
                                     |> Compensation.toString
                                     |> cell
                       }
@@ -162,7 +167,8 @@ table model =
                       , width = Element.fill
                       , view =
                             \salary ->
-                                salary.stock
+                                Salary.toFields salary
+                                    |> .stock
                                     |> Maybe.map Stock.toString
                                     |> Maybe.withDefault ""
                                     |> cell
@@ -174,7 +180,8 @@ table model =
                       , width = Element.fill
                       , view =
                             \salary ->
-                                salary.date
+                                Salary.toFields salary
+                                    |> .date
                                     |> Date.toString
                                     |> cell
                       }

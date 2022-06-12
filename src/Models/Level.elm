@@ -1,15 +1,27 @@
 module Models.Level exposing (..)
 
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (Decoder)
+import Utils
 
 
 type Level
     = Level String
 
 
-decode : Decode.Decoder Level
-decode =
-    Decode.map Level Decode.string
+tryNew : String -> Result String Level
+tryNew level =
+    if String.length level > 0 then
+        Ok (Level level)
+
+    else
+        Err "Le niveau ne peut pas être vide"
+
+
+decoder : Decoder Level
+decoder =
+    Decode.string
+        |> Decode.map tryNew
+        |> Decode.andThen Utils.resultDecoder
 
 
 toString : Level -> String

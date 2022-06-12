@@ -1,6 +1,6 @@
 module Models.Stock exposing (..)
 
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (Decoder)
 import Utils
 
 
@@ -8,9 +8,20 @@ type Stock
     = Stock Int
 
 
-decode : Decode.Decoder Stock
-decode =
-    Decode.map Stock Decode.int
+tryNew : Int -> Result String Stock
+tryNew stock =
+    if stock >= 0 then
+        Ok (Stock stock)
+
+    else
+        Err "Le stock ne peut pas être négatif"
+
+
+decoder : Decoder Stock
+decoder =
+    Decode.int
+        |> Decode.map tryNew
+        |> Decode.andThen Utils.resultDecoder
 
 
 toInt : Stock -> Int

@@ -1,5 +1,7 @@
 module Utils exposing (..)
 
+import Json.Decode as Decode exposing (Decoder)
+
 
 map :
     (model1 -> model2)
@@ -38,3 +40,13 @@ compareMaybe compare maybeA maybeB =
 
         ( Nothing, Nothing ) ->
             EQ
+
+
+resultDecoder : Result String a -> Decoder a
+resultDecoder result =
+    case result of
+        Ok r ->
+            Decode.succeed r
+
+        Err e ->
+            Decode.fail e

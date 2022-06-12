@@ -1,7 +1,7 @@
 module Models.Date exposing (..)
 
 import Iso8601
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (Decoder)
 import Time exposing (Month(..), Posix, posixToMillis, utc)
 
 
@@ -9,9 +9,15 @@ type Date
     = Date Posix
 
 
-decode : Decode.Decoder Date
-decode =
-    Decode.map Date Iso8601.decoder
+new : Posix -> Date
+new date =
+    Date date
+
+
+decoder : Decoder Date
+decoder =
+    Iso8601.decoder
+        |> Decode.map new
 
 
 toString : Date -> String

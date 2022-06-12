@@ -14,3 +14,13 @@ headers flags =
 getAllSalariesUrl : Flags -> String
 getAllSalariesUrl flags =
     flags.supabaseUrl ++ "salaries?select=*"
+
+
+getAllCompaniesUrl : Flags -> String
+getAllCompaniesUrl flags =
+    flags.supabaseUrl ++ "companies?select=*&order=company"
+
+
+getAllLocationsUrl : Flags -> String
+getAllLocationsUrl flags =
+    flags.supabaseUrl ++ "locations?select=*&order=location"

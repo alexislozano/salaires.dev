@@ -1,6 +1,6 @@
 module Models.Compensation exposing (..)
 
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (Decoder)
 import Utils
 
 
@@ -8,9 +8,20 @@ type Compensation
     = Compensation Int
 
 
-decode : Decode.Decoder Compensation
-decode =
-    Decode.map Compensation Decode.int
+tryNew : Int -> Result String Compensation
+tryNew compensation =
+    if compensation >= 0 then
+        Ok (Compensation compensation)
+
+    else
+        Err "La compensation ne peut pas être négative"
+
+
+decoder : Decoder Compensation
+decoder =
+    Decode.int
+        |> Decode.map tryNew
+        |> Decode.andThen Utils.resultDecoder
 
 
 toInt : Compensation -> Int

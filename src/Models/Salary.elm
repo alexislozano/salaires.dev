@@ -1,22 +1,21 @@
 module Models.Salary exposing (..)
 
-import Json.Decode as Decode
-import Json.Decode.Pipeline exposing (required)
-import Models.Company as Company exposing (Company)
-import Models.CompanyXp as CompanyXp exposing (CompanyXp)
-import Models.Compensation as Compensation exposing (Compensation)
-import Models.Date as Date exposing (Date)
-import Models.Level as Level exposing (Level)
-import Models.Location as Location exposing (Location)
-import Models.SalaryId as SalaryId exposing (SalaryId)
-import Models.Stock as Stock exposing (Stock)
-import Models.TotalXp as TotalXp exposing (TotalXp)
+import Models.Company exposing (Company)
+import Models.Compensation exposing (Compensation)
+import Models.Date exposing (Date)
+import Models.Level exposing (Level)
+import Models.Location exposing (Location)
+import Models.Stock exposing (Stock)
+import Models.Xp as Xp exposing (Xp)
 
 
-type alias Salary =
+type Salary
+    = Salary Fields
+
+
+type alias Fields =
     { -- required
-      id : SalaryId
-    , company : Company
+      company : Company
     , location : Location
     , compensation : Compensation
     , date : Date
@@ -24,20 +23,25 @@ type alias Salary =
     -- optional
     , stock : Maybe Stock
     , level : Maybe Level
-    , companyXp : Maybe CompanyXp
-    , totalXp : Maybe TotalXp
+    , companyXp : Maybe Xp
+    , totalXp : Maybe Xp
     }
 
 
-decode : Decode.Decoder Salary
-decode =
-    Decode.succeed Salary
-        |> required "id" SalaryId.decode
-        |> required "company" Company.decode
-        |> required "location" Location.decode
-        |> required "compensation" Compensation.decode
-        |> required "date" Date.decode
-        |> required "stock" (Decode.maybe Stock.decode)
-        |> required "level" (Decode.maybe Level.decode)
-        |> required "company_xp" (Decode.maybe CompanyXp.decode)
-        |> required "total_xp" (Decode.maybe TotalXp.decode)
+toFields : Salary -> Fields
+toFields (Salary fields) =
+    fields
+
+
+tryNew : Fields -> Result String Salary
+tryNew fields =
+    case ( fields.companyXp, fields.totalXp ) of
+        ( Just cXp, Just tXp ) ->
+            if Xp.toInt cXp > Xp.toInt tXp then
+                Err "L'expérience entreprise ne peut pas être plus grande que l'expérience totale"
+
+            else
+                Ok (Salary fields)
+
+        _ ->
+            Ok (Salary fields)
