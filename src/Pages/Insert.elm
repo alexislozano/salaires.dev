@@ -5,8 +5,8 @@ import Element.Font as Font
 import Element.Input as Input
 import Flags exposing (Flags)
 import Http
-import Models.Company exposing (Company)
-import Models.Location exposing (Location)
+import Models.Company as Company exposing (Company)
+import Models.Location as Location exposing (Location)
 import Services.Companies as Companies
 import Services.Locations as Locations
 
@@ -16,8 +16,8 @@ type alias Model =
 
 
 type alias Form =
-    { company : String
-    , location : String
+    { company : { value : String, error : Maybe String }
+    , location : { value : String, error : Maybe String }
     , level : String
     , companyXp : String
     , totalXp : String
@@ -57,8 +57,8 @@ init flags =
                 ]
     in
     ( { form =
-            { company = ""
-            , location = ""
+            { company = { value = "", error = Nothing }
+            , location = { value = "", error = Nothing }
             , level = ""
             , companyXp = ""
             , totalXp = ""
@@ -87,10 +87,28 @@ update msg model =
                 newForm =
                     case field of
                         Company ->
-                            { form | company = value }
+                            let
+                                error =
+                                    case Company.tryNew value of
+                                        Ok _ ->
+                                            Nothing
+
+                                        Err e ->
+                                            Just e
+                            in
+                            { form | company = { value = value, error = error } }
 
                         Location ->
-                            { form | location = value }
+                            let
+                                error =
+                                    case Location.tryNew value of
+                                        Ok _ ->
+                                            Nothing
+
+                                        Err e ->
+                                            Just e
+                            in
+                            { form | location = { value = value, error = error } }
 
                         _ ->
                             form
@@ -106,16 +124,25 @@ view { form } =
         , Element.spacing 32
         ]
         [ Element.el [ Font.size 32, Element.paddingXY 0 16 ] <| Element.text "J'ajoute mon salaire"
-        , Input.text []
+        , Input.text
+            [ Element.below
+                (case form.company.error of
+                    Just e ->
+                        Element.text e
+
+                    Nothing ->
+                        Element.none
+                )
+            ]
             { label = Input.labelAbove [] <| Element.text "Entreprise"
             , onChange = OnFieldChange Company
             , placeholder = Just <| Input.placeholder [] <| Element.text "Google"
-            , text = form.company
+            , text = form.company.value
             }
         , Input.text []
             { label = Input.labelAbove [] <| Element.text "Localisation"
             , onChange = OnFieldChange Location
             , placeholder = Just <| Input.placeholder [] <| Element.text "Paris"
-            , text = form.location
+            , text = form.location.value
             }
         ]
