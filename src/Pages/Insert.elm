@@ -1,8 +1,8 @@
 module Pages.Insert exposing (..)
 
+import Design.Select as Select
 import Element exposing (Element)
 import Element.Font as Font
-import Element.Input as Input
 import Flags exposing (Flags)
 import Http
 import Models.Company as Company exposing (Company)
@@ -12,12 +12,15 @@ import Services.Locations as Locations
 
 
 type alias Model =
-    { form : Form }
+    { form : Form
+    , companies : List Company
+    , locations : List Location
+    }
 
 
 type alias Form =
-    { company : { value : String, error : Maybe String }
-    , location : { value : String, error : Maybe String }
+    { company : { value : String, field : Select.Model, error : Maybe String }
+    , location : { value : String, field : Select.Model, error : Maybe String }
     , level : String
     , companyXp : String
     , totalXp : String
@@ -45,6 +48,7 @@ type Msg
     = GotAllCompanies (Result Http.Error (List Company))
     | GotAllLocations (Result Http.Error (List Location))
     | OnFieldChange Field String
+    | SelectMsg Field Select.Msg
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -57,14 +61,16 @@ init flags =
                 ]
     in
     ( { form =
-            { company = { value = "", error = Nothing }
-            , location = { value = "", error = Nothing }
+            { company = { value = "", field = Select.init, error = Nothing }
+            , location = { value = "", field = Select.init, error = Nothing }
             , level = ""
             , companyXp = ""
             , totalXp = ""
             , compensation = ""
             , stock = ""
             }
+      , companies = []
+      , locations = []
       }
     , cmd
     )
@@ -73,8 +79,14 @@ init flags =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        GotAllCompanies (Ok companies) ->
+            ( { model | companies = companies }, Cmd.none )
+
         GotAllCompanies _ ->
             ( model, Cmd.none )
+
+        GotAllLocations (Ok locations) ->
+            ( { model | locations = locations }, Cmd.none )
 
         GotAllLocations _ ->
             ( model, Cmd.none )
@@ -96,7 +108,13 @@ update msg model =
                                         Err e ->
                                             Just e
                             in
-                            { form | company = { value = value, error = error } }
+                            { form
+                                | company =
+                                    { value = value
+                                    , field = form.company.field
+                                    , error = error
+                                    }
+                            }
 
                         Location ->
                             let
@@ -108,7 +126,43 @@ update msg model =
                                         Err e ->
                                             Just e
                             in
-                            { form | location = { value = value, error = error } }
+                            { form
+                                | location =
+                                    { value = value
+                                    , field = form.location.field
+                                    , error = error
+                                    }
+                            }
+
+                        _ ->
+                            form
+            in
+            ( { model | form = newForm }, Cmd.none )
+
+        SelectMsg field subMsg ->
+            let
+                form =
+                    model.form
+
+                newForm =
+                    case field of
+                        Company ->
+                            { form
+                                | company =
+                                    { value = form.company.value
+                                    , field = Select.update subMsg form.company.field
+                                    , error = form.company.error
+                                    }
+                            }
+
+                        Location ->
+                            { form
+                                | location =
+                                    { value = form.location.value
+                                    , field = Select.update subMsg form.location.field
+                                    , error = form.location.error
+                                    }
+                            }
 
                         _ ->
                             form
@@ -117,32 +171,29 @@ update msg model =
 
 
 view : Model -> Element Msg
-view { form } =
+view { form, companies, locations } =
     Element.column
         [ Element.paddingXY 0 32
         , Element.centerX
         , Element.spacing 32
         ]
         [ Element.el [ Font.size 32, Element.paddingXY 0 16 ] <| Element.text "J'ajoute mon salaire"
-        , Input.text
-            [ Element.below
-                (case form.company.error of
-                    Just e ->
-                        Element.text e
-
-                    Nothing ->
-                        Element.none
-                )
-            ]
-            { label = Input.labelAbove [] <| Element.text "Entreprise"
+        , Select.view
+            form.company.field
+            { label = "Entreprise"
             , onChange = OnFieldChange Company
-            , placeholder = Just <| Input.placeholder [] <| Element.text "Google"
-            , text = form.company.value
+            , options = List.map Company.toString companies
+            , toMsg = SelectMsg Company
+            , placeholder = "Google"
+            , value = form.company.value
             }
-        , Input.text []
-            { label = Input.labelAbove [] <| Element.text "Localisation"
+        , Select.view
+            form.location.field
+            { label = "Localisation"
             , onChange = OnFieldChange Location
-            , placeholder = Just <| Input.placeholder [] <| Element.text "Paris"
-            , text = form.location.value
+            , options = List.map Location.toString locations
+            , toMsg = SelectMsg Location
+            , placeholder = "Paris"
+            , value = form.location.value
             }
         ]
