@@ -6,6 +6,7 @@ import Element.Font as Font
 import Element.Input as Input
 import Flags exposing (Flags)
 import Http
+import I18n
 import Models.Company as Company exposing (Company)
 import Models.Location as Location exposing (Location)
 import Services.Companies as Companies
@@ -168,10 +169,10 @@ view { form, companies, locations } =
         , Element.centerX
         , Element.spacing 32
         ]
-        [ Element.el [ Font.size 32, Element.paddingXY 0 16 ] <| Element.text "J'ajoute mon salaire"
+        [ Element.el [ Font.size 32, Element.paddingXY 0 16 ] <| Element.text (I18n.translate I18n.French I18n.IAddMySalary)
         , Select.view
             form.company.field
-            { label = "Entreprise"
+            { label = I18n.translate I18n.French I18n.Company
             , onChange = OnFieldChange Company
             , options = List.map Company.toString companies
             , toMsg = SelectMsg Company
@@ -180,7 +181,7 @@ view { form, companies, locations } =
             }
         , Select.view
             form.location.field
-            { label = "Localisation"
+            { label = I18n.translate I18n.French I18n.Location
             , onChange = OnFieldChange Location
             , options = List.map Location.toString locations
             , toMsg = SelectMsg Location
@@ -188,31 +189,31 @@ view { form, companies, locations } =
             , value = form.location.value
             }
         , Input.text []
-            { label = Input.labelAbove [] <| Element.text "Compensation"
+            { label = Input.labelAbove [] <| Element.text (I18n.translate I18n.French I18n.Compensation)
             , onChange = OnFieldChange Compensation
             , placeholder = Just <| Input.placeholder [] <| Element.text "40000"
             , text = form.compensation
             }
         , Input.text []
-            { label = Input.labelAbove [] <| Element.text "Stock"
+            { label = Input.labelAbove [] <| Element.text (I18n.translate I18n.French I18n.Stock)
             , onChange = OnFieldChange Stock
             , placeholder = Just <| Input.placeholder [] <| Element.text "10000"
             , text = form.stock
             }
         , Input.text []
-            { label = Input.labelAbove [] <| Element.text "Niveau"
+            { label = Input.labelAbove [] <| Element.text (I18n.translate I18n.French I18n.Level)
             , onChange = OnFieldChange Level
             , placeholder = Just <| Input.placeholder [] <| Element.text "2"
             , text = form.level
             }
         , Input.text []
-            { label = Input.labelAbove [] <| Element.text "Expérience entreprise"
+            { label = Input.labelAbove [] <| Element.text (I18n.translate I18n.French I18n.CompanyXp)
             , onChange = OnFieldChange CompanyXp
             , placeholder = Just <| Input.placeholder [] <| Element.text "2"
             , text = form.companyXp
             }
         , Input.text []
-            { label = Input.labelAbove [] <| Element.text "Expérience totale"
+            { label = Input.labelAbove [] <| Element.text (I18n.translate I18n.French I18n.TotalXp)
             , onChange = OnFieldChange TotalXp
             , placeholder = Just <| Input.placeholder [] <| Element.text "10"
             , text = form.totalXp

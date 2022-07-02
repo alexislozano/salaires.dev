@@ -1,5 +1,6 @@
 module Design.Table exposing (..)
 
+import I18n
 import Models.Company
 import Models.Compensation
 import Models.Date
@@ -41,28 +42,28 @@ title : Column -> String
 title column =
     case column of
         Company ->
-            "Entreprise"
+            I18n.translate I18n.French I18n.Company
 
         Location ->
-            "Localisation"
+            I18n.translate I18n.French I18n.Location
 
         Level ->
-            "Niveau"
+            I18n.translate I18n.French I18n.Level
 
         CompanyXp ->
-            "Expérience entreprise"
+            I18n.translate I18n.French I18n.CompanyXp
 
         TotalXp ->
-            "Expérience totale"
+            I18n.translate I18n.French I18n.TotalXp
 
         Compensation ->
-            "Compensation"
+            I18n.translate I18n.French I18n.Compensation
 
         Stock ->
-            "Stock"
+            I18n.translate I18n.French I18n.Stock
 
         Date ->
-            "Date d'ajout"
+            I18n.translate I18n.French I18n.Date
 
 
 header : { column : Column, direction : Direction } -> Column -> String

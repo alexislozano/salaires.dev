@@ -3,6 +3,7 @@ module Page exposing (..)
 import Element exposing (Element)
 import Element.Border as Border
 import Flags exposing (Flags)
+import I18n
 import Pages.Index as Index
 import Pages.Insert as Insert
 import Pages.NotFound as NotFound
@@ -102,7 +103,7 @@ header =
             [ Element.alignRight
             , Element.paddingEach { top = 0, right = 16, bottom = 0, left = 16 }
             ]
-            { label = Element.text "J'ajoute mon salaire"
+            { label = Element.text (I18n.translate I18n.French I18n.IAddMySalary)
             , url = Route.toString Route.Insert
             }
         ]
