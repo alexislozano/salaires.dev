@@ -3,6 +3,7 @@ module Pages.Insert exposing (..)
 import Design.Select as Select
 import Element exposing (Element)
 import Element.Font as Font
+import Element.Input as Input
 import Flags exposing (Flags)
 import Http
 import Models.Company as Company exposing (Company)
@@ -19,8 +20,8 @@ type alias Model =
 
 
 type alias Form =
-    { company : { value : String, field : Select.Model, error : Maybe String }
-    , location : { value : String, field : Select.Model, error : Maybe String }
+    { company : { value : String, field : Select.Model }
+    , location : { value : String, field : Select.Model }
     , level : String
     , companyXp : String
     , totalXp : String
@@ -61,8 +62,8 @@ init flags =
                 ]
     in
     ( { form =
-            { company = { value = "", field = Select.init, error = Nothing }
-            , location = { value = "", field = Select.init, error = Nothing }
+            { company = { value = "", field = Select.init }
+            , location = { value = "", field = Select.init }
             , level = ""
             , companyXp = ""
             , totalXp = ""
@@ -99,43 +100,35 @@ update msg model =
                 newForm =
                     case field of
                         Company ->
-                            let
-                                error =
-                                    case Company.tryNew value of
-                                        Ok _ ->
-                                            Nothing
-
-                                        Err e ->
-                                            Just e
-                            in
                             { form
                                 | company =
                                     { value = value
                                     , field = form.company.field
-                                    , error = error
                                     }
                             }
 
                         Location ->
-                            let
-                                error =
-                                    case Location.tryNew value of
-                                        Ok _ ->
-                                            Nothing
-
-                                        Err e ->
-                                            Just e
-                            in
                             { form
                                 | location =
                                     { value = value
                                     , field = form.location.field
-                                    , error = error
                                     }
                             }
 
-                        _ ->
-                            form
+                        Compensation ->
+                            { form | compensation = value }
+
+                        Stock ->
+                            { form | stock = value }
+
+                        Level ->
+                            { form | level = value }
+
+                        CompanyXp ->
+                            { form | companyXp = value }
+
+                        TotalXp ->
+                            { form | totalXp = value }
             in
             ( { model | form = newForm }, Cmd.none )
 
@@ -151,7 +144,6 @@ update msg model =
                                 | company =
                                     { value = form.company.value
                                     , field = Select.update subMsg form.company.field
-                                    , error = form.company.error
                                     }
                             }
 
@@ -160,7 +152,6 @@ update msg model =
                                 | location =
                                     { value = form.location.value
                                     , field = Select.update subMsg form.location.field
-                                    , error = form.location.error
                                     }
                             }
 
@@ -195,5 +186,35 @@ view { form, companies, locations } =
             , toMsg = SelectMsg Location
             , placeholder = "Paris"
             , value = form.location.value
+            }
+        , Input.text []
+            { label = Input.labelAbove [] <| Element.text "Compensation"
+            , onChange = OnFieldChange Compensation
+            , placeholder = Just <| Input.placeholder [] <| Element.text "40000"
+            , text = form.compensation
+            }
+        , Input.text []
+            { label = Input.labelAbove [] <| Element.text "Stock"
+            , onChange = OnFieldChange Stock
+            , placeholder = Just <| Input.placeholder [] <| Element.text "10000"
+            , text = form.stock
+            }
+        , Input.text []
+            { label = Input.labelAbove [] <| Element.text "Niveau"
+            , onChange = OnFieldChange Level
+            , placeholder = Just <| Input.placeholder [] <| Element.text "2"
+            , text = form.level
+            }
+        , Input.text []
+            { label = Input.labelAbove [] <| Element.text "Expérience entreprise"
+            , onChange = OnFieldChange CompanyXp
+            , placeholder = Just <| Input.placeholder [] <| Element.text "2"
+            , text = form.companyXp
+            }
+        , Input.text []
+            { label = Input.labelAbove [] <| Element.text "Expérience totale"
+            , onChange = OnFieldChange TotalXp
+            , placeholder = Just <| Input.placeholder [] <| Element.text "10"
+            , text = form.totalXp
             }
         ]
