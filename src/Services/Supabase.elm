@@ -24,3 +24,8 @@ getAllCompaniesUrl flags =
 getAllLocationsUrl : Flags -> String
 getAllLocationsUrl flags =
     flags.supabaseUrl ++ "locations?select=*&order=location"
+
+
+insertSalaryUrl : Flags -> String
+insertSalaryUrl flags =
+    flags.supabaseUrl ++ "salaries"

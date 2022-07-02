@@ -19,6 +19,7 @@ type Key
     | ShouldBeANumber
     | ShouldBePositive
     | Optional
+    | Send
 
 
 translate : Lang -> Key -> String
@@ -64,3 +65,6 @@ translate lang key =
 
                 Optional ->
                     "Optionel"
+
+                Send ->
+                    "Envoyer"

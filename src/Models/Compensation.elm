@@ -2,6 +2,7 @@ module Models.Compensation exposing (..)
 
 import I18n
 import Json.Decode as Decode exposing (Decoder)
+import Json.Encode as Encode exposing (Value)
 import Utils
 
 
@@ -30,6 +31,11 @@ decoder =
     Decode.int
         |> Decode.map tryFromInt
         |> Decode.andThen Utils.resultDecoder
+
+
+encode : Compensation -> Value
+encode (Compensation compensation) =
+    Encode.int compensation
 
 
 toInt : Compensation -> Int

@@ -2,6 +2,7 @@ module Models.Location exposing (..)
 
 import I18n
 import Json.Decode as Decode exposing (Decoder)
+import Json.Encode as Encode exposing (Value)
 import Utils
 
 
@@ -23,6 +24,11 @@ decoder =
     Decode.string
         |> Decode.map tryFromString
         |> Decode.andThen Utils.resultDecoder
+
+
+encode : Location -> Value
+encode (Location location) =
+    Encode.string location
 
 
 toString : Location -> String

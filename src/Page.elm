@@ -40,15 +40,15 @@ init flags url =
                 |> Utils.map NotFoundModel NotFoundMsg
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Flags -> Msg -> Model -> ( Model, Cmd Msg )
+update flags msg model =
     case ( msg, model ) of
         ( IndexMsg subMsg, IndexModel subModel ) ->
             Index.update subMsg subModel
                 |> Utils.map IndexModel IndexMsg
 
         ( InsertMsg subMsg, InsertModel subModel ) ->
-            Insert.update subMsg subModel
+            Insert.update flags subMsg subModel
                 |> Utils.map InsertModel InsertMsg
 
         ( NotFoundMsg subMsg, NotFoundModel subModel ) ->

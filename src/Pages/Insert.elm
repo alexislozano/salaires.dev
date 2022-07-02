@@ -1,5 +1,6 @@
 module Pages.Insert exposing (..)
 
+import Design.Button as Button
 import Design.Input as Input
 import Design.Select as Select
 import Element exposing (Element)
@@ -16,6 +17,7 @@ import Models.Stock as Stock exposing (Stock)
 import Models.Xp as Xp exposing (Xp)
 import Services.Companies as Companies
 import Services.Locations as Locations
+import Services.Salaries as Salaries
 
 
 type alias Model =
@@ -25,20 +27,43 @@ type alias Model =
     }
 
 
-type FieldState a
-    = Empty
-    | Filled (Result String a)
-
-
 type alias Form =
-    { company : { value : String, state : FieldState Company, field : Select.Model }
-    , location : { value : String, state : FieldState Location, field : Select.Model }
-    , compensation : { value : String, state : FieldState Compensation }
-    , stock : { value : String, state : FieldState Stock }
-    , level : { value : String, state : FieldState Level }
-    , companyXp : { value : String, state : FieldState Xp }
-    , totalXp : { value : String, state : FieldState Xp }
+    { company : { value : String, parsed : Result String Company, field : Select.Model }
+    , location : { value : String, parsed : Result String Location, field : Select.Model }
+    , compensation : { value : String, parsed : Result String Compensation }
+    , stock : { value : String, parsed : Result String (Maybe Stock) }
+    , level : { value : String, parsed : Result String (Maybe Level) }
+    , companyXp : { value : String, parsed : Result String (Maybe Xp) }
+    , totalXp : { value : String, parsed : Result String (Maybe Xp) }
     }
+
+
+body : Form -> Maybe Salaries.Body
+body form =
+    case ( form.company.parsed, form.location.parsed, form.compensation.parsed ) of
+        ( Ok company, Ok location, Ok compensation ) ->
+            case ( form.stock.parsed, form.level.parsed, form.companyXp.parsed ) of
+                ( Ok stock, Ok level, Ok companyXp ) ->
+                    case form.totalXp.parsed of
+                        Ok totalXp ->
+                            Just
+                                { company = company
+                                , location = location
+                                , compensation = compensation
+                                , stock = stock
+                                , level = level
+                                , companyXp = companyXp
+                                , totalXp = totalXp
+                                }
+
+                        _ ->
+                            Nothing
+
+                _ ->
+                    Nothing
+
+        _ ->
+            Nothing
 
 
 type Field
@@ -54,8 +79,10 @@ type Field
 type Msg
     = GotAllCompanies (Result Http.Error (List Company))
     | GotAllLocations (Result Http.Error (List Location))
+    | Sent (Result Http.Error ())
     | OnFieldChange Field String
     | SelectMsg Field Select.Msg
+    | Send
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -68,13 +95,13 @@ init flags =
                 ]
     in
     ( { form =
-            { company = { value = "", state = Empty, field = Select.init }
-            , location = { value = "", state = Empty, field = Select.init }
-            , level = { value = "", state = Empty }
-            , companyXp = { value = "", state = Empty }
-            , totalXp = { value = "", state = Empty }
-            , compensation = { value = "", state = Empty }
-            , stock = { value = "", state = Empty }
+            { company = { value = "", parsed = Err " ", field = Select.init }
+            , location = { value = "", parsed = Err " ", field = Select.init }
+            , compensation = { value = "", parsed = Err " " }
+            , level = { value = "", parsed = Ok Nothing }
+            , companyXp = { value = "", parsed = Ok Nothing }
+            , totalXp = { value = "", parsed = Ok Nothing }
+            , stock = { value = "", parsed = Ok Nothing }
             }
       , companies = []
       , locations = []
@@ -83,8 +110,8 @@ init flags =
     )
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Flags -> Msg -> Model -> ( Model, Cmd Msg )
+update flags msg model =
     case msg of
         GotAllCompanies (Ok companies) ->
             ( { model | companies = companies }, Cmd.none )
@@ -98,6 +125,24 @@ update msg model =
         GotAllLocations _ ->
             ( model, Cmd.none )
 
+        Sent _ ->
+            ( model
+            , Cmd.batch
+                [ Companies.getAll flags GotAllCompanies
+                , Locations.getAll flags GotAllLocations
+                ]
+            )
+
+        Send ->
+            ( model
+            , case body model.form of
+                Nothing ->
+                    Cmd.none
+
+                Just b ->
+                    Salaries.post flags Sent b
+            )
+
         OnFieldChange field value ->
             let
                 form =
@@ -109,7 +154,7 @@ update msg model =
                             { form
                                 | company =
                                     { value = value
-                                    , state = Filled (Company.tryFromString value)
+                                    , parsed = Company.tryFromString value
                                     , field = form.company.field
                                     }
                             }
@@ -118,7 +163,7 @@ update msg model =
                             { form
                                 | location =
                                     { value = value
-                                    , state = Filled (Location.tryFromString value)
+                                    , parsed = Location.tryFromString value
                                     , field = form.location.field
                                     }
                             }
@@ -127,7 +172,7 @@ update msg model =
                             { form
                                 | compensation =
                                     { value = value
-                                    , state = Filled (Compensation.tryFromString value)
+                                    , parsed = Compensation.tryFromString value
                                     }
                             }
 
@@ -135,12 +180,12 @@ update msg model =
                             { form
                                 | stock =
                                     { value = value
-                                    , state =
+                                    , parsed =
                                         if String.isEmpty value then
-                                            Empty
+                                            Ok Nothing
 
                                         else
-                                            Filled (Stock.tryFromString value)
+                                            Stock.tryFromString value |> Result.map Just
                                     }
                             }
 
@@ -148,12 +193,12 @@ update msg model =
                             { form
                                 | level =
                                     { value = value
-                                    , state =
+                                    , parsed =
                                         if String.isEmpty value then
-                                            Empty
+                                            Ok Nothing
 
                                         else
-                                            Filled (Level.tryFromString value)
+                                            Level.tryFromString value |> Result.map Just
                                     }
                             }
 
@@ -161,12 +206,12 @@ update msg model =
                             { form
                                 | companyXp =
                                     { value = value
-                                    , state =
+                                    , parsed =
                                         if String.isEmpty value then
-                                            Empty
+                                            Ok Nothing
 
                                         else
-                                            Filled (Xp.tryFromString value)
+                                            Xp.tryFromString value |> Result.map Just
                                     }
                             }
 
@@ -174,12 +219,12 @@ update msg model =
                             { form
                                 | totalXp =
                                     { value = value
-                                    , state =
+                                    , parsed =
                                         if String.isEmpty value then
-                                            Empty
+                                            Ok Nothing
 
                                         else
-                                            Filled (Xp.tryFromString value)
+                                            Xp.tryFromString value |> Result.map Just
                                     }
                             }
             in
@@ -196,7 +241,7 @@ update msg model =
                             { form
                                 | company =
                                     { value = form.company.value
-                                    , state = form.company.state
+                                    , parsed = form.company.parsed
                                     , field = Select.update subMsg form.company.field
                                     }
                             }
@@ -205,7 +250,7 @@ update msg model =
                             { form
                                 | location =
                                     { value = form.location.value
-                                    , state = form.location.state
+                                    , parsed = form.location.parsed
                                     , field = Select.update subMsg form.location.field
                                     }
                             }
@@ -226,7 +271,7 @@ view { form, companies, locations } =
         [ Element.el [ Font.size 32, Element.paddingXY 0 16 ] <| Element.text (I18n.translate I18n.French I18n.IAddMySalary)
         , Select.view
             form.company.field
-            { error = error form.company.state
+            { error = error form.company.parsed
             , label = I18n.translate I18n.French I18n.Company
             , onChange = OnFieldChange Company
             , options = List.map Company.toString companies
@@ -237,7 +282,7 @@ view { form, companies, locations } =
             }
         , Select.view
             form.location.field
-            { error = error form.location.state
+            { error = error form.location.parsed
             , label = I18n.translate I18n.French I18n.Location
             , onChange = OnFieldChange Location
             , options = List.map Location.toString locations
@@ -247,7 +292,7 @@ view { form, companies, locations } =
             , value = form.location.value
             }
         , Input.view
-            { error = error form.compensation.state
+            { error = error form.compensation.parsed
             , label = I18n.translate I18n.French I18n.Compensation
             , onChange = OnFieldChange Compensation
             , placeholder = "40000"
@@ -255,7 +300,7 @@ view { form, companies, locations } =
             , value = form.compensation.value
             }
         , Input.view
-            { error = error form.stock.state
+            { error = error form.stock.parsed
             , label = I18n.translate I18n.French I18n.Stock
             , onChange = OnFieldChange Stock
             , placeholder = "10000"
@@ -263,7 +308,7 @@ view { form, companies, locations } =
             , value = form.stock.value
             }
         , Input.view
-            { error = error form.level.state
+            { error = error form.level.parsed
             , label = I18n.translate I18n.French I18n.Level
             , onChange = OnFieldChange Level
             , placeholder = "2"
@@ -271,7 +316,7 @@ view { form, companies, locations } =
             , value = form.level.value
             }
         , Input.view
-            { error = error form.companyXp.state
+            { error = error form.companyXp.parsed
             , label = I18n.translate I18n.French I18n.CompanyXp
             , onChange = OnFieldChange CompanyXp
             , placeholder = "2"
@@ -279,21 +324,36 @@ view { form, companies, locations } =
             , value = form.companyXp.value
             }
         , Input.view
-            { error = error form.totalXp.state
+            { error = error form.totalXp.parsed
             , label = I18n.translate I18n.French I18n.TotalXp
             , onChange = OnFieldChange TotalXp
             , placeholder = "10"
             , required = False
             , value = form.totalXp.value
             }
+        , Button.view
+            { disabled = disabled form
+            , label = I18n.translate I18n.French I18n.Send
+            , onClick = Send
+            }
         ]
 
 
-error : FieldState a -> String
+error : Result String a -> String
 error state =
     case state of
-        Filled (Err e) ->
+        Err e ->
             e
 
         _ ->
             " "
+
+
+disabled : Form -> Bool
+disabled form =
+    case body form of
+        Just _ ->
+            False
+
+        Nothing ->
+            True

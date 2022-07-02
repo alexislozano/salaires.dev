@@ -62,7 +62,7 @@ update msg model =
                 |> Utils.map (Model model.key model.flags) PageMsg
 
         PageMsg pageMsg ->
-            Page.update pageMsg model.page
+            Page.update model.flags pageMsg model.page
                 |> Utils.map (Model model.key model.flags) PageMsg
 
 
