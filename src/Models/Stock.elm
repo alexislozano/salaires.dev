@@ -1,5 +1,6 @@
 module Models.Stock exposing (..)
 
+import I18n
 import Json.Decode as Decode exposing (Decoder)
 import Utils
 
@@ -8,19 +9,26 @@ type Stock
     = Stock Int
 
 
-tryNew : Int -> Result String Stock
-tryNew stock =
+tryFromInt : Int -> Result String Stock
+tryFromInt stock =
     if stock >= 0 then
         Ok (Stock stock)
 
     else
-        Err "Le stock ne peut pas être négatif"
+        Err (I18n.translate I18n.French I18n.ShouldBePositive)
+
+
+tryFromString : String -> Result String Stock
+tryFromString stock =
+    String.toInt stock
+        |> Result.fromMaybe (I18n.translate I18n.French I18n.ShouldBeANumber)
+        |> Result.andThen tryFromInt
 
 
 decoder : Decoder Stock
 decoder =
     Decode.int
-        |> Decode.map tryNew
+        |> Decode.map tryFromInt
         |> Decode.andThen Utils.resultDecoder
 
 

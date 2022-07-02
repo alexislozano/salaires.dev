@@ -1,5 +1,6 @@
 module Models.Level exposing (..)
 
+import I18n
 import Json.Decode as Decode exposing (Decoder)
 import Utils
 
@@ -8,19 +9,19 @@ type Level
     = Level String
 
 
-tryNew : String -> Result String Level
-tryNew level =
+tryFromString : String -> Result String Level
+tryFromString level =
     if String.length level > 0 then
         Ok (Level level)
 
     else
-        Err "Le niveau ne peut pas être vide"
+        Err (I18n.translate I18n.French I18n.ShouldNotBeEmpty)
 
 
 decoder : Decoder Level
 decoder =
     Decode.string
-        |> Decode.map tryNew
+        |> Decode.map tryFromString
         |> Decode.andThen Utils.resultDecoder
 
 

@@ -15,6 +15,10 @@ type Key
     | TotalXp
     | Date
     | IAddMySalary
+    | ShouldNotBeEmpty
+    | ShouldBeANumber
+    | ShouldBePositive
+    | Optional
 
 
 translate : Lang -> Key -> String
@@ -48,3 +52,15 @@ translate lang key =
 
                 IAddMySalary ->
                     "J'ajoute mon salaire"
+
+                ShouldNotBeEmpty ->
+                    "Ce champ ne peut pas être vide"
+
+                ShouldBeANumber ->
+                    "Cette valeur doit être un nombre"
+
+                ShouldBePositive ->
+                    "Ce nombre doit être positif"
+
+                Optional ->
+                    "Optionel"

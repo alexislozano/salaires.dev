@@ -1,5 +1,6 @@
 module Models.Location exposing (..)
 
+import I18n
 import Json.Decode as Decode exposing (Decoder)
 import Utils
 
@@ -8,19 +9,19 @@ type Location
     = Location String
 
 
-tryNew : String -> Result String Location
-tryNew location =
-    if String.length location > 0 then
-        Ok (Location location)
+tryFromString : String -> Result String Location
+tryFromString location =
+    if String.isEmpty location then
+        Err (I18n.translate I18n.French I18n.ShouldNotBeEmpty)
 
     else
-        Err "La localisation ne peut pas être vide"
+        Ok (Location location)
 
 
 decoder : Decoder Location
 decoder =
     Decode.string
-        |> Decode.map tryNew
+        |> Decode.map tryFromString
         |> Decode.andThen Utils.resultDecoder
 
 

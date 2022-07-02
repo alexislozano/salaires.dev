@@ -1,5 +1,6 @@
 module Models.Company exposing (..)
 
+import I18n
 import Json.Decode as Decode exposing (Decoder)
 import Utils
 
@@ -8,19 +9,19 @@ type Company
     = Company String
 
 
-tryNew : String -> Result String Company
-tryNew company =
-    if String.length company > 0 then
-        Ok (Company company)
+tryFromString : String -> Result String Company
+tryFromString company =
+    if String.isEmpty company then
+        Err (I18n.translate I18n.French I18n.ShouldNotBeEmpty)
 
     else
-        Err "L'entreprise ne peut pas être vide"
+        Ok (Company company)
 
 
 decoder : Decoder Company
 decoder =
     Decode.string
-        |> Decode.map tryNew
+        |> Decode.map tryFromString
         |> Decode.andThen Utils.resultDecoder
 
 

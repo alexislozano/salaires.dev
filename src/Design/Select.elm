@@ -1,9 +1,11 @@
 module Design.Select exposing (..)
 
+import Design.Utils as Utils
 import Element exposing (Element)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onFocus, onLoseFocus)
+import Element.Font as Font
 import Element.Input as Input
 
 
@@ -51,24 +53,26 @@ update msg model =
 view :
     Model
     ->
-        { label : String
+        { error : String
+        , label : String
         , onChange : String -> msg
         , options : List String
         , placeholder : String
+        , required : Bool
         , toMsg : Msg -> msg
         , value : String
         }
     -> Element msg
-view model { label, onChange, options, placeholder, toMsg, value } =
+view model { error, label, onChange, options, placeholder, required, toMsg, value } =
     Element.column
         [ Element.width Element.fill
-        , Element.spacing 16
+        , Element.spacing 8
         ]
         [ Input.text
             [ onFocus <| toMsg FocusText
             , onLoseFocus <| toMsg UnfocusText
             ]
-            { label = Input.labelAbove [] <| Element.text label
+            { label = Utils.label required label
             , onChange = onChange
             , placeholder = Just <| Input.placeholder [] (Element.text placeholder)
             , text = value
@@ -90,6 +94,9 @@ view model { label, onChange, options, placeholder, toMsg, value } =
                 , selected = Just value
                 , label = Input.labelHidden label
                 }
+        , Element.el
+            [ Font.color (Element.rgb255 255 0 0) ]
+            (Element.text error)
         ]
 
 

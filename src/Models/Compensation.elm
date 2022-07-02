@@ -1,5 +1,6 @@
 module Models.Compensation exposing (..)
 
+import I18n
 import Json.Decode as Decode exposing (Decoder)
 import Utils
 
@@ -8,19 +9,26 @@ type Compensation
     = Compensation Int
 
 
-tryNew : Int -> Result String Compensation
-tryNew compensation =
+tryFromInt : Int -> Result String Compensation
+tryFromInt compensation =
     if compensation >= 0 then
         Ok (Compensation compensation)
 
     else
-        Err "La compensation ne peut pas être négative"
+        Err (I18n.translate I18n.French I18n.ShouldBePositive)
+
+
+tryFromString : String -> Result String Compensation
+tryFromString compensation =
+    String.toInt compensation
+        |> Result.fromMaybe (I18n.translate I18n.French I18n.ShouldBeANumber)
+        |> Result.andThen tryFromInt
 
 
 decoder : Decoder Compensation
 decoder =
     Decode.int
-        |> Decode.map tryNew
+        |> Decode.map tryFromInt
         |> Decode.andThen Utils.resultDecoder
 
 
