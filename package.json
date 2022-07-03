@@ -2,7 +2,7 @@
   "name": "salaires.dev",
   "source": "src/index.html",
   "scripts": {
-    "dev": "parcel",
+    "dev": "parcel --host 0.0.0.0",
     "build": "parcel build"
   },
   "devDependencies": {
