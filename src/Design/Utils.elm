@@ -1,5 +1,6 @@
 module Design.Utils exposing (..)
 
+import Design.Palette as Palette
 import Element
 import Element.Font as Font
 import Element.Input as Input
@@ -16,7 +17,7 @@ label required text =
 
               else
                 Element.el
-                    [ Font.color (Element.rgb255 150 150 150)
+                    [ Font.color Palette.grey
                     ]
                 <|
                     Element.text (" - " ++ I18n.translate I18n.French I18n.Optional)

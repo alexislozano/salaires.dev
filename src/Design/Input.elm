@@ -1,14 +1,15 @@
 module Design.Input exposing (..)
 
+import Design.Palette as Palette
 import Design.Utils as Utils
 import Element exposing (Element)
+import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Html.Attributes exposing (placeholder)
 
 
 view :
-    { error : String
+    { error : Maybe String
     , label : String
     , onChange : String -> msg
     , placeholder : String
@@ -20,15 +21,29 @@ view { error, label, onChange, placeholder, required, value } =
     Element.column
         [ Element.width Element.fill
         , Element.spacing 8
+        , Font.bold
         ]
         [ Input.text
-            []
+            [ Border.width 2
+            , Border.color <|
+                case error of
+                    Just _ ->
+                        Palette.red
+
+                    Nothing ->
+                        Palette.black
+            , Border.rounded 4
+            ]
             { label = Utils.label required label
             , onChange = onChange
-            , placeholder = Just <| Input.placeholder [] <| Element.text placeholder
+            , placeholder =
+                placeholder
+                    |> Element.text
+                    |> Input.placeholder [ Font.color Palette.grey ]
+                    |> Just
             , text = value
             }
         , Element.el
-            [ Font.color (Element.rgb255 255 0 0) ]
-            (Element.text error)
+            [ Font.color Palette.red ]
+            (Element.text (error |> Maybe.withDefault " "))
         ]

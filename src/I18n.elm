@@ -20,6 +20,7 @@ type Key
     | ShouldBePositive
     | Optional
     | Send
+    | ThisPageDoesNotExist
 
 
 translate : Lang -> Key -> String
@@ -68,3 +69,6 @@ translate lang key =
 
                 Send ->
                     "Envoyer"
+
+                ThisPageDoesNotExist ->
+                    "Cette page n'existe pas"

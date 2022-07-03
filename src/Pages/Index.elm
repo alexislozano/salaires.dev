@@ -1,7 +1,10 @@
 module Pages.Index exposing (..)
 
+import Design.Palette as Palette
 import Design.Table as Table
 import Element exposing (Element)
+import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Flags exposing (Flags)
@@ -82,7 +85,7 @@ table : Model -> Element Msg
 table model =
     case model.salaries of
         Success salaries ->
-            Element.table [ Element.paddingXY 0 8 ]
+            Element.indexedTable []
                 { data = salaries |> Table.sort model.sort
                 , columns =
                     [ { header =
@@ -91,11 +94,11 @@ table model =
                                 |> header Table.Company
                       , width = Element.fill
                       , view =
-                            \salary ->
+                            \index salary ->
                                 Salary.toFields salary
                                     |> .company
                                     |> Company.toString
-                                    |> cell
+                                    |> cell index
                       }
                     , { header =
                             Table.Location
@@ -103,11 +106,11 @@ table model =
                                 |> header Table.Location
                       , width = Element.fill
                       , view =
-                            \salary ->
+                            \index salary ->
                                 Salary.toFields salary
                                     |> .location
                                     |> Location.toString
-                                    |> cell
+                                    |> cell index
                       }
                     , { header =
                             Table.Level
@@ -115,12 +118,12 @@ table model =
                                 |> header Table.Level
                       , width = Element.fill
                       , view =
-                            \salary ->
+                            \index salary ->
                                 Salary.toFields salary
                                     |> .level
                                     |> Maybe.map Level.toString
                                     |> Maybe.withDefault ""
-                                    |> cell
+                                    |> cell index
                       }
                     , { header =
                             Table.CompanyXp
@@ -128,12 +131,12 @@ table model =
                                 |> header Table.CompanyXp
                       , width = Element.fill
                       , view =
-                            \salary ->
+                            \index salary ->
                                 Salary.toFields salary
                                     |> .companyXp
                                     |> Maybe.map Xp.toString
                                     |> Maybe.withDefault ""
-                                    |> cell
+                                    |> cell index
                       }
                     , { header =
                             Table.TotalXp
@@ -141,12 +144,12 @@ table model =
                                 |> header Table.TotalXp
                       , width = Element.fill
                       , view =
-                            \salary ->
+                            \index salary ->
                                 Salary.toFields salary
                                     |> .totalXp
                                     |> Maybe.map Xp.toString
                                     |> Maybe.withDefault ""
-                                    |> cell
+                                    |> cell index
                       }
                     , { header =
                             Table.Compensation
@@ -154,11 +157,11 @@ table model =
                                 |> header Table.Compensation
                       , width = Element.fill
                       , view =
-                            \salary ->
+                            \index salary ->
                                 Salary.toFields salary
                                     |> .compensation
                                     |> Compensation.toString
-                                    |> cell
+                                    |> cell index
                       }
                     , { header =
                             Table.Stock
@@ -166,12 +169,12 @@ table model =
                                 |> header Table.Stock
                       , width = Element.fill
                       , view =
-                            \salary ->
+                            \index salary ->
                                 Salary.toFields salary
                                     |> .stock
                                     |> Maybe.map Stock.toString
                                     |> Maybe.withDefault ""
-                                    |> cell
+                                    |> cell index
                       }
                     , { header =
                             Table.Date
@@ -179,11 +182,11 @@ table model =
                                 |> header Table.Date
                       , width = Element.fill
                       , view =
-                            \salary ->
+                            \index salary ->
                                 Salary.toFields salary
                                     |> .date
                                     |> Date.toString
-                                    |> cell
+                                    |> cell index
                       }
                     ]
                 }
@@ -198,18 +201,28 @@ table model =
 header : Table.Column -> String -> Element Msg
 header column title =
     Input.button
-        [ Element.padding 16
+        [ Element.height <| Element.px 48
+        , Element.paddingXY 16 0
         , Font.bold
+        , Border.widthEach { top = 0, right = 0, bottom = 2, left = 0 }
         ]
         { onPress = Just <| Clicked column
         , label = Element.text title
         }
 
 
-cell : String -> Element msg
-cell text =
+cell : Int -> String -> Element msg
+cell index text =
     Element.el
-        [ Element.padding 16
+        [ Element.height <| Element.px 48
+        , Element.paddingXY 16 0
+        , Background.color <|
+            if modBy 2 index == 0 then
+                Palette.lightSand
+
+            else
+                Palette.sand
         ]
     <|
-        Element.text text
+        Element.el [ Element.centerY ] <|
+            Element.text text

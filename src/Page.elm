@@ -1,6 +1,9 @@
 module Page exposing (..)
 
+import Design.Link as Link
+import Design.Palette as Palette
 import Element exposing (Element)
+import Element.Background as Background
 import Element.Border as Border
 import Flags exposing (Flags)
 import I18n
@@ -69,6 +72,8 @@ view model =
         , Element.el
             [ Element.width Element.fill
             , Element.height Element.fill
+            , Background.color Palette.sand
+            , Element.scrollbarY
             ]
           <|
             case model of
@@ -90,20 +95,18 @@ header : Element msg
 header =
     Element.row
         [ Element.height <| Element.px 64
+        , Element.paddingXY 8 0
         , Element.width Element.fill
-        , Border.widthEach { top = 0, right = 0, bottom = 1, left = 0 }
+        , Border.widthEach { top = 0, right = 0, bottom = 2, left = 0 }
+        , Element.spaceEvenly
+        , Background.color Palette.peach
         ]
-        [ Element.link
-            [ Element.paddingEach { top = 0, right = 16, bottom = 0, left = 16 }
-            ]
-            { label = Element.text "salaires.dev"
+        [ Link.view
+            { label = "salaires.dev"
             , url = Route.toString Route.Index
             }
-        , Element.link
-            [ Element.alignRight
-            , Element.paddingEach { top = 0, right = 16, bottom = 0, left = 16 }
-            ]
-            { label = Element.text (I18n.translate I18n.French I18n.IAddMySalary)
+        , Link.view
+            { label = I18n.translate I18n.French I18n.IAddMySalary
             , url = Route.toString Route.Insert
             }
         ]

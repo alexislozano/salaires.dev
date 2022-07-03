@@ -1,7 +1,9 @@
 module Pages.NotFound exposing (..)
 
 import Element exposing (Element)
+import Element.Font as Font
 import Flags exposing (Flags)
+import I18n
 
 
 type alias Model =
@@ -29,6 +31,7 @@ view _ =
     Element.el
         [ Element.centerX
         , Element.centerY
+        , Font.bold
         ]
     <|
-        Element.text "Cette page n'existe pas"
+        Element.text (I18n.translate I18n.French I18n.ThisPageDoesNotExist)

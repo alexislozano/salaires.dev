@@ -1,5 +1,6 @@
 module Design.Select exposing (..)
 
+import Design.Palette as Palette
 import Design.Utils as Utils
 import Element exposing (Element)
 import Element.Background as Background
@@ -53,7 +54,7 @@ update msg model =
 view :
     Model
     ->
-        { error : String
+        { error : Maybe String
         , label : String
         , onChange : String -> msg
         , options : List String
@@ -67,14 +68,28 @@ view model { error, label, onChange, options, placeholder, required, toMsg, valu
     Element.column
         [ Element.width Element.fill
         , Element.spacing 8
+        , Font.bold
         ]
         [ Input.text
             [ onFocus <| toMsg FocusText
             , onLoseFocus <| toMsg UnfocusText
+            , Border.width 2
+            , Border.color <|
+                case error of
+                    Just _ ->
+                        Palette.red
+
+                    Nothing ->
+                        Palette.black
+            , Border.rounded 4
             ]
             { label = Utils.label required label
             , onChange = onChange
-            , placeholder = Just <| Input.placeholder [] (Element.text placeholder)
+            , placeholder =
+                placeholder
+                    |> Element.text
+                    |> Input.placeholder [ Font.color Palette.grey ]
+                    |> Just
             , text = value
             }
         , if List.isEmpty options || not (opened model) then
@@ -82,12 +97,13 @@ view model { error, label, onChange, options, placeholder, required, toMsg, valu
 
           else
             Input.radio
-                [ Border.width 1
+                [ Border.width 2
                 , Element.width Element.fill
                 , onFocus <| toMsg FocusRadio
                 , onLoseFocus <| toMsg UnfocusRadio
                 , Element.height <| Element.px 200
                 , Element.scrollbarY
+                , Border.rounded 4
                 ]
                 { onChange = onChange
                 , options = options |> List.map (\option -> Input.optionWith option (optionView option))
@@ -95,8 +111,8 @@ view model { error, label, onChange, options, placeholder, required, toMsg, valu
                 , label = Input.labelHidden label
                 }
         , Element.el
-            [ Font.color (Element.rgb255 255 0 0) ]
-            (Element.text error)
+            [ Font.color Palette.red ]
+            (Element.text (error |> Maybe.withDefault " "))
         ]
 
 
@@ -108,9 +124,9 @@ optionView option state =
         , Background.color <|
             case state of
                 Input.Idle ->
-                    Element.rgb255 255 255 255
+                    Palette.white
 
                 _ ->
-                    Element.rgb255 200 200 200
+                    Palette.yellow
         ]
         (Element.text option)

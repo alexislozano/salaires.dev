@@ -95,9 +95,9 @@ init flags =
                 ]
     in
     ( { form =
-            { company = { value = "", parsed = Err " ", field = Select.init }
-            , location = { value = "", parsed = Err " ", field = Select.init }
-            , compensation = { value = "", parsed = Err " " }
+            { company = { value = "", parsed = Err "", field = Select.init }
+            , location = { value = "", parsed = Err "", field = Select.init }
+            , compensation = { value = "", parsed = Err "" }
             , level = { value = "", parsed = Ok Nothing }
             , companyXp = { value = "", parsed = Ok Nothing }
             , totalXp = { value = "", parsed = Ok Nothing }
@@ -268,7 +268,12 @@ view { form, companies, locations } =
         , Element.centerX
         , Element.spacing 16
         ]
-        [ Element.el [ Font.size 32, Element.paddingXY 0 16 ] <| Element.text (I18n.translate I18n.French I18n.IAddMySalary)
+        [ Element.el
+            [ Font.size 32
+            , Element.paddingXY 0 16
+            ]
+          <|
+            Element.text (I18n.translate I18n.French I18n.IAddMySalary)
         , Select.view
             form.company.field
             { error = error form.company.parsed
@@ -339,14 +344,14 @@ view { form, companies, locations } =
         ]
 
 
-error : Result String a -> String
+error : Result String a -> Maybe String
 error state =
     case state of
         Err e ->
-            e
+            Just e
 
         _ ->
-            " "
+            Nothing
 
 
 disabled : Form -> Bool
