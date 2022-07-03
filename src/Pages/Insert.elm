@@ -22,6 +22,7 @@ import Services.Salaries as Salaries
 
 type alias Model =
     { form : Form
+    , status : Status
     , companies : List Company
     , locations : List Location
     }
@@ -66,6 +67,13 @@ body form =
             Nothing
 
 
+type Status
+    = Init
+    | Loading
+    | Success
+    | Error
+
+
 type Field
     = Company
     | Location
@@ -95,14 +103,15 @@ init flags =
                 ]
     in
     ( { form =
-            { company = { value = "", parsed = Err "", field = Select.init }
-            , location = { value = "", parsed = Err "", field = Select.init }
-            , compensation = { value = "", parsed = Err "" }
+            { company = { value = "", parsed = Err " ", field = Select.init }
+            , location = { value = "", parsed = Err " ", field = Select.init }
+            , compensation = { value = "", parsed = Err " " }
             , level = { value = "", parsed = Ok Nothing }
             , companyXp = { value = "", parsed = Ok Nothing }
             , totalXp = { value = "", parsed = Ok Nothing }
             , stock = { value = "", parsed = Ok Nothing }
             }
+      , status = Init
       , companies = []
       , locations = []
       }
@@ -125,16 +134,21 @@ update flags msg model =
         GotAllLocations _ ->
             ( model, Cmd.none )
 
-        Sent _ ->
-            ( model
+        Sent (Ok _) ->
+            ( { model | status = Success }
             , Cmd.batch
                 [ Companies.getAll flags GotAllCompanies
                 , Locations.getAll flags GotAllLocations
                 ]
             )
 
+        Sent _ ->
+            ( { model | status = Error }
+            , Cmd.none
+            )
+
         Send ->
-            ( model
+            ( { model | status = Loading }
             , case body model.form of
                 Nothing ->
                     Cmd.none
@@ -228,7 +242,7 @@ update flags msg model =
                                     }
                             }
             in
-            ( { model | form = newForm }, Cmd.none )
+            ( { model | form = newForm, status = Init }, Cmd.none )
 
         SelectMsg field subMsg ->
             let
@@ -262,7 +276,7 @@ update flags msg model =
 
 
 view : Model -> Element Msg
-view { form, companies, locations } =
+view { form, status, companies, locations } =
     Element.column
         [ Element.paddingXY 0 32
         , Element.centerX
@@ -338,7 +352,20 @@ view { form, companies, locations } =
             }
         , Button.view
             { disabled = disabled form
-            , label = I18n.translate I18n.French I18n.Send
+            , label =
+                I18n.translate I18n.French <|
+                    case status of
+                        Init ->
+                            I18n.Send
+
+                        Loading ->
+                            I18n.Sending
+
+                        Error ->
+                            I18n.Error
+
+                        Success ->
+                            I18n.Sent
             , onClick = Send
             }
         ]

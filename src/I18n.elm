@@ -20,6 +20,9 @@ type Key
     | ShouldBePositive
     | Optional
     | Send
+    | Sending
+    | Error
+    | Sent
     | ThisPageDoesNotExist
 
 
@@ -69,6 +72,15 @@ translate lang key =
 
                 Send ->
                     "Envoyer"
+
+                Sending ->
+                    "En cours d'envoi..."
+
+                Sent ->
+                    "Envoyé"
+
+                Error ->
+                    "Erreur"
 
                 ThisPageDoesNotExist ->
                     "Cette page n'existe pas"
