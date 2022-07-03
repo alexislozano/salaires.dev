@@ -113,15 +113,27 @@ table model =
                                     |> cell index
                       }
                     , { header =
-                            Table.Level
+                            Table.Compensation
                                 |> Table.header model.sort
-                                |> header Table.Level
+                                |> header Table.Compensation
                       , width = Element.fill
                       , view =
                             \index salary ->
                                 Salary.toFields salary
-                                    |> .level
-                                    |> Maybe.map Level.toString
+                                    |> .compensation
+                                    |> Compensation.toString
+                                    |> cell index
+                      }
+                    , { header =
+                            Table.Stock
+                                |> Table.header model.sort
+                                |> header Table.Stock
+                      , width = Element.fill
+                      , view =
+                            \index salary ->
+                                Salary.toFields salary
+                                    |> .stock
+                                    |> Maybe.map Stock.toString
                                     |> Maybe.withDefault ""
                                     |> cell index
                       }
@@ -152,27 +164,15 @@ table model =
                                     |> cell index
                       }
                     , { header =
-                            Table.Compensation
+                            Table.Level
                                 |> Table.header model.sort
-                                |> header Table.Compensation
+                                |> header Table.Level
                       , width = Element.fill
                       , view =
                             \index salary ->
                                 Salary.toFields salary
-                                    |> .compensation
-                                    |> Compensation.toString
-                                    |> cell index
-                      }
-                    , { header =
-                            Table.Stock
-                                |> Table.header model.sort
-                                |> header Table.Stock
-                      , width = Element.fill
-                      , view =
-                            \index salary ->
-                                Salary.toFields salary
-                                    |> .stock
-                                    |> Maybe.map Stock.toString
+                                    |> .level
+                                    |> Maybe.map Level.toString
                                     |> Maybe.withDefault ""
                                     |> cell index
                       }

@@ -327,14 +327,6 @@ view { form, status, companies, locations } =
             , value = form.stock.value
             }
         , Input.view
-            { error = error form.level.parsed
-            , label = I18n.translate I18n.French I18n.Level
-            , onChange = OnFieldChange Level
-            , placeholder = "2"
-            , required = False
-            , value = form.level.value
-            }
-        , Input.view
             { error = error form.companyXp.parsed
             , label = I18n.translate I18n.French I18n.CompanyXp
             , onChange = OnFieldChange CompanyXp
@@ -349,6 +341,14 @@ view { form, status, companies, locations } =
             , placeholder = "10"
             , required = False
             , value = form.totalXp.value
+            }
+        , Input.view
+            { error = error form.level.parsed
+            , label = I18n.translate I18n.French I18n.Level
+            , onChange = OnFieldChange Level
+            , placeholder = "2"
+            , required = False
+            , value = form.level.value
             }
         , Button.view
             { disabled = disabled form
