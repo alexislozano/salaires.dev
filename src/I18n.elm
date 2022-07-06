@@ -24,6 +24,7 @@ type Key
     | Error
     | Sent
     | ThisPageDoesNotExist
+    | InsertIsDownForNow
 
 
 translate : Lang -> Key -> String
@@ -84,3 +85,6 @@ translate lang key =
 
                 ThisPageDoesNotExist ->
                     "Cette page n'existe pas"
+
+                InsertIsDownForNow ->
+                    "Il n'est plus possible d'ajouter des salaires pour le moment."

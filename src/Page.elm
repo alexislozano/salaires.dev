@@ -9,6 +9,7 @@ import Flags exposing (Flags)
 import I18n
 import Pages.Index as Index
 import Pages.Insert as Insert
+import Pages.NoInsert as NoInsert
 import Pages.NotFound as NotFound
 import Route
 import Url exposing (Url)
@@ -18,12 +19,14 @@ import Utils
 type Model
     = IndexModel Index.Model
     | InsertModel Insert.Model
+    | NoInsertModel NoInsert.Model
     | NotFoundModel NotFound.Model
 
 
 type Msg
     = IndexMsg Index.Msg
     | InsertMsg Insert.Msg
+    | NoInsertMsg NoInsert.Msg
     | NotFoundMsg NotFound.Msg
 
 
@@ -35,8 +38,8 @@ init flags url =
                 |> Utils.map IndexModel IndexMsg
 
         Route.Insert ->
-            Insert.init flags
-                |> Utils.map InsertModel InsertMsg
+            NoInsert.init flags
+                |> Utils.map NoInsertModel NoInsertMsg
 
         Route.NotFound ->
             NotFound.init flags
@@ -53,6 +56,10 @@ update flags msg model =
         ( InsertMsg subMsg, InsertModel subModel ) ->
             Insert.update flags subMsg subModel
                 |> Utils.map InsertModel InsertMsg
+
+        ( NoInsertMsg subMsg, NoInsertModel subModel ) ->
+            NoInsert.update subMsg subModel
+                |> Utils.map NoInsertModel NoInsertMsg
 
         ( NotFoundMsg subMsg, NotFoundModel subModel ) ->
             NotFound.update subMsg subModel
@@ -84,6 +91,10 @@ view model =
                 InsertModel subModel ->
                     Insert.view subModel
                         |> Element.map InsertMsg
+
+                NoInsertModel subModel ->
+                    NoInsert.view subModel
+                        |> Element.map NoInsertMsg
 
                 NotFoundModel subModel ->
                     NotFound.view subModel
