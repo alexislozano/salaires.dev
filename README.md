@@ -6,14 +6,20 @@ Partagez votre salaire de développeur / développeuse avec la communauté.
 
 Les PRs sont les bienvenues !
 
-## Lancer en local
+## Front
+
+```
+cd front
+```
+
+### Lancer en local
 
 ```
 npm install
 npm run dev
 ```
 
-## Créer un build
+### Créer un build
 
 ```
 npm install
