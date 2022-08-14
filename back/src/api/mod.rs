@@ -33,7 +33,8 @@ pub async fn serve(
             "/salaries",
             get(fetch_salaries)
                 .post(insert_salary)
-                .layer(Extension(salary_repo)),
+                .layer(Extension(salary_repo))
+                .layer(Extension(token_repo.clone())),
         )
         .route(
             "/companies",

@@ -1,6 +1,6 @@
 use rand::{thread_rng, Rng};
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub struct Token {
     raw: String,
 }
@@ -21,5 +21,17 @@ impl Token {
 impl From<Token> for String {
     fn from(token: Token) -> Self {
         token.raw
+    }
+}
+
+impl TryFrom<String> for Token {
+    type Error = ();
+
+    fn try_from(raw: String) -> Result<Self, Self::Error> {
+        if raw.len() == 6 {
+            Ok(Self { raw })
+        } else {
+            Err(())
+        }
     }
 }

@@ -1,6 +1,6 @@
 use std::sync::Mutex;
 
-use super::{InsertError, TokenRepository};
+use super::{DeleteError, InsertError, TokenRepository};
 use crate::domain::models::Token;
 use async_trait::async_trait;
 
@@ -29,6 +29,25 @@ impl InMemoryTokenRepository {
 
 #[async_trait]
 impl TokenRepository for InMemoryTokenRepository {
+    async fn delete(&self, token: Token) -> Result<(), DeleteError> {
+        if self.error {
+            return Err(DeleteError::Unknown("error flag is on"));
+        }
+
+        let mut lock = match self.tokens.lock() {
+            Ok(lock) => lock,
+            _ => return Err(DeleteError::Unknown("could not acquire lock")),
+        };
+
+        let index = match lock.iter().position(|t| t == &token) {
+            Some(index) => index,
+            None => return Err(DeleteError::Unknown("token not found")),
+        };
+
+        lock.remove(index);
+        Ok(())
+    }
+
     async fn insert(&self, token: Token) -> Result<(), InsertError> {
         if self.error {
             return Err(InsertError::Unknown("error flag is on"));

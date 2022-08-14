@@ -1,8 +1,8 @@
-use super::{InsertError, TokenRepository};
+use super::{DeleteError, InsertError, TokenRepository};
 use crate::domain::models::Token;
 use async_trait::async_trait;
 use axum::http::HeaderMap;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::env;
 
 pub struct SupabaseTokenRepository {
@@ -32,6 +32,46 @@ impl SupabaseTokenRepository {
 
 #[async_trait]
 impl TokenRepository for SupabaseTokenRepository {
+    async fn delete(&self, token: Token) -> Result<(), DeleteError> {
+        let client = reqwest::Client::new();
+        let res = match client
+            .get(format!(
+                "{}tokens?token=eq.{}",
+                self.url,
+                String::from(token.clone())
+            ))
+            .headers(self.headers())
+            .send()
+            .await
+        {
+            Ok(res) => res,
+            _ => return Err(DeleteError::Unknown("could not send request")),
+        };
+
+        match res.json::<Vec<SupabaseToken>>().await {
+            Ok(tokens) => {
+                if tokens.len() == 0 {
+                    return Err(DeleteError::Unknown("could not find token"));
+                }
+            }
+            _ => return Err(DeleteError::Unknown("could not parse json")),
+        };
+
+        match client
+            .delete(format!(
+                "{}tokens?token=eq.{}",
+                self.url,
+                String::from(token)
+            ))
+            .headers(self.headers())
+            .send()
+            .await
+        {
+            Ok(_) => Ok(()),
+            _ => Err(DeleteError::Unknown("could not send request")),
+        }
+    }
+
     async fn insert(&self, token: Token) -> Result<(), InsertError> {
         let client = reqwest::Client::new();
         match client
@@ -47,7 +87,7 @@ impl TokenRepository for SupabaseTokenRepository {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Deserialize, Serialize)]
 pub struct SupabaseToken {
     token: String,
 }
