@@ -1,5 +1,5 @@
 use crate::domain::models::Location;
-use crate::repositories::{location::FetchAllError, LocationRepository};
+use crate::infra::{location_repository::FetchAllError, LocationRepository};
 use std::sync::Arc;
 
 pub enum Error {
@@ -16,7 +16,7 @@ pub async fn fetch_locations(repo: Arc<dyn LocationRepository>) -> Result<Vec<Lo
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::repositories::InMemoryLocationRepository;
+    use crate::infra::InMemoryLocationRepository;
 
     #[tokio::test]
     async fn it_should_return_an_unknown_error_when_an_unexpected_error_happens() {

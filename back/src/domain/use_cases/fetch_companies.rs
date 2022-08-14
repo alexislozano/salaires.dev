@@ -1,5 +1,5 @@
 use crate::domain::models::Company;
-use crate::repositories::{company::FetchAllError, CompanyRepository};
+use crate::infra::{company_repository::FetchAllError, CompanyRepository};
 use std::sync::Arc;
 
 pub enum Error {
@@ -16,7 +16,7 @@ pub async fn fetch_companies(repo: Arc<dyn CompanyRepository>) -> Result<Vec<Com
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::repositories::InMemoryCompanyRepository;
+    use crate::infra::InMemoryCompanyRepository;
 
     #[tokio::test]
     async fn it_should_return_an_unknown_error_when_an_unexpected_error_happens() {

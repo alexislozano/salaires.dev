@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     domain::{models::Salary, use_cases},
-    repositories::SalaryRepository,
+    infra::SalaryRepository,
 };
 use axum::{http::StatusCode, Extension, Json};
 use chrono::Utc;

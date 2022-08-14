@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::{domain::use_cases, repositories::LocationRepository};
+use crate::{domain::use_cases, infra::LocationRepository};
 use axum::{http::StatusCode, Extension, Json};
 
 type Error = (StatusCode, &'static str);

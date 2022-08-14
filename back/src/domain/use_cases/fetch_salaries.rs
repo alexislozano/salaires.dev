@@ -1,5 +1,5 @@
 use crate::domain::models::Salary;
-use crate::repositories::{salary::FetchAllError, SalaryRepository};
+use crate::infra::{salary_repository::FetchAllError, SalaryRepository};
 use std::sync::Arc;
 
 pub enum Error {
@@ -16,7 +16,7 @@ pub async fn fetch_salaries(repo: Arc<dyn SalaryRepository>) -> Result<Vec<Salar
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::repositories::InMemorySalaryRepository;
+    use crate::infra::InMemorySalaryRepository;
 
     #[tokio::test]
     async fn it_should_return_an_unknown_error_when_an_unexpected_error_happens() {
