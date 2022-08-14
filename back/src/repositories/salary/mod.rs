@@ -1,16 +1,19 @@
 pub mod in_memory;
+pub mod supabase;
 
 use crate::domain::models::Salary;
+use async_trait::async_trait;
 
 pub enum FetchAllError {
-    Unknown,
+    Unknown(&'static str),
 }
 
 pub enum InsertError {
-    Unknown,
+    Unknown(&'static str),
 }
 
+#[async_trait]
 pub trait SalaryRepository: Send + Sync {
-    fn fetch_all(&self) -> Result<Vec<Salary>, FetchAllError>;
-    fn insert(&self, salary: Salary) -> Result<(), InsertError>;
+    async fn fetch_all(&self) -> Result<Vec<Salary>, FetchAllError>;
+    async fn insert(&self, salary: Salary) -> Result<(), InsertError>;
 }

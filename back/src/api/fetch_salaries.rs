@@ -35,15 +35,19 @@ impl From<Salary> for Response {
     }
 }
 
+type Error = (StatusCode, &'static str);
+
 pub async fn fetch_salaries(
     Extension(repo): Extension<Arc<dyn SalaryRepository>>,
-) -> Result<Json<Vec<Response>>, StatusCode> {
-    match use_cases::fetch_salaries(repo) {
+) -> Result<Json<Vec<Response>>, Error> {
+    match use_cases::fetch_salaries(repo).await {
         Ok(salaries) => Ok(salaries
             .into_iter()
             .map(|salary| Response::from(salary))
             .collect::<Vec<Response>>()
             .into()),
-        _ => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(use_cases::fetch_salaries::Error::Unknown(str)) => {
+            Err((StatusCode::INTERNAL_SERVER_ERROR, str))
+        }
     }
 }

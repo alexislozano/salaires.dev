@@ -52,17 +52,21 @@ impl TryFrom<Request> for Salary {
     }
 }
 
+type Error = (StatusCode, &'static str);
+
 pub async fn insert_salary(
     Extension(repo): Extension<Arc<dyn SalaryRepository>>,
     Json(request): Json<Request>,
-) -> Result<Json<()>, StatusCode> {
+) -> Result<Json<()>, Error> {
     let salary = match request.try_into() {
         Ok(salary) => salary,
-        _ => return Err(StatusCode::BAD_REQUEST),
+        _ => return Err((StatusCode::BAD_REQUEST, "bad body")),
     };
 
-    match use_cases::insert_salary(repo, salary) {
+    match use_cases::insert_salary(repo, salary).await {
         Ok(()) => Ok(().into()),
-        _ => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(use_cases::insert_salary::Error::Unknown(str)) => {
+            Err((StatusCode::INTERNAL_SERVER_ERROR, str))
+        }
     }
 }

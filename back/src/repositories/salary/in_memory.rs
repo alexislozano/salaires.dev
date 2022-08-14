@@ -2,6 +2,7 @@ use std::sync::Mutex;
 
 use super::{FetchAllError, InsertError, SalaryRepository};
 use crate::domain::models::Salary;
+use async_trait::async_trait;
 
 pub struct InMemorySalaryRepository {
     error: bool,
@@ -9,6 +10,7 @@ pub struct InMemorySalaryRepository {
 }
 
 impl InMemorySalaryRepository {
+    #[cfg(test)]
     pub fn new() -> Self {
         Self {
             error: false,
@@ -25,28 +27,29 @@ impl InMemorySalaryRepository {
     }
 }
 
+#[async_trait]
 impl SalaryRepository for InMemorySalaryRepository {
-    fn fetch_all(&self) -> Result<Vec<Salary>, FetchAllError> {
+    async fn fetch_all(&self) -> Result<Vec<Salary>, FetchAllError> {
         if self.error {
-            return Err(FetchAllError::Unknown);
+            return Err(FetchAllError::Unknown("error flag is on"));
         }
 
         let lock = match self.salaries.lock() {
             Ok(lock) => lock,
-            _ => return Err(FetchAllError::Unknown),
+            _ => return Err(FetchAllError::Unknown("could not acquire lock")),
         };
 
         Ok(lock.to_vec())
     }
 
-    fn insert(&self, salary: Salary) -> Result<(), InsertError> {
+    async fn insert(&self, salary: Salary) -> Result<(), InsertError> {
         if self.error {
-            return Err(InsertError::Unknown);
+            return Err(InsertError::Unknown("error flag is on"));
         }
 
         let mut lock = match self.salaries.lock() {
             Ok(lock) => lock,
-            _ => return Err(InsertError::Unknown),
+            _ => return Err(InsertError::Unknown("could not acquire lock")),
         };
 
         lock.push(salary);

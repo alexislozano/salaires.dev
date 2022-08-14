@@ -3,13 +3,13 @@ use crate::repositories::{FetchAllError, SalaryRepository};
 use std::sync::Arc;
 
 pub enum Error {
-    Unknown,
+    Unknown(&'static str),
 }
 
-pub fn fetch_salaries(repo: Arc<dyn SalaryRepository>) -> Result<Vec<Salary>, Error> {
-    match repo.fetch_all() {
+pub async fn fetch_salaries(repo: Arc<dyn SalaryRepository>) -> Result<Vec<Salary>, Error> {
+    match repo.fetch_all().await {
         Ok(salaries) => Ok(salaries),
-        Err(FetchAllError::Unknown) => Err(Error::Unknown),
+        Err(FetchAllError::Unknown(str)) => Err(Error::Unknown(str)),
     }
 }
 
@@ -18,25 +18,25 @@ mod tests {
     use super::*;
     use crate::repositories::InMemorySalaryRepository;
 
-    #[test]
-    fn it_should_return_an_unknown_error_when_an_unexpected_error_happens() {
+    #[tokio::test]
+    async fn it_should_return_an_unknown_error_when_an_unexpected_error_happens() {
         let repo = Arc::new(InMemorySalaryRepository::new().with_error());
 
-        let res = fetch_salaries(repo);
+        let res = fetch_salaries(repo).await;
 
         match res {
-            Err(Error::Unknown) => {}
+            Err(Error::Unknown(_)) => {}
             _ => unreachable!(),
         };
     }
 
-    #[test]
-    fn it_should_return_all_salaries_otherwise() {
+    #[tokio::test]
+    async fn it_should_return_all_salaries_otherwise() {
         let salary = Salary::test();
         let repo = Arc::new(InMemorySalaryRepository::new());
-        repo.insert(salary.clone()).ok();
+        repo.insert(salary.clone()).await.ok();
 
-        let res = fetch_salaries(repo);
+        let res = fetch_salaries(repo).await;
 
         match res {
             Ok(salaries) => {
