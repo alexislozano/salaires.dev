@@ -8,6 +8,8 @@ use crate::infra::{
     CompanyRepository, LocationRepository, SalaryRepository, TokenRepository, TokenSender,
 };
 use axum::{
+    error_handling::HandleErrorLayer,
+    http::StatusCode,
     routing::{get, post},
     Extension, Router,
 };
@@ -16,7 +18,8 @@ use fetch_locations::fetch_locations;
 use fetch_salaries::fetch_salaries;
 use insert_salary::insert_salary;
 use send_token::send_token;
-use std::{env, sync::Arc};
+use std::{env, sync::Arc, time::Duration};
+use tower::{buffer::BufferLayer, limit::RateLimitLayer, ServiceBuilder};
 
 pub async fn serve(
     salary_repo: Arc<dyn SalaryRepository>,
@@ -31,10 +34,11 @@ pub async fn serve(
     let app = Router::new()
         .route(
             "/salaries",
-            get(fetch_salaries)
-                .post(insert_salary)
-                .layer(Extension(salary_repo))
-                .layer(Extension(token_repo.clone())),
+            get(fetch_salaries).post(insert_salary).layer(
+                ServiceBuilder::new()
+                    .layer(Extension(salary_repo))
+                    .layer(Extension(token_repo.clone())),
+            ),
         )
         .route(
             "/companies",
@@ -49,6 +53,14 @@ pub async fn serve(
             post(send_token)
                 .layer(Extension(token_repo))
                 .layer(Extension(token_sender)),
+        )
+        .layer(
+            ServiceBuilder::new()
+                .layer(HandleErrorLayer::new(|_err| async {
+                    (StatusCode::REQUEST_TIMEOUT, "timeout")
+                }))
+                .layer(BufferLayer::new(1024))
+                .layer(RateLimitLayer::new(1, Duration::from_secs(1))),
         );
 
     axum::Server::bind(&url.parse().unwrap())
