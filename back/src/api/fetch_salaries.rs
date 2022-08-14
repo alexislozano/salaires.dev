@@ -43,7 +43,7 @@ pub async fn fetch_salaries(
     match use_cases::fetch_salaries(repo).await {
         Ok(salaries) => Ok(salaries
             .into_iter()
-            .map(|salary| Response::from(salary))
+            .map(|salary| salary.into())
             .collect::<Vec<Response>>()
             .into()),
         Err(use_cases::fetch_salaries::Error::Unknown(str)) => {

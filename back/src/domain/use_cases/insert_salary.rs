@@ -1,5 +1,5 @@
 use crate::domain::models::Salary;
-use crate::repositories::{InsertError, SalaryRepository};
+use crate::repositories::{salary::InsertError, SalaryRepository};
 use std::sync::Arc;
 
 pub enum Error {
