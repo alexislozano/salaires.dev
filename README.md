@@ -6,6 +6,30 @@ Partagez votre salaire de développeur / développeuse avec la communauté.
 
 Les PRs sont les bienvenues !
 
+## Back
+
+```
+cd back
+```
+
+### Lancer les tests
+
+```
+cargo test
+```
+
+### Lancer en local
+
+```
+cargo run
+```
+
+## Créer un build
+
+```
+cargo build
+```
+
 ## Front
 
 ```
