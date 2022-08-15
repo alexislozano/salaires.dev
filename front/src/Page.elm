@@ -38,8 +38,8 @@ init flags url =
                 |> Utils.map IndexModel IndexMsg
 
         Route.Insert ->
-            NoInsert.init flags
-                |> Utils.map NoInsertModel NoInsertMsg
+            Insert.init flags
+                |> Utils.map InsertModel InsertMsg
 
         Route.NotFound ->
             NotFound.init flags

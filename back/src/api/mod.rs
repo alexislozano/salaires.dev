@@ -59,7 +59,7 @@ pub async fn serve(
                 .layer(Extension(token_repo))
                 .layer(Extension(token_sender)),
         )
-        .layer(CorsLayer::new().allow_origin(origin))
+        .layer(CorsLayer::permissive().allow_origin(origin))
         .layer(
             ServiceBuilder::new()
                 .layer(HandleErrorLayer::new(|_err| async {
