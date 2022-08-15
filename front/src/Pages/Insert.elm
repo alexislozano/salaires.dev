@@ -14,6 +14,7 @@ import Models.Compensation as Compensation exposing (Compensation)
 import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
 import Models.Stock as Stock exposing (Stock)
+import Models.Token as Token exposing (Token)
 import Models.Xp as Xp exposing (Xp)
 import Services.Companies as Companies
 import Services.Locations as Locations
@@ -29,7 +30,8 @@ type alias Model =
 
 
 type alias Form =
-    { company : { value : String, parsed : Result String Company, field : Select.Model }
+    { token : { value : String, parsed : Result String Token }
+    , company : { value : String, parsed : Result String Company, field : Select.Model }
     , location : { value : String, parsed : Result String Location, field : Select.Model }
     , compensation : { value : String, parsed : Result String Compensation }
     , stock : { value : String, parsed : Result String (Maybe Stock) }
@@ -45,12 +47,13 @@ body form =
         ( Ok company, Ok location, Ok compensation ) ->
             case ( form.stock.parsed, form.level.parsed, form.companyXp.parsed ) of
                 ( Ok stock, Ok level, Ok companyXp ) ->
-                    case form.totalXp.parsed of
-                        Ok totalXp ->
+                    case ( form.totalXp.parsed, form.token.parsed ) of
+                        ( Ok totalXp, Ok token ) ->
                             Just
                                 { company = company
                                 , location = location
                                 , compensation = compensation
+                                , token = token
                                 , stock = stock
                                 , level = level
                                 , companyXp = companyXp
@@ -77,11 +80,12 @@ type Status
 type Field
     = Company
     | Location
-    | Level
+    | Compensation
+    | Token
+    | Stock
     | CompanyXp
     | TotalXp
-    | Compensation
-    | Stock
+    | Level
 
 
 type Msg
@@ -106,6 +110,7 @@ init flags =
             { company = { value = "", parsed = Err " ", field = Select.init }
             , location = { value = "", parsed = Err " ", field = Select.init }
             , compensation = { value = "", parsed = Err " " }
+            , token = { value = "", parsed = Err " " }
             , level = { value = "", parsed = Ok Nothing }
             , companyXp = { value = "", parsed = Ok Nothing }
             , totalXp = { value = "", parsed = Ok Nothing }
@@ -187,6 +192,14 @@ update flags msg model =
                                 | compensation =
                                     { value = value
                                     , parsed = Compensation.tryFromString value
+                                    }
+                            }
+
+                        Token ->
+                            { form
+                                | token =
+                                    { value = value
+                                    , parsed = Token.tryFromString value
                                     }
                             }
 
@@ -288,6 +301,14 @@ view { form, status, companies, locations } =
             ]
           <|
             Element.text (I18n.translate I18n.French I18n.IAddMySalary)
+        , Input.view
+            { error = error form.token.parsed
+            , label = I18n.translate I18n.French I18n.Token
+            , onChange = OnFieldChange Token
+            , placeholder = "123456"
+            , required = True
+            , value = form.token.value
+            }
         , Select.view
             form.company.field
             { error = error form.company.parsed

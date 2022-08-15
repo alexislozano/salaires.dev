@@ -25,6 +25,8 @@ type Key
     | Sent
     | ThisPageDoesNotExist
     | InsertIsDownForNow
+    | Token
+    | ShouldBeSixCharactersLong
 
 
 translate : Lang -> Key -> String
@@ -88,3 +90,9 @@ translate lang key =
 
                 InsertIsDownForNow ->
                     "Il n'est plus possible d'ajouter des salaires pour le moment."
+
+                Token ->
+                    "Token"
+
+                ShouldBeSixCharactersLong ->
+                    "Cette valeur doit comporter six caractères"

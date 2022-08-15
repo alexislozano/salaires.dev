@@ -12,6 +12,7 @@ import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
 import Models.Salary as Salary exposing (Salary)
 import Models.Stock as Stock exposing (Stock)
+import Models.Token as Token exposing (Token)
 import Models.Xp as Xp exposing (Xp)
 import Utils
 
@@ -46,6 +47,7 @@ type alias Body =
     { company : Company
     , location : Location
     , compensation : Compensation
+    , token : Token
     , stock : Maybe Stock
     , level : Maybe Level
     , companyXp : Maybe Xp
@@ -59,6 +61,7 @@ encode body =
         [ ( "company", Company.encode body.company )
         , ( "location", Location.encode body.location )
         , ( "compensation", Compensation.encode body.compensation )
+        , ( "token", Token.encode body.token )
         , ( "stock", body.stock |> Maybe.map Stock.encode |> Maybe.withDefault null )
         , ( "level", body.level |> Maybe.map Level.encode |> Maybe.withDefault null )
         , ( "company_xp", body.companyXp |> Maybe.map Xp.encode |> Maybe.withDefault null )
