@@ -5,15 +5,14 @@ import Http
 import Json.Decode exposing (Decoder, andThen, list, succeed)
 import Json.Decode.Pipeline exposing (required)
 import Models.Company as Company exposing (Company)
-import Services.Supabase as Supabase
 
 
 getAll : Flags -> (Result Http.Error (List Company) -> msg) -> Cmd msg
 getAll flags msg =
     Http.request
         { method = "GET"
-        , headers = Supabase.headers flags
-        , url = Supabase.getAllCompaniesUrl flags
+        , headers = []
+        , url = flags.apiUrl ++ "/companies"
         , body = Http.emptyBody
         , timeout = Nothing
         , tracker = Nothing

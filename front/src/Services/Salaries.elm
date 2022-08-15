@@ -13,7 +13,6 @@ import Models.Location as Location exposing (Location)
 import Models.Salary as Salary exposing (Salary)
 import Models.Stock as Stock exposing (Stock)
 import Models.Xp as Xp exposing (Xp)
-import Services.Supabase as Supabase
 import Utils
 
 
@@ -21,8 +20,8 @@ getAll : Flags -> (Result Http.Error (List Salary) -> msg) -> Cmd msg
 getAll flags msg =
     Http.request
         { method = "GET"
-        , headers = Supabase.headers flags
-        , url = Supabase.getAllSalariesUrl flags
+        , headers = []
+        , url = flags.apiUrl ++ "/salaries"
         , body = Http.emptyBody
         , timeout = Nothing
         , tracker = Nothing
@@ -34,8 +33,8 @@ post : Flags -> (Result Http.Error () -> msg) -> Body -> Cmd msg
 post flags msg body =
     Http.request
         { method = "POST"
-        , headers = Supabase.headers flags
-        , url = Supabase.insertSalaryUrl flags
+        , headers = []
+        , url = flags.apiUrl ++ "/salaries"
         , body = Http.jsonBody <| encode body
         , timeout = Nothing
         , tracker = Nothing

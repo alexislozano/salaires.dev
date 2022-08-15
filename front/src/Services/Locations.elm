@@ -5,15 +5,14 @@ import Http
 import Json.Decode exposing (Decoder, andThen, list, succeed)
 import Json.Decode.Pipeline exposing (required)
 import Models.Location as Location exposing (Location)
-import Services.Supabase as Supabase
 
 
 getAll : Flags -> (Result Http.Error (List Location) -> msg) -> Cmd msg
 getAll flags msg =
     Http.request
         { method = "GET"
-        , headers = Supabase.headers flags
-        , url = Supabase.getAllLocationsUrl flags
+        , headers = []
+        , url = flags.apiUrl ++ "/locations"
         , body = Http.emptyBody
         , timeout = Nothing
         , tracker = Nothing
