@@ -87,6 +87,7 @@ dependencies = [
  "serde",
  "tokio",
  "tower",
+ "tower-http",
 ]
 
 [[package]]
