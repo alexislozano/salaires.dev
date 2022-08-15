@@ -27,6 +27,10 @@ type Key
     | InsertIsDownForNow
     | Token
     | ShouldBeSixCharactersLong
+    | ShouldContainAnAt
+    | Email
+    | GetAToken
+    | IGotAToken
 
 
 translate : Lang -> Key -> String
@@ -96,3 +100,15 @@ translate lang key =
 
                 ShouldBeSixCharactersLong ->
                     "Cette valeur doit comporter six caractères"
+
+                ShouldContainAnAt ->
+                    "Doit comporter un @"
+
+                Email ->
+                    "Email"
+
+                GetAToken ->
+                    "Obtenir un token"
+
+                IGotAToken ->
+                    "J'ai reçu un token"

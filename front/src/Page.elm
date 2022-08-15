@@ -9,6 +9,7 @@ import Flags exposing (Flags)
 import I18n
 import Pages.Index as Index
 import Pages.Insert as Insert
+import Pages.Login as Login
 import Pages.NoInsert as NoInsert
 import Pages.NotFound as NotFound
 import Route
@@ -20,6 +21,7 @@ type Model
     = IndexModel Index.Model
     | InsertModel Insert.Model
     | NoInsertModel NoInsert.Model
+    | LoginModel Login.Model
     | NotFoundModel NotFound.Model
 
 
@@ -27,6 +29,7 @@ type Msg
     = IndexMsg Index.Msg
     | InsertMsg Insert.Msg
     | NoInsertMsg NoInsert.Msg
+    | LoginMsg Login.Msg
     | NotFoundMsg NotFound.Msg
 
 
@@ -40,6 +43,10 @@ init flags url =
         Route.Insert ->
             Insert.init flags
                 |> Utils.map InsertModel InsertMsg
+
+        Route.Login ->
+            Login.init flags
+                |> Utils.map LoginModel LoginMsg
 
         Route.NotFound ->
             NotFound.init flags
@@ -60,6 +67,10 @@ update flags msg model =
         ( NoInsertMsg subMsg, NoInsertModel subModel ) ->
             NoInsert.update subMsg subModel
                 |> Utils.map NoInsertModel NoInsertMsg
+
+        ( LoginMsg subMsg, LoginModel subModel ) ->
+            Login.update flags subMsg subModel
+                |> Utils.map LoginModel LoginMsg
 
         ( NotFoundMsg subMsg, NotFoundModel subModel ) ->
             NotFound.update subMsg subModel
@@ -96,6 +107,10 @@ view model =
                     NoInsert.view subModel
                         |> Element.map NoInsertMsg
 
+                LoginModel subModel ->
+                    Login.view subModel
+                        |> Element.map LoginMsg
+
                 NotFoundModel subModel ->
                     NotFound.view subModel
                         |> Element.map NotFoundMsg
@@ -112,12 +127,12 @@ header =
         , Element.spaceEvenly
         , Background.color Palette.peach
         ]
-        [ Link.view
+        [ Link.view []
             { label = "salaires.dev"
             , url = Route.toString Route.Index
             }
-        , Link.view
+        , Link.view []
             { label = I18n.translate I18n.French I18n.IAddMySalary
-            , url = Route.toString Route.Insert
+            , url = Route.toString Route.Login
             }
         ]

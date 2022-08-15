@@ -54,7 +54,7 @@ pub async fn serve(
             get(fetch_locations).layer(Extension(location_repo)),
         )
         .route(
-            "/token",
+            "/tokens",
             post(send_token)
                 .layer(Extension(token_repo))
                 .layer(Extension(token_sender)),
