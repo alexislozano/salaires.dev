@@ -96,7 +96,7 @@ translate lang key =
                     "Il n'est plus possible d'ajouter des salaires pour le moment."
 
                 Token ->
-                    "Token"
+                    "Code de confirmation"
 
                 ShouldBeSixCharactersLong ->
                     "Cette valeur doit comporter six caractères"
@@ -108,7 +108,7 @@ translate lang key =
                     "Email"
 
                 GetAToken ->
-                    "Obtenir un token"
+                    "Obtenir un code de confirmation"
 
                 IGotAToken ->
-                    "J'ai reçu un token"
+                    "J'ai reçu un code de confirmation"

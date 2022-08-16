@@ -38,7 +38,7 @@ impl TokenSender for EmailTokenSender {
         let message = match Message::builder()
             .from(from.parse().unwrap())
             .to(String::from(email).parse().unwrap())
-            .subject("Votre token")
+            .subject("Votre code de confirmation")
             .body(String::from(token))
         {
             Ok(message) => message,
