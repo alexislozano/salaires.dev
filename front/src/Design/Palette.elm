@@ -41,3 +41,13 @@ lightSand =
 sand : Color
 sand =
     rgb255 245 240 236
+
+
+darkBlue : Color
+darkBlue =
+    rgb255 5 81 96
+
+
+lightBlue : Color
+lightBlue =
+    rgb255 207 244 252

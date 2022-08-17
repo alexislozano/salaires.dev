@@ -31,6 +31,7 @@ type Key
     | Email
     | GetAToken
     | IGotAToken
+    | LoginBanner
 
 
 translate : Lang -> Key -> String
@@ -112,3 +113,6 @@ translate lang key =
 
                 IGotAToken ->
                     "J'ai reçu un code de confirmation"
+
+                LoginBanner ->
+                    "Entrez une adresse email et recevez un code de confirmation que vous pourrez utiliser dans le formulaire d'ajout de salaire. L'adresse entrée ne sert qu'à recevoir le code, elle n'est pas enregistrée."

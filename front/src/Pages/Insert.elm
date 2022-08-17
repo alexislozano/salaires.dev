@@ -1,10 +1,10 @@
 module Pages.Insert exposing (..)
 
 import Design.Button as Button
+import Design.Form as Form
 import Design.Input as Input
 import Design.Select as Select
 import Element exposing (Element)
-import Element.Font as Font
 import Flags exposing (Flags)
 import Html.Attributes exposing (value)
 import Http
@@ -290,18 +290,9 @@ update flags msg model =
 
 view : Model -> Element Msg
 view { form, status, companies, locations } =
-    Element.column
-        [ Element.paddingXY 0 32
-        , Element.centerX
-        , Element.spacing 16
-        ]
-        [ Element.el
-            [ Font.size 32
-            , Element.paddingXY 0 16
-            ]
-          <|
-            Element.text (I18n.translate I18n.French I18n.IAddMySalary)
-        , Input.view
+    Form.view
+        { title = I18n.translate I18n.French I18n.IAddMySalary }
+        [ Input.view
             { error = error form.token.parsed
             , label = I18n.translate I18n.French I18n.Token
             , onChange = OnFieldChange Token

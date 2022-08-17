@@ -1,10 +1,11 @@
 module Pages.Login exposing (..)
 
+import Design.Banner as Banner
 import Design.Button as Button
+import Design.Form as Form
 import Design.Input as Input
 import Design.Link as Link
 import Element exposing (Element)
-import Element.Font as Font
 import Flags exposing (Flags)
 import Html.Attributes exposing (value)
 import Http
@@ -108,17 +109,17 @@ update flags msg model =
 
 view : Model -> Element Msg
 view { form, status } =
-    Element.column
-        [ Element.paddingXY 0 32
-        , Element.centerX
-        , Element.spacing 16
-        ]
-        [ Element.el
-            [ Font.size 32
-            , Element.paddingXY 0 16
+    Form.view
+        { title = I18n.translate I18n.French I18n.GetAToken }
+        [ Banner.view
+            [ Element.paddingEach
+                { top = 0
+                , left = 0
+                , right = 0
+                , bottom = 32
+                }
             ]
-          <|
-            Element.text (I18n.translate I18n.French I18n.GetAToken)
+            { text = I18n.translate I18n.French I18n.LoginBanner }
         , Input.view
             { error = error form.email.parsed
             , label = I18n.translate I18n.French I18n.Email
