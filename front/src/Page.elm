@@ -127,10 +127,16 @@ header =
         , Element.spaceEvenly
         , Background.color Palette.peach
         ]
-        [ Link.view []
-            { label = "salaires.dev"
-            , url = Route.toString Route.Index
-            }
+        [ Element.row [ Element.spacing 8 ]
+            [ Link.view []
+                { label = "salaires.dev"
+                , url = Route.toString Route.Index
+                }
+            , Link.view []
+                { label = "Github"
+                , url = "https://github.com/alexislozano/salaires.dev"
+                }
+            ]
         , Link.view []
             { label = I18n.translate I18n.French I18n.IAddMySalary
             , url = Route.toString Route.Login
