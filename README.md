@@ -24,7 +24,7 @@ cargo test
 cargo run
 ```
 
-## Créer un build
+### Créer un build
 
 ```
 cargo build
