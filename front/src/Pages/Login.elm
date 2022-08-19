@@ -131,7 +131,7 @@ view { form, status } =
                 , value = form.email.value
                 }
             , Button.view
-                { disabled = disabled form
+                { disabled = disabled status form
                 , label =
                     I18n.translate I18n.French <|
                         case status of
@@ -166,11 +166,11 @@ error state =
             Nothing
 
 
-disabled : Form -> Bool
-disabled form =
-    case body form of
-        Just _ ->
+disabled : Status -> Form -> Bool
+disabled status form =
+    case ( status, body form ) of
+        ( Init, Just _ ) ->
             False
 
-        Nothing ->
+        _ ->
             True

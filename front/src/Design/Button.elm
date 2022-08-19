@@ -23,6 +23,12 @@ view { disabled, label, onClick } =
             , Css.fontWeight Css.bold
             , Css.fontFamily Css.inherit
             , Css.fontSize Css.inherit
+            , Css.cursor <|
+                if disabled then
+                    Css.notAllowed
+
+                else
+                    Css.pointer
             , Css.color <|
                 if disabled then
                     Palette.grey
