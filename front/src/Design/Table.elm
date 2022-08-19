@@ -82,7 +82,7 @@ header { column, direction } c =
                         "  ↓"
 
             else
-                ""
+                "   "
            )
 
 

@@ -1,24 +1,32 @@
 module Design.Form exposing (..)
 
-import Element exposing (Element)
-import Element.Font as Font
+import Css
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
 
 
-view : { title : String } -> List (Element msg) -> Element msg
+view : { title : String } -> List (Html msg) -> Html msg
 view { title } elements =
-    Element.column
-        [ Element.paddingXY 0 32
-        , Element.centerX
-        , Element.spacing 16
-        , Element.width <| Element.maximum 500 Element.fill
-        ]
-        ((Element.el
-            [ Font.size 32
-            , Element.centerX
-            , Element.paddingXY 0 32
+    Html.form
+        [ Attributes.css
+            [ Css.width (Css.pct 100)
+            , Css.maxWidth (Css.px 500)
+            , Css.property "height" "fit-content"
+            , Css.displayFlex
+            , Css.flexDirection Css.column
+            , Css.property "gap" "16px"
+            , Css.alignItems Css.center
             ]
-          <|
-            Element.text title
-         )
+        ]
+        (Html.h2
+            [ Attributes.css
+                [ Css.fontSize (Css.px 32)
+                , Css.padding2 (Css.px 16) (Css.px 32)
+                , Css.margin Css.zero
+                , Css.fontWeight Css.normal
+                , Css.textAlign Css.center
+                ]
+            ]
+            [ Html.text title ]
             :: elements
         )

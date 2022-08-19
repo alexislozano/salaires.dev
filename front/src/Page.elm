@@ -1,12 +1,7 @@
 module Page exposing (..)
 
-import Design.Link as Link
-import Design.Palette as Palette
-import Element exposing (Element)
-import Element.Background as Background
-import Element.Border as Border
 import Flags exposing (Flags)
-import I18n
+import Html.Styled as Html exposing (Html)
 import Pages.Index as Index
 import Pages.Insert as Insert
 import Pages.Login as Login
@@ -80,65 +75,25 @@ update flags msg model =
             ( model, Cmd.none )
 
 
-view : Model -> Element Msg
+view : Model -> Html Msg
 view model =
-    Element.column
-        [ Element.width Element.fill
-        , Element.height Element.fill
-        ]
-        [ header
-        , Element.el
-            [ Element.width Element.fill
-            , Element.height Element.fill
-            , Background.color Palette.sand
-            , Element.scrollbarY
-            ]
-          <|
-            case model of
-                IndexModel subModel ->
-                    Index.view subModel
-                        |> Element.map IndexMsg
+    case model of
+        IndexModel subModel ->
+            Index.view subModel
+                |> Html.map IndexMsg
 
-                InsertModel subModel ->
-                    Insert.view subModel
-                        |> Element.map InsertMsg
+        InsertModel subModel ->
+            Insert.view subModel
+                |> Html.map InsertMsg
 
-                NoInsertModel subModel ->
-                    NoInsert.view subModel
-                        |> Element.map NoInsertMsg
+        NoInsertModel subModel ->
+            NoInsert.view subModel
+                |> Html.map NoInsertMsg
 
-                LoginModel subModel ->
-                    Login.view subModel
-                        |> Element.map LoginMsg
+        LoginModel subModel ->
+            Login.view subModel
+                |> Html.map LoginMsg
 
-                NotFoundModel subModel ->
-                    NotFound.view subModel
-                        |> Element.map NotFoundMsg
-        ]
-
-
-header : Element msg
-header =
-    Element.row
-        [ Element.height <| Element.px 64
-        , Element.paddingXY 8 0
-        , Element.width Element.fill
-        , Border.widthEach { top = 0, right = 0, bottom = 2, left = 0 }
-        , Element.spaceEvenly
-        , Background.color Palette.peach
-        ]
-        [ Element.row [ Element.spacing 8 ]
-            [ Link.view []
-                { label = "salaires.dev"
-                , url = Route.toString Route.Index
-                }
-            , Link.view []
-                { label = "Github"
-                , url = "https://github.com/alexislozano/salaires.dev"
-                }
-            ]
-        , Link.view []
-            { label = I18n.translate I18n.French I18n.IAddMySalary
-            , url = Route.toString Route.Login
-            }
-        ]
+        NotFoundModel subModel ->
+            NotFound.view subModel
+                |> Html.map NotFoundMsg

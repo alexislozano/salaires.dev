@@ -1,30 +1,27 @@
 module Design.Banner exposing (..)
 
+import Css exposing (Style)
 import Design.Palette as Palette
-import Element exposing (Attribute, Element)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Font as Font
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
 
 
 view :
-    List (Attribute msg)
+    List Style
     -> { text : String }
-    -> Element msg
-view attributes { text } =
-    Element.el
-        attributes
-    <|
-        Element.el
-            [ Element.width Element.fill
-            , Element.padding 12
-            , Border.width 1
-            , Border.rounded 4
-            , Border.color Palette.darkBlue
-            , Background.color Palette.lightBlue
-            , Font.color Palette.darkBlue
-            ]
-        <|
-            Element.paragraph
-                []
-                [ Element.text text ]
+    -> Html msg
+view styles { text } =
+    Html.p
+        [ Attributes.css <|
+            List.concat
+                [ [ Css.padding (Css.px 12)
+                  , Css.margin Css.zero
+                  , Css.border3 (Css.px 1) Css.solid Palette.darkBlue
+                  , Css.borderRadius (Css.px 4)
+                  , Css.backgroundColor Palette.lightBlue
+                  , Css.color Palette.darkBlue
+                  ]
+                , styles
+                ]
+        ]
+        [ Html.text text ]

@@ -1,13 +1,14 @@
 module Pages.Login exposing (..)
 
+import Css
 import Design.Banner as Banner
 import Design.Button as Button
 import Design.Form as Form
 import Design.Input as Input
 import Design.Link as Link
-import Element exposing (Element)
 import Flags exposing (Flags)
-import Html.Attributes exposing (value)
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
 import Http
 import I18n
 import Models.Email as Email exposing (Email)
@@ -107,50 +108,51 @@ update flags msg model =
             ( { model | form = newForm, status = Init }, Cmd.none )
 
 
-view : Model -> Element Msg
+view : Model -> Html Msg
 view { form, status } =
-    Form.view
-        { title = I18n.translate I18n.French I18n.GetAToken }
-        [ Banner.view
-            [ Element.paddingEach
-                { top = 0
-                , left = 0
-                , right = 0
-                , bottom = 32
+    Html.main_
+        [ Attributes.css
+            [ Css.displayFlex
+            , Css.justifyContent Css.center
+            , Css.overflow Css.auto
+            , Css.padding (Css.px 32)
+            ]
+        ]
+        [ Form.view
+            { title = I18n.translate I18n.French I18n.GetAToken }
+            [ Banner.view [ Css.marginBottom (Css.px 16) ]
+                { text = I18n.translate I18n.French I18n.LoginBanner }
+            , Input.view
+                { error = error form.email.parsed
+                , label = I18n.translate I18n.French I18n.Email
+                , onChange = OnFieldChange Email
+                , placeholder = "moi@exemple.fr"
+                , required = True
+                , value = form.email.value
+                }
+            , Button.view
+                { disabled = disabled form
+                , label =
+                    I18n.translate I18n.French <|
+                        case status of
+                            Init ->
+                                I18n.GetAToken
+
+                            Loading ->
+                                I18n.Sending
+
+                            Error ->
+                                I18n.Error
+
+                            Success ->
+                                I18n.Sent
+                , onClick = Send
+                }
+            , Link.view [ Css.width (Css.pct 100) ]
+                { label = I18n.translate I18n.French I18n.IGotAToken
+                , url = Route.toString Route.Insert
                 }
             ]
-            { text = I18n.translate I18n.French I18n.LoginBanner }
-        , Input.view
-            { error = error form.email.parsed
-            , label = I18n.translate I18n.French I18n.Email
-            , onChange = OnFieldChange Email
-            , placeholder = "moi@exemple.fr"
-            , required = True
-            , value = form.email.value
-            }
-        , Button.view
-            { disabled = disabled form
-            , label =
-                I18n.translate I18n.French <|
-                    case status of
-                        Init ->
-                            I18n.GetAToken
-
-                        Loading ->
-                            I18n.Sending
-
-                        Error ->
-                            I18n.Error
-
-                        Success ->
-                            I18n.Sent
-            , onClick = Send
-            }
-        , Link.view
-            [ Element.width Element.fill ]
-            { label = I18n.translate I18n.French I18n.IGotAToken
-            , url = Route.toString Route.Insert
-            }
         ]
 
 

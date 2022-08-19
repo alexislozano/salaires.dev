@@ -2,10 +2,16 @@ module Main exposing (..)
 
 import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav exposing (Key)
-import Element
-import Element.Font as Font
+import Css
+import Css.Global as Global
+import Design.Link as Link
+import Design.Palette as Palette
 import Flags exposing (Flags)
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
+import I18n
 import Page
+import Route
 import Url exposing (Url)
 import Utils
 
@@ -70,13 +76,52 @@ view : Model -> Document Msg
 view model =
     { title = "salaires.dev"
     , body =
-        [ Element.layout
-            [ Element.width Element.fill
-            , Element.height Element.fill
-            , Font.size 14
+        [ header
+        , Page.view model.page |> Html.map PageMsg
+        , Global.global
+            [ Global.body
+                [ Css.backgroundColor Palette.sand
+                , Css.fontFamilies [ "Open Sans", "Helvetica", "Verdana", Css.sansSerif.value ]
+                , Css.fontSize (Css.px 14)
+                , Css.margin Css.zero
+                , Css.height (Css.vh 100)
+                , Css.displayFlex
+                , Css.flexDirection Css.column
+                ]
             ]
-            (Page.view model.page
-                |> Element.map PageMsg
-            )
         ]
+            |> List.map Html.toUnstyled
     }
+
+
+header : Html msg
+header =
+    Html.nav
+        [ Attributes.css
+            [ Css.backgroundColor Palette.peach
+            , Css.borderBottom2 (Css.px 2) Css.solid
+            , Css.displayFlex
+            , Css.justifyContent Css.spaceBetween
+            , Css.padding (Css.px 8)
+            ]
+        ]
+        [ Html.div
+            [ Attributes.css
+                [ Css.displayFlex
+                , Css.property "gap" "8px"
+                ]
+            ]
+            [ Link.view []
+                { label = "salaires.dev"
+                , url = Route.toString Route.Index
+                }
+            , Link.view []
+                { label = "Github"
+                , url = "https://github.com/alexislozano/salaires.dev"
+                }
+            ]
+        , Link.view []
+            { label = I18n.translate I18n.French I18n.IAddMySalary
+            , url = Route.toString Route.Login
+            }
+        ]

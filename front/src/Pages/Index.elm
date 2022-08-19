@@ -1,13 +1,12 @@
 module Pages.Index exposing (..)
 
+import Css
 import Design.Palette as Palette
 import Design.Table as Table
-import Element exposing (Element)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Font as Font
-import Element.Input as Input
 import Flags exposing (Flags)
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
+import Html.Styled.Events as Events
 import Http
 import Models.Company as Company
 import Models.Compensation as Compensation
@@ -24,10 +23,13 @@ import Utils exposing (HttpData(..))
 
 type alias Model =
     { salaries : HttpData (List Salary)
-    , sort :
-        { column : Table.Column
-        , direction : Table.Direction
-        }
+    , sort : Sort
+    }
+
+
+type alias Sort =
+    { column : Table.Column
+    , direction : Table.Direction
     }
 
 
@@ -76,153 +78,159 @@ update msg model =
             ( { model | sort = sort }, Cmd.none )
 
 
-view : Model -> Element Msg
+view : Model -> Html Msg
 view model =
-    table model
-
-
-table : Model -> Element Msg
-table model =
-    case model.salaries of
-        Success salaries ->
-            Element.indexedTable []
-                { data = salaries |> Table.sort model.sort
-                , columns =
-                    [ { header =
-                            Table.Company
-                                |> Table.header model.sort
-                                |> header Table.Company
-                      , width = Element.fill
-                      , view =
-                            \index salary ->
-                                Salary.toFields salary
-                                    |> .company
-                                    |> Company.toString
-                                    |> cell index
-                      }
-                    , { header =
-                            Table.Location
-                                |> Table.header model.sort
-                                |> header Table.Location
-                      , width = Element.fill
-                      , view =
-                            \index salary ->
-                                Salary.toFields salary
-                                    |> .location
-                                    |> Location.toString
-                                    |> cell index
-                      }
-                    , { header =
-                            Table.Compensation
-                                |> Table.header model.sort
-                                |> header Table.Compensation
-                      , width = Element.fill
-                      , view =
-                            \index salary ->
-                                Salary.toFields salary
-                                    |> .compensation
-                                    |> Compensation.toString
-                                    |> cell index
-                      }
-                    , { header =
-                            Table.Stock
-                                |> Table.header model.sort
-                                |> header Table.Stock
-                      , width = Element.fill
-                      , view =
-                            \index salary ->
-                                Salary.toFields salary
-                                    |> .stock
-                                    |> Maybe.map Stock.toString
-                                    |> Maybe.withDefault ""
-                                    |> cell index
-                      }
-                    , { header =
-                            Table.CompanyXp
-                                |> Table.header model.sort
-                                |> header Table.CompanyXp
-                      , width = Element.fill
-                      , view =
-                            \index salary ->
-                                Salary.toFields salary
-                                    |> .companyXp
-                                    |> Maybe.map Xp.toString
-                                    |> Maybe.withDefault ""
-                                    |> cell index
-                      }
-                    , { header =
-                            Table.TotalXp
-                                |> Table.header model.sort
-                                |> header Table.TotalXp
-                      , width = Element.fill
-                      , view =
-                            \index salary ->
-                                Salary.toFields salary
-                                    |> .totalXp
-                                    |> Maybe.map Xp.toString
-                                    |> Maybe.withDefault ""
-                                    |> cell index
-                      }
-                    , { header =
-                            Table.Level
-                                |> Table.header model.sort
-                                |> header Table.Level
-                      , width = Element.fill
-                      , view =
-                            \index salary ->
-                                Salary.toFields salary
-                                    |> .level
-                                    |> Maybe.map Level.toString
-                                    |> Maybe.withDefault ""
-                                    |> cell index
-                      }
-                    , { header =
-                            Table.Date
-                                |> Table.header model.sort
-                                |> header Table.Date
-                      , width = Element.fill
-                      , view =
-                            \index salary ->
-                                Salary.toFields salary
-                                    |> .date
-                                    |> Date.toString
-                                    |> cell index
-                      }
+    Html.main_ [ Attributes.css [ Css.overflow Css.scroll ] ] <|
+        case model.salaries of
+            Success salaries ->
+                [ Html.table
+                    [ Attributes.css
+                        [ Css.borderSpacing Css.zero
+                        , Css.width (Css.pct 100)
+                        ]
                     ]
-                }
+                    [ head model
+                    , salaries
+                        |> Table.sort model.sort
+                        |> body
+                    ]
+                ]
 
-        Loading ->
-            Element.none
-
-        Failure ->
-            Element.none
+            _ ->
+                []
 
 
-header : Table.Column -> String -> Element Msg
+head : Model -> Html Msg
+head { sort } =
+    Html.thead
+        [ Attributes.css
+            [ Css.position Css.sticky
+            , Css.top Css.zero
+            ]
+        ]
+        [ Html.tr []
+            [ Table.Company
+                |> Table.header sort
+                |> header Table.Company
+            , Table.Location
+                |> Table.header sort
+                |> header Table.Location
+            , Table.Compensation
+                |> Table.header sort
+                |> header Table.Compensation
+            , Table.Stock
+                |> Table.header sort
+                |> header Table.Stock
+            , Table.CompanyXp
+                |> Table.header sort
+                |> header Table.CompanyXp
+            , Table.TotalXp
+                |> Table.header sort
+                |> header Table.TotalXp
+            , Table.Level
+                |> Table.header sort
+                |> header Table.Level
+            , Table.Date
+                |> Table.header sort
+                |> header Table.Date
+            ]
+        ]
+
+
+header : Table.Column -> String -> Html Msg
 header column title =
-    Input.button
-        [ Element.height <| Element.px 48
-        , Element.paddingXY 16 0
-        , Font.bold
-        , Border.widthEach { top = 0, right = 0, bottom = 2, left = 0 }
+    Html.th
+        [ Attributes.css
+            [ Css.padding Css.zero
+            , Css.backgroundColor Palette.sand
+            , Css.borderBottom2 (Css.px 2) Css.solid
+            ]
         ]
-        { onPress = Just <| Clicked column
-        , label = Element.text title
-        }
-
-
-cell : Int -> String -> Element msg
-cell index text =
-    Element.el
-        [ Element.height <| Element.px 48
-        , Element.paddingXY 16 0
-        , Background.color <|
-            if modBy 2 index == 0 then
-                Palette.lightSand
-
-            else
-                Palette.sand
+        [ Html.button
+            [ Events.onClick <| Clicked column
+            , Attributes.css
+                [ Css.height (Css.px 48)
+                , Css.width (Css.pct 100)
+                , Css.border Css.zero
+                , Css.fontWeight Css.bold
+                , Css.backgroundColor Css.transparent
+                , Css.padding2 Css.zero (Css.px 16)
+                , Css.textAlign Css.start
+                , Css.cursor Css.pointer
+                , Css.fontSize Css.inherit
+                , Css.fontFamily Css.inherit
+                , Css.whiteSpace Css.noWrap
+                ]
+            ]
+            [ Html.text title ]
         ]
-    <|
-        Element.el [ Element.centerY ] <|
-            Element.text text
+
+
+body : List Salary -> Html Msg
+body salaries =
+    salaries
+        |> List.indexedMap row
+        |> Html.tbody []
+
+
+row : Int -> Salary -> Html Msg
+row index salary =
+    Html.tr
+        [ Attributes.css
+            [ Css.backgroundColor <|
+                if modBy 2 index == 0 then
+                    Palette.lightSand
+
+                else
+                    Palette.sand
+            ]
+        ]
+        [ Salary.toFields salary
+            |> .company
+            |> Company.toString
+            |> cell
+        , Salary.toFields salary
+            |> .location
+            |> Location.toString
+            |> cell
+        , Salary.toFields salary
+            |> .compensation
+            |> Compensation.toString
+            |> cell
+        , Salary.toFields salary
+            |> .stock
+            |> Maybe.map Stock.toString
+            |> Maybe.withDefault ""
+            |> cell
+        , Salary.toFields salary
+            |> .companyXp
+            |> Maybe.map Xp.toString
+            |> Maybe.withDefault ""
+            |> cell
+        , Salary.toFields salary
+            |> .totalXp
+            |> Maybe.map Xp.toString
+            |> Maybe.withDefault ""
+            |> cell
+        , Salary.toFields salary
+            |> .level
+            |> Maybe.map Level.toString
+            |> Maybe.withDefault ""
+            |> cell
+        , Salary.toFields salary
+            |> .date
+            |> Date.toString
+            |> cell
+        ]
+
+
+cell : String -> Html msg
+cell value =
+    Html.td
+        [ Attributes.css
+            [ Css.height (Css.px 48)
+            , Css.padding2 Css.zero (Css.px 16)
+            , Css.whiteSpace Css.noWrap
+            ]
+        ]
+        [ Html.text value ]

@@ -1,24 +1,21 @@
 module Design.Utils exposing (..)
 
+import Css
 import Design.Palette as Palette
-import Element
-import Element.Font as Font
-import Element.Input as Input
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
 import I18n
 
 
-label : Bool -> String -> Input.Label msg
+label : Bool -> String -> Html msg
 label required text =
-    Input.labelAbove [] <|
-        Element.row []
-            [ Element.text text
-            , if required then
-                Element.none
+    Html.span [] <|
+        Html.text text
+            :: (if required then
+                    []
 
-              else
-                Element.el
-                    [ Font.color Palette.grey
+                else
+                    [ Html.span [ Attributes.css [ Css.color Palette.grey ] ]
+                        [ Html.text (" - " ++ I18n.translate I18n.French I18n.Optional) ]
                     ]
-                <|
-                    Element.text (" - " ++ I18n.translate I18n.French I18n.Optional)
-            ]
+               )
