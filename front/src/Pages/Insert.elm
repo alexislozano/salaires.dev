@@ -1,13 +1,11 @@
 module Pages.Insert exposing (..)
 
-import Css
 import Design.Button as Button
 import Design.Form as Form
 import Design.Input as Input
 import Design.Select as Select
 import Flags exposing (Flags)
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes
 import Http
 import I18n
 import Models.Company as Company exposing (Company)
@@ -17,6 +15,7 @@ import Models.Location as Location exposing (Location)
 import Models.Stock as Stock exposing (Stock)
 import Models.Token as Token exposing (Token)
 import Models.Xp as Xp exposing (Xp)
+import Notification
 import Services.Companies as Companies
 import Services.Locations as Locations
 import Services.Salaries as Salaries
@@ -74,8 +73,6 @@ body form =
 type Status
     = Init
     | Loading
-    | Success
-    | Error
 
 
 type Field
@@ -95,6 +92,7 @@ type Msg
     | Sent (Result Http.Error ())
     | OnFieldChange Field String
     | Send
+    | NotificationMsg Notification.Msg
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -140,16 +138,17 @@ update flags msg model =
             ( model, Cmd.none )
 
         Sent (Ok _) ->
-            ( { model | status = Success }
+            ( { model | status = Init }
             , Cmd.batch
                 [ Companies.getAll flags GotAllCompanies
                 , Locations.getAll flags GotAllLocations
+                , Notification.send NotificationMsg Notification.SalaryInserted
                 ]
             )
 
         Sent _ ->
-            ( { model | status = Error }
-            , Cmd.none
+            ( { model | status = Init }
+            , Notification.send NotificationMsg Notification.SalaryInsertingError
             )
 
         Send ->
@@ -161,6 +160,9 @@ update flags msg model =
                 Just b ->
                     Salaries.post flags Sent b
             )
+
+        NotificationMsg _ ->
+            ( model, Cmd.none )
 
         OnFieldChange field value ->
             let
@@ -256,106 +258,102 @@ update flags msg model =
             ( { model | form = newForm, status = Init }, Cmd.none )
 
 
-view : Model -> Html Msg
+extractNotification : Msg -> Maybe Notification.Msg
+extractNotification msg =
+    case msg of
+        NotificationMsg subMsg ->
+            Just subMsg
+
+        _ ->
+            Nothing
+
+
+view : Model -> List (Html Msg)
 view { form, status, companies, locations } =
-    Html.main_
-        [ Attributes.css
-            [ Css.displayFlex
-            , Css.justifyContent Css.center
-            , Css.overflow Css.auto
-            , Css.padding (Css.px 32)
-            ]
+    [ Form.view
+        { title = I18n.translate I18n.French I18n.IAddMySalary }
+        [ Input.view
+            { error = error form.token.parsed
+            , label = I18n.translate I18n.French I18n.Token
+            , onChange = OnFieldChange Token
+            , placeholder = "123456"
+            , required = True
+            , value = form.token.value
+            }
+        , Select.view
+            { error = error form.company.parsed
+            , id = "companies"
+            , label = I18n.translate I18n.French I18n.Company
+            , onChange = OnFieldChange Company
+            , options = List.map Company.toString companies
+            , placeholder = "Google"
+            , required = True
+            , value = form.company.value
+            }
+        , Select.view
+            { error = error form.location.parsed
+            , id = "locations"
+            , label = I18n.translate I18n.French I18n.Location
+            , onChange = OnFieldChange Location
+            , options = List.map Location.toString locations
+            , placeholder = "Paris"
+            , required = True
+            , value = form.location.value
+            }
+        , Input.view
+            { error = error form.compensation.parsed
+            , label = I18n.translate I18n.French I18n.Compensation
+            , onChange = OnFieldChange Compensation
+            , placeholder = "40000"
+            , required = True
+            , value = form.compensation.value
+            }
+        , Input.view
+            { error = error form.stock.parsed
+            , label = I18n.translate I18n.French I18n.Stock
+            , onChange = OnFieldChange Stock
+            , placeholder = "10000"
+            , required = False
+            , value = form.stock.value
+            }
+        , Input.view
+            { error = error form.companyXp.parsed
+            , label = I18n.translate I18n.French I18n.CompanyXp
+            , onChange = OnFieldChange CompanyXp
+            , placeholder = "2"
+            , required = False
+            , value = form.companyXp.value
+            }
+        , Input.view
+            { error = error form.totalXp.parsed
+            , label = I18n.translate I18n.French I18n.TotalXp
+            , onChange = OnFieldChange TotalXp
+            , placeholder = "10"
+            , required = False
+            , value = form.totalXp.value
+            }
+        , Input.view
+            { error = error form.level.parsed
+            , label = I18n.translate I18n.French I18n.Level
+            , onChange = OnFieldChange Level
+            , placeholder = "2"
+            , required = False
+            , value = form.level.value
+            }
+        , Button.view
+            { disabled = disabled status form
+            , label =
+                I18n.translate I18n.French <|
+                    case status of
+                        Init ->
+                            I18n.Send
+
+                        Loading ->
+                            I18n.Sending
+            , onClick = Send
+            }
         ]
-        [ Form.view
-            { title = I18n.translate I18n.French I18n.IAddMySalary }
-            [ Input.view
-                { error = error form.token.parsed
-                , label = I18n.translate I18n.French I18n.Token
-                , onChange = OnFieldChange Token
-                , placeholder = "123456"
-                , required = True
-                , value = form.token.value
-                }
-            , Select.view
-                { error = error form.company.parsed
-                , id = "companies"
-                , label = I18n.translate I18n.French I18n.Company
-                , onChange = OnFieldChange Company
-                , options = List.map Company.toString companies
-                , placeholder = "Google"
-                , required = True
-                , value = form.company.value
-                }
-            , Select.view
-                { error = error form.location.parsed
-                , id = "locations"
-                , label = I18n.translate I18n.French I18n.Location
-                , onChange = OnFieldChange Location
-                , options = List.map Location.toString locations
-                , placeholder = "Paris"
-                , required = True
-                , value = form.location.value
-                }
-            , Input.view
-                { error = error form.compensation.parsed
-                , label = I18n.translate I18n.French I18n.Compensation
-                , onChange = OnFieldChange Compensation
-                , placeholder = "40000"
-                , required = True
-                , value = form.compensation.value
-                }
-            , Input.view
-                { error = error form.stock.parsed
-                , label = I18n.translate I18n.French I18n.Stock
-                , onChange = OnFieldChange Stock
-                , placeholder = "10000"
-                , required = False
-                , value = form.stock.value
-                }
-            , Input.view
-                { error = error form.companyXp.parsed
-                , label = I18n.translate I18n.French I18n.CompanyXp
-                , onChange = OnFieldChange CompanyXp
-                , placeholder = "2"
-                , required = False
-                , value = form.companyXp.value
-                }
-            , Input.view
-                { error = error form.totalXp.parsed
-                , label = I18n.translate I18n.French I18n.TotalXp
-                , onChange = OnFieldChange TotalXp
-                , placeholder = "10"
-                , required = False
-                , value = form.totalXp.value
-                }
-            , Input.view
-                { error = error form.level.parsed
-                , label = I18n.translate I18n.French I18n.Level
-                , onChange = OnFieldChange Level
-                , placeholder = "2"
-                , required = False
-                , value = form.level.value
-                }
-            , Button.view
-                { disabled = disabled status form
-                , label =
-                    I18n.translate I18n.French <|
-                        case status of
-                            Init ->
-                                I18n.Send
-
-                            Loading ->
-                                I18n.Sending
-
-                            Error ->
-                                I18n.Error
-
-                            Success ->
-                                I18n.Sent
-                , onClick = Send
-                }
-            ]
-        ]
+    ]
 
 
 error : Result String a -> Maybe String

@@ -78,26 +78,25 @@ update msg model =
             ( { model | sort = sort }, Cmd.none )
 
 
-view : Model -> Html Msg
+view : Model -> List (Html Msg)
 view model =
-    Html.main_ [ Attributes.css [ Css.overflow Css.scroll ] ] <|
-        case model.salaries of
-            Success salaries ->
-                [ Html.table
-                    [ Attributes.css
-                        [ Css.borderSpacing Css.zero
-                        , Css.width (Css.pct 100)
-                        ]
-                    ]
-                    [ head model
-                    , salaries
-                        |> Table.sort model.sort
-                        |> body
+    case model.salaries of
+        Success salaries ->
+            [ Html.table
+                [ Attributes.css
+                    [ Css.borderSpacing Css.zero
+                    , Css.width (Css.pct 100)
                     ]
                 ]
+                [ head model
+                , salaries
+                    |> Table.sort model.sort
+                    |> body
+                ]
+            ]
 
-            _ ->
-                []
+        _ ->
+            []
 
 
 head : Model -> Html Msg

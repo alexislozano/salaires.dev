@@ -8,10 +8,10 @@ import Design.Input as Input
 import Design.Link as Link
 import Flags exposing (Flags)
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes
 import Http
 import I18n
 import Models.Email as Email exposing (Email)
+import Notification
 import Route
 import Services.Tokens as Tokens
 
@@ -42,8 +42,6 @@ body form =
 type Status
     = Init
     | Loading
-    | Success
-    | Error
 
 
 type Field
@@ -54,6 +52,7 @@ type Msg
     = Sent (Result Http.Error ())
     | OnFieldChange Field String
     | Send
+    | NotificationMsg Notification.Msg
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -71,13 +70,13 @@ update : Flags -> Msg -> Model -> ( Model, Cmd Msg )
 update flags msg model =
     case msg of
         Sent (Ok _) ->
-            ( { model | status = Success }
-            , Cmd.none
+            ( { model | status = Init }
+            , Notification.send NotificationMsg Notification.EmailSent
             )
 
         Sent _ ->
-            ( { model | status = Error }
-            , Cmd.none
+            ( { model | status = Init }
+            , Notification.send NotificationMsg Notification.EmailSendingError
             )
 
         Send ->
@@ -89,6 +88,9 @@ update flags msg model =
                 Just b ->
                     Tokens.post flags Sent b
             )
+
+        NotificationMsg _ ->
+            ( model, Cmd.none )
 
         OnFieldChange field value ->
             let
@@ -108,52 +110,48 @@ update flags msg model =
             ( { model | form = newForm, status = Init }, Cmd.none )
 
 
-view : Model -> Html Msg
+extractNotification : Msg -> Maybe Notification.Msg
+extractNotification msg =
+    case msg of
+        NotificationMsg subMsg ->
+            Just subMsg
+
+        _ ->
+            Nothing
+
+
+view : Model -> List (Html Msg)
 view { form, status } =
-    Html.main_
-        [ Attributes.css
-            [ Css.displayFlex
-            , Css.justifyContent Css.center
-            , Css.overflow Css.auto
-            , Css.padding (Css.px 32)
-            ]
+    [ Form.view
+        { title = I18n.translate I18n.French I18n.GetAToken }
+        [ Banner.view [ Css.marginBottom (Css.px 16) ]
+            { text = I18n.translate I18n.French I18n.LoginBanner }
+        , Input.view
+            { error = error form.email.parsed
+            , label = I18n.translate I18n.French I18n.Email
+            , onChange = OnFieldChange Email
+            , placeholder = "moi@exemple.fr"
+            , required = True
+            , value = form.email.value
+            }
+        , Button.view
+            { disabled = disabled status form
+            , label =
+                I18n.translate I18n.French <|
+                    case status of
+                        Init ->
+                            I18n.GetAToken
+
+                        Loading ->
+                            I18n.Sending
+            , onClick = Send
+            }
+        , Link.view [ Css.width (Css.pct 100) ]
+            { label = I18n.translate I18n.French I18n.IGotAToken
+            , url = Route.toString Route.Insert
+            }
         ]
-        [ Form.view
-            { title = I18n.translate I18n.French I18n.GetAToken }
-            [ Banner.view [ Css.marginBottom (Css.px 16) ]
-                { text = I18n.translate I18n.French I18n.LoginBanner }
-            , Input.view
-                { error = error form.email.parsed
-                , label = I18n.translate I18n.French I18n.Email
-                , onChange = OnFieldChange Email
-                , placeholder = "moi@exemple.fr"
-                , required = True
-                , value = form.email.value
-                }
-            , Button.view
-                { disabled = disabled status form
-                , label =
-                    I18n.translate I18n.French <|
-                        case status of
-                            Init ->
-                                I18n.GetAToken
-
-                            Loading ->
-                                I18n.Sending
-
-                            Error ->
-                                I18n.Error
-
-                            Success ->
-                                I18n.Sent
-                , onClick = Send
-                }
-            , Link.view [ Css.width (Css.pct 100) ]
-                { label = I18n.translate I18n.French I18n.IGotAToken
-                , url = Route.toString Route.Insert
-                }
-            ]
-        ]
+    ]
 
 
 error : Result String a -> Maybe String

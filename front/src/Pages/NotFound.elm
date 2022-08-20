@@ -1,9 +1,7 @@
 module Pages.NotFound exposing (..)
 
-import Css
 import Flags exposing (Flags)
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes
 import I18n
 
 
@@ -27,15 +25,6 @@ update msg model =
             ( model, Cmd.none )
 
 
-view : Model -> Html msg
+view : Model -> List (Html msg)
 view _ =
-    Html.main_
-        [ Attributes.css
-            [ Css.fontWeight Css.bold
-            , Css.displayFlex
-            , Css.justifyContent Css.center
-            , Css.alignItems Css.center
-            , Css.flexGrow (Css.num 1)
-            ]
-        ]
-        [ Html.text (I18n.translate I18n.French I18n.ThisPageDoesNotExist) ]
+    [ Html.text (I18n.translate I18n.French I18n.ThisPageDoesNotExist) ]

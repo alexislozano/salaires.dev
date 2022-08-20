@@ -10,6 +10,7 @@ import Flags exposing (Flags)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import I18n
+import Notification
 import Page
 import Route
 import Url exposing (Url)
@@ -31,6 +32,7 @@ main =
 type alias Model =
     { key : Key
     , flags : Flags
+    , notification : Maybe Notification.Msg
     , page : Page.Model
     }
 
@@ -38,13 +40,14 @@ type alias Model =
 type Msg
     = LinkClicked UrlRequest
     | UrlChanged Url
+    | HideNotification
     | PageMsg Page.Msg
 
 
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
 init flags url key =
     Page.init flags url
-        |> Utils.map (Model key flags) PageMsg
+        |> Utils.map (Model key flags Nothing) PageMsg
 
 
 subscriptions : Model -> Sub Msg
@@ -65,11 +68,23 @@ update msg model =
 
         UrlChanged url ->
             Page.init model.flags url
-                |> Utils.map (Model model.key model.flags) PageMsg
+                |> Utils.map (Model model.key model.flags model.notification) PageMsg
+
+        HideNotification ->
+            ( { model | notification = Nothing }
+            , Cmd.none
+            )
 
         PageMsg pageMsg ->
-            Page.update model.flags pageMsg model.page
-                |> Utils.map (Model model.key model.flags) PageMsg
+            case Page.extractNotification pageMsg of
+                Just notification ->
+                    ( { model | notification = Just notification }
+                    , Notification.hide HideNotification
+                    )
+
+                Nothing ->
+                    Page.update model.flags pageMsg model.page
+                        |> Utils.map (Model model.key model.flags model.notification) PageMsg
 
 
 view : Model -> Document Msg
@@ -77,7 +92,7 @@ view model =
     { title = "salaires.dev"
     , body =
         [ header
-        , Page.view model.page |> Html.map PageMsg
+        , Page.view model.page model.notification |> Html.map PageMsg
         , Global.global
             [ Global.body
                 [ Css.backgroundColor Palette.sand

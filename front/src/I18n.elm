@@ -21,8 +21,6 @@ type Key
     | Optional
     | Send
     | Sending
-    | Error
-    | Sent
     | ThisPageDoesNotExist
     | InsertIsDownForNow
     | Token
@@ -32,6 +30,10 @@ type Key
     | GetAToken
     | IGotAToken
     | LoginBanner
+    | EmailSent
+    | EmailSendingError
+    | SalaryInserted
+    | SalaryInstertingError
 
 
 translate : Lang -> Key -> String
@@ -84,12 +86,6 @@ translate lang key =
                 Sending ->
                     "En cours d'envoi..."
 
-                Sent ->
-                    "Envoyé"
-
-                Error ->
-                    "Erreur"
-
                 ThisPageDoesNotExist ->
                     "Cette page n'existe pas"
 
@@ -116,3 +112,15 @@ translate lang key =
 
                 LoginBanner ->
                     "Entrez une adresse email et recevez un code de confirmation que vous pourrez utiliser dans le formulaire d'ajout de salaire. L'adresse entrée ne sert qu'à recevoir le code, elle n'est pas enregistrée."
+
+                EmailSent ->
+                    "Un email a éte envoyé"
+
+                EmailSendingError ->
+                    "L'email n'a pas pu être envoyé"
+
+                SalaryInserted ->
+                    "Le salaire a été ajouté"
+
+                SalaryInstertingError ->
+                    "Le salaire n'a pas pu être ajouté"
