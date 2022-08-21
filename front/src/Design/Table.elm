@@ -66,24 +66,55 @@ title column =
             I18n.translate I18n.French I18n.Date
 
 
-header : { column : Column, direction : Direction } -> Column -> String
+subtitle : Column -> String
+subtitle column =
+    case column of
+        Company ->
+            ""
+
+        Location ->
+            ""
+
+        Level ->
+            ""
+
+        CompanyXp ->
+            I18n.translate I18n.French I18n.InYears
+
+        TotalXp ->
+            I18n.translate I18n.French I18n.InYears
+
+        Compensation ->
+            I18n.translate I18n.French I18n.CompensationHelp
+
+        Stock ->
+            I18n.translate I18n.French I18n.InEuros
+
+        Date ->
+            ""
+
+
+header : { column : Column, direction : Direction } -> Column -> { title : String, subtitle : String }
 header { column, direction } c =
     let
         displayArrow =
             equal column c
     in
-    title c
-        ++ (if displayArrow then
-                case direction of
-                    Asc ->
-                        "  ↑"
+    { title =
+        title c
+            ++ (if displayArrow then
+                    case direction of
+                        Asc ->
+                            "  ↑"
 
-                    Desc ->
-                        "  ↓"
+                        Desc ->
+                            "  ↓"
 
-            else
-                "   "
-           )
+                else
+                    "   "
+               )
+    , subtitle = subtitle c
+    }
 
 
 sort :

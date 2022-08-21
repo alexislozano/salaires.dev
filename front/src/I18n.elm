@@ -35,6 +35,9 @@ type Key
     | SalaryInserted
     | SalaryInstertingError
     | LoadingData
+    | InYears
+    | InEuros
+    | CompensationHelp
 
 
 translate : Lang -> Key -> String
@@ -49,7 +52,7 @@ translate lang key =
                     "Localisation"
 
                 Compensation ->
-                    "Compensation"
+                    "Rémunération brute"
 
                 Stock ->
                     "Stock"
@@ -128,3 +131,12 @@ translate lang key =
 
                 LoadingData ->
                     "Chargement des données..."
+
+                InYears ->
+                    "en années"
+
+                InEuros ->
+                    "en €"
+
+                CompensationHelp ->
+                    "fixe + variable en € / an"

@@ -275,6 +275,7 @@ view { form, status, companies, locations } =
         [ Input.view
             { error = error form.token.parsed
             , label = I18n.translate I18n.French I18n.Token
+            , sublabel = Nothing
             , onChange = OnFieldChange Token
             , placeholder = "123456"
             , required = True
@@ -303,6 +304,7 @@ view { form, status, companies, locations } =
         , Input.view
             { error = error form.compensation.parsed
             , label = I18n.translate I18n.French I18n.Compensation
+            , sublabel = Just <| I18n.translate I18n.French I18n.CompensationHelp
             , onChange = OnFieldChange Compensation
             , placeholder = "40000"
             , required = True
@@ -311,6 +313,7 @@ view { form, status, companies, locations } =
         , Input.view
             { error = error form.stock.parsed
             , label = I18n.translate I18n.French I18n.Stock
+            , sublabel = Just <| I18n.translate I18n.French I18n.InEuros
             , onChange = OnFieldChange Stock
             , placeholder = "10000"
             , required = False
@@ -319,6 +322,7 @@ view { form, status, companies, locations } =
         , Input.view
             { error = error form.companyXp.parsed
             , label = I18n.translate I18n.French I18n.CompanyXp
+            , sublabel = Just <| I18n.translate I18n.French I18n.InYears
             , onChange = OnFieldChange CompanyXp
             , placeholder = "2"
             , required = False
@@ -327,6 +331,7 @@ view { form, status, companies, locations } =
         , Input.view
             { error = error form.totalXp.parsed
             , label = I18n.translate I18n.French I18n.TotalXp
+            , sublabel = Just <| I18n.translate I18n.French I18n.InYears
             , onChange = OnFieldChange TotalXp
             , placeholder = "10"
             , required = False
@@ -335,6 +340,7 @@ view { form, status, companies, locations } =
         , Input.view
             { error = error form.level.parsed
             , label = I18n.translate I18n.French I18n.Level
+            , sublabel = Nothing
             , onChange = OnFieldChange Level
             , placeholder = "2"
             , required = False

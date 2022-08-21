@@ -146,8 +146,8 @@ head { sort } =
         ]
 
 
-header : Table.Column -> String -> Html Msg
-header column title =
+header : Table.Column -> { title : String, subtitle : String } -> Html Msg
+header column { title, subtitle } =
     Html.th
         [ Attributes.css
             [ Css.padding Css.zero
@@ -161,17 +161,30 @@ header column title =
                 [ Css.height (Css.px 48)
                 , Css.width (Css.pct 100)
                 , Css.border Css.zero
-                , Css.fontWeight Css.bold
                 , Css.backgroundColor Css.transparent
-                , Css.padding2 Css.zero (Css.px 16)
+                , Css.padding2 (Css.px 8) (Css.px 16)
                 , Css.textAlign Css.start
                 , Css.cursor Css.pointer
                 , Css.fontSize Css.inherit
                 , Css.fontFamily Css.inherit
                 , Css.whiteSpace Css.noWrap
+                , Css.displayFlex
+                , Css.flexDirection Css.column
                 ]
             ]
-            [ Html.text title ]
+            [ Html.span
+                [ Attributes.css
+                    [ Css.fontWeight Css.bold
+                    ]
+                ]
+                [ Html.text title ]
+            , Html.span
+                [ Attributes.css
+                    [ Css.fontSize (Css.px 12)
+                    ]
+                ]
+                [ Html.text subtitle ]
+            ]
         ]
 
 

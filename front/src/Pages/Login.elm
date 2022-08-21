@@ -129,6 +129,7 @@ view { form, status } =
         , Input.view
             { error = error form.email.parsed
             , label = I18n.translate I18n.French I18n.Email
+            , sublabel = Nothing
             , onChange = OnFieldChange Email
             , placeholder = "moi@exemple.fr"
             , required = True

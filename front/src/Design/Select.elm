@@ -25,11 +25,10 @@ view { error, id, label, onChange, options, placeholder, required, value } =
             [ Css.displayFlex
             , Css.flexDirection Css.column
             , Css.property "gap" "4px"
-            , Css.fontWeight Css.bold
             , Css.width (Css.pct 100)
             ]
         ]
-        [ Utils.label required label
+        [ Utils.label required label Nothing
         , Html.input
             [ Attributes.css
                 [ Css.border3 (Css.px 2) Css.solid <|
