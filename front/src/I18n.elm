@@ -34,6 +34,7 @@ type Key
     | EmailSendingError
     | SalaryInserted
     | SalaryInstertingError
+    | LoadingData
 
 
 translate : Lang -> Key -> String
@@ -124,3 +125,6 @@ translate lang key =
 
                 SalaryInstertingError ->
                     "Le salaire n'a pas pu être ajouté"
+
+                LoadingData ->
+                    "Chargement des données..."

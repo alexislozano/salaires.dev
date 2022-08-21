@@ -8,6 +8,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Http
+import I18n
 import Models.Company as Company
 import Models.Compensation as Compensation
 import Models.Date as Date
@@ -96,7 +97,16 @@ view model =
             ]
 
         _ ->
-            []
+            [ Html.div
+                [ Attributes.css
+                    [ Css.displayFlex
+                    , Css.height (Css.pct 100)
+                    , Css.alignItems Css.center
+                    , Css.justifyContent Css.center
+                    ]
+                ]
+                [ Html.text (I18n.translate I18n.French I18n.LoadingData) ]
+            ]
 
 
 head : Model -> Html Msg

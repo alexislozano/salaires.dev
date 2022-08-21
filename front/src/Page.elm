@@ -94,7 +94,11 @@ extractNotification msg =
 view : Model -> Maybe Notification.Msg -> Html Msg
 view model mNotification =
     Html.main_
-        [ Attributes.css [ Css.overflow Css.auto ] ]
+        [ Attributes.css
+            [ Css.overflow Css.auto
+            , Css.flexGrow (Css.num 1)
+            ]
+        ]
         ((case mNotification of
             Just notification ->
                 Notification.view notification
