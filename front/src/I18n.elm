@@ -11,6 +11,7 @@ type Key
     | Compensation
     | Stock
     | Level
+    | Title
     | CompanyXp
     | TotalXp
     | Date
@@ -60,6 +61,9 @@ translate lang key =
 
                 Level ->
                     "Niveau"
+
+                Title ->
+                     "Intitulé du poste"
 
                 CompanyXp ->
                     "Expérience entreprise"

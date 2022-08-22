@@ -13,6 +13,7 @@ import Models.Compensation as Compensation exposing (Compensation)
 import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
 import Models.Stock as Stock exposing (Stock)
+import Models.Title as Title exposing (Title)
 import Models.Token as Token exposing (Token)
 import Models.Xp as Xp exposing (Xp)
 import Notification
@@ -38,6 +39,7 @@ type alias Form =
     , level : { value : String, parsed : Result String (Maybe Level) }
     , companyXp : { value : String, parsed : Result String (Maybe Xp) }
     , totalXp : { value : String, parsed : Result String (Maybe Xp) }
+    , title : { value : String, parsed : Result String (Maybe Title) }
     }
 
 
@@ -47,8 +49,8 @@ body form =
         ( Ok company, Ok location, Ok compensation ) ->
             case ( form.stock.parsed, form.level.parsed, form.companyXp.parsed ) of
                 ( Ok stock, Ok level, Ok companyXp ) ->
-                    case ( form.totalXp.parsed, form.token.parsed ) of
-                        ( Ok totalXp, Ok token ) ->
+                    case ( form.totalXp.parsed, form.title.parsed, form.token.parsed ) of
+                        ( Ok totalXp, Ok title, Ok token ) ->
                             Just
                                 { company = company
                                 , location = location
@@ -58,6 +60,7 @@ body form =
                                 , level = level
                                 , companyXp = companyXp
                                 , totalXp = totalXp
+                                , title = title
                                 }
 
                         _ ->
@@ -84,6 +87,7 @@ type Field
     | CompanyXp
     | TotalXp
     | Level
+    | Title
 
 
 type Msg
@@ -113,6 +117,7 @@ init flags =
             , companyXp = { value = "", parsed = Ok Nothing }
             , totalXp = { value = "", parsed = Ok Nothing }
             , stock = { value = "", parsed = Ok Nothing }
+            , title = { value = "", parsed = Ok Nothing }
             }
       , status = Init
       , companies = []
@@ -229,6 +234,19 @@ update flags msg model =
                                     }
                             }
 
+                        Title ->
+                            { form
+                                | title =
+                                    { value = value
+                                    , parsed =
+                                        if String.isEmpty value then
+                                            Ok Nothing
+
+                                        else
+                                            Title.tryFromString value |> Result.map Just
+                                    }
+                            }
+
                         CompanyXp ->
                             { form
                                 | companyXp =
@@ -336,6 +354,15 @@ view { form, status, companies, locations } =
             , placeholder = "10"
             , required = False
             , value = form.totalXp.value
+            }
+        , Input.view
+            { error = error form.title.parsed
+            , label = I18n.translate I18n.French I18n.Title
+            , sublabel = Nothing
+            , onChange = OnFieldChange Title
+            , placeholder = "Fullstack Developer"
+            , required = False
+            , value = form.title.value
             }
         , Input.view
             { error = error form.level.parsed
