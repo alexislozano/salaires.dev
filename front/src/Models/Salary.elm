@@ -6,7 +6,7 @@ import Models.Date exposing (Date)
 import Models.Level exposing (Level)
 import Models.Location exposing (Location)
 import Models.Stock exposing (Stock)
-import Models.Xp as Xp exposing (Xp)
+import Models.Xp exposing (Xp)
 
 
 type Salary
@@ -35,13 +35,4 @@ toFields (Salary fields) =
 
 tryNew : Fields -> Result String Salary
 tryNew fields =
-    case ( fields.companyXp, fields.totalXp ) of
-        ( Just cXp, Just tXp ) ->
-            if Xp.toInt cXp > Xp.toInt tXp then
-                Err "L'expérience entreprise ne peut pas être plus grande que l'expérience totale"
-
-            else
-                Ok (Salary fields)
-
-        _ ->
-            Ok (Salary fields)
+    Ok (Salary fields)
