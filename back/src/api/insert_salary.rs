@@ -19,6 +19,7 @@ pub struct Request {
     token: String,
     stock: Option<i32>,
     level: Option<String>,
+    title: Option<String>,
     company_xp: Option<i32>,
     total_xp: Option<i32>,
 }
@@ -38,6 +39,11 @@ impl TryFrom<Request> for Salary {
                 None
             },
             if let Some(raw) = request.level {
+                Some(raw.try_into()?)
+            } else {
+                None
+            },
+            if let Some(raw) = request.title {
                 Some(raw.try_into()?)
             } else {
                 None
