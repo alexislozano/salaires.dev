@@ -78,6 +78,7 @@ type alias Response =
     , date : Date
     , stock : Maybe Stock
     , level : Maybe Level
+    , title : Maybe Title
     , companyXp : Maybe Xp
     , totalXp : Maybe Xp
     }
@@ -97,6 +98,7 @@ decoder =
         |> required "date" Date.decoder
         |> required "stock" (maybe Stock.decoder)
         |> required "level" (maybe Level.decoder)
+        |> required "title" (maybe Title.decoder)
         |> required "company_xp" (maybe Xp.decoder)
         |> required "total_xp" (maybe Xp.decoder)
         |> andThen toSalaryDecoder

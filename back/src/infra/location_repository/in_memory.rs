@@ -1,6 +1,6 @@
 use std::sync::Mutex;
 
-use super::{LocationRepository, FetchAllError};
+use super::{FetchAllError, LocationRepository};
 use crate::domain::models::Location;
 use async_trait::async_trait;
 

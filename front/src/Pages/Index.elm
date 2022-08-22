@@ -16,6 +16,7 @@ import Models.Level as Level
 import Models.Location as Location
 import Models.Salary as Salary exposing (Salary)
 import Models.Stock as Stock
+import Models.Title as Title
 import Models.Xp as Xp
 import Result exposing (Result(..))
 import Services.Salaries as Salaries
@@ -139,6 +140,9 @@ head { sort } =
             , Table.Level
                 |> Table.header sort
                 |> header Table.Level
+            , Table.Title
+                |> Table.header sort
+                |> header Table.Level
             , Table.Date
                 |> Table.header sort
                 |> header Table.Date
@@ -237,6 +241,11 @@ row index salary =
         , Salary.toFields salary
             |> .level
             |> Maybe.map Level.toString
+            |> Maybe.withDefault ""
+            |> cell
+        , Salary.toFields salary
+            |> .title
+            |> Maybe.map Title.toString
             |> Maybe.withDefault ""
             |> cell
         , Salary.toFields salary

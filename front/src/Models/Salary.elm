@@ -6,6 +6,7 @@ import Models.Date exposing (Date)
 import Models.Level exposing (Level)
 import Models.Location exposing (Location)
 import Models.Stock exposing (Stock)
+import Models.Title exposing (Title)
 import Models.Xp exposing (Xp)
 
 
@@ -23,6 +24,7 @@ type alias Fields =
     -- optional
     , stock : Maybe Stock
     , level : Maybe Level
+    , title : Maybe Title
     , companyXp : Maybe Xp
     , totalXp : Maybe Xp
     }

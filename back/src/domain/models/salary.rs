@@ -1,4 +1,4 @@
-use super::{Company, Compensation, Date, Level, Title, Location, Stock, Xp};
+use super::{Company, Compensation, Date, Level, Location, Stock, Title, Xp};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Salary {
