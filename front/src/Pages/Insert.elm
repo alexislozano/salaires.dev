@@ -20,6 +20,7 @@ import Notification
 import Services.Companies as Companies
 import Services.Locations as Locations
 import Services.Salaries as Salaries
+import Services.Titles as Titles
 
 
 type alias Model =
@@ -41,7 +42,6 @@ type alias Form =
     , level : { value : String, parsed : Result String (Maybe Level) }
     , companyXp : { value : String, parsed : Result String (Maybe Xp) }
     , totalXp : { value : String, parsed : Result String (Maybe Xp) }
-    , title : { value : String, parsed : Result String (Maybe Title) }
     }
 
 
@@ -63,7 +63,6 @@ body form =
                                 , level = level
                                 , companyXp = companyXp
                                 , totalXp = totalXp
-                                , title = title
                                 }
 
                         _ ->
@@ -96,6 +95,7 @@ type Field
 type Msg
     = GotAllCompanies (Result Http.Error (List Company))
     | GotAllLocations (Result Http.Error (List Location))
+    | GotAllTitles (Result Http.Error (List Title))
     | Sent (Result Http.Error ())
     | OnFieldChange Field String
     | Send
@@ -109,6 +109,7 @@ init flags =
             Cmd.batch
                 [ Companies.getAll flags GotAllCompanies
                 , Locations.getAll flags GotAllLocations
+                , Titles.getAll flags GotAllTitles
                 ]
     in
     ( { form =
@@ -121,11 +122,11 @@ init flags =
             , companyXp = { value = "", parsed = Ok Nothing }
             , totalXp = { value = "", parsed = Ok Nothing }
             , stock = { value = "", parsed = Ok Nothing }
-            , title = { value = "", parsed = Ok Nothing }
             }
       , status = Init
       , companies = []
       , locations = []
+      , titles = []
       }
     , cmd
     )
@@ -146,11 +147,18 @@ update flags msg model =
         GotAllLocations _ ->
             ( model, Cmd.none )
 
+        GotAllTitles (Ok titles) ->
+            ( { model | titles = titles }, Cmd.none )
+
+        GotAllTitles _ ->
+            ( model, Cmd.none )
+
         Sent (Ok _) ->
             ( { model | status = Init }
             , Cmd.batch
                 [ Companies.getAll flags GotAllCompanies
                 , Locations.getAll flags GotAllLocations
+                , Titles.getAll flags GotAllTitles
                 , Notification.send NotificationMsg Notification.SalaryInserted
                 ]
             )
@@ -286,7 +294,7 @@ extractNotification msg =
 
 
 view : Model -> List (Html Msg)
-view { form, status, companies, locations } =
+view { form, status, companies, locations, titles } =
     [ Form.view
         { title = I18n.translate I18n.French I18n.IAddMySalary }
         [ Input.view
@@ -308,10 +316,11 @@ view { form, status, companies, locations } =
             , required = True
             , value = form.company.value
             }
-        , Input.view
+        , Select.view
             { error = error form.title.parsed
+            , id = "titles"
             , label = I18n.translate I18n.French I18n.Title
-            , sublabel = Nothing
+            , options = List.map Title.toString titles
             , onChange = OnFieldChange Title
             , placeholder = I18n.translate I18n.French I18n.TitlePlaceholder
             , required = True

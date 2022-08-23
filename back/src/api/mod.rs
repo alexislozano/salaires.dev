@@ -1,11 +1,13 @@
 mod fetch_companies;
 mod fetch_locations;
 mod fetch_salaries;
+mod fetch_titles;
 mod insert_salary;
 mod send_token;
 
 use crate::infra::{
-    CompanyRepository, LocationRepository, SalaryRepository, TokenRepository, TokenSender,
+    CompanyRepository, LocationRepository, SalaryRepository, TitleRepository, TokenRepository,
+    TokenSender,
 };
 use axum::{
     error_handling::HandleErrorLayer,
@@ -16,6 +18,7 @@ use axum::{
 use fetch_companies::fetch_companies;
 use fetch_locations::fetch_locations;
 use fetch_salaries::fetch_salaries;
+use fetch_titles::fetch_titles;
 use insert_salary::insert_salary;
 use send_token::send_token;
 use std::{env, sync::Arc, time::Duration};
@@ -26,6 +29,7 @@ pub async fn serve(
     salary_repo: Arc<dyn SalaryRepository>,
     company_repo: Arc<dyn CompanyRepository>,
     location_repo: Arc<dyn LocationRepository>,
+    title_repo: Arc<dyn TitleRepository>,
     token_repo: Arc<dyn TokenRepository>,
     token_sender: Arc<dyn TokenSender>,
 ) {
@@ -52,6 +56,10 @@ pub async fn serve(
         .route(
             "/locations",
             get(fetch_locations).layer(Extension(location_repo)),
+        )
+        .route(
+            "/titles",
+            get(fetch_titles).layer(Extension(title_repo))
         )
         .route(
             "/tokens",
