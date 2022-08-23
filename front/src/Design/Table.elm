@@ -145,7 +145,7 @@ sort { column, direction } salaries =
                     \s1 s2 -> Utils.compareMaybe Models.Level.compare s1.level s2.level
 
                 Title ->
-                    \s1 s2 -> Utils.compareMaybe Models.Title.compare s1.title s2.title
+                    \s1 s2 -> Models.Title.compare s1.title s2.title
 
                 CompanyXp ->
                     \s1 s2 -> Utils.compareMaybe Models.Xp.compare s1.companyXp s2.companyXp

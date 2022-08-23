@@ -27,12 +27,14 @@ type alias Model =
     , status : Status
     , companies : List Company
     , locations : List Location
+    , titles : List Title
     }
 
 
 type alias Form =
     { token : { value : String, parsed : Result String Token }
     , company : { value : String, parsed : Result String Company }
+    , title : { value : String, parsed : Result String (Title) }
     , location : { value : String, parsed : Result String Location }
     , compensation : { value : String, parsed : Result String Compensation }
     , stock : { value : String, parsed : Result String (Maybe Stock) }
@@ -53,6 +55,7 @@ body form =
                         ( Ok totalXp, Ok title, Ok token ) ->
                             Just
                                 { company = company
+                                , title = title
                                 , location = location
                                 , compensation = compensation
                                 , token = token
@@ -110,6 +113,7 @@ init flags =
     in
     ( { form =
             { company = { value = "", parsed = Err " " }
+            , title = { value = "", parsed = Err " " }
             , location = { value = "", parsed = Err " " }
             , compensation = { value = "", parsed = Err " " }
             , token = { value = "", parsed = Err " " }
@@ -184,6 +188,14 @@ update flags msg model =
                                     }
                             }
 
+                        Title ->
+                            { form
+                                | title =
+                                    { value = value
+                                    , parsed = Title.tryFromString value
+                                    }
+                            }
+
                         Location ->
                             { form
                                 | location =
@@ -231,19 +243,6 @@ update flags msg model =
 
                                         else
                                             Level.tryFromString value |> Result.map Just
-                                    }
-                            }
-
-                        Title ->
-                            { form
-                                | title =
-                                    { value = value
-                                    , parsed =
-                                        if String.isEmpty value then
-                                            Ok Nothing
-
-                                        else
-                                            Title.tryFromString value |> Result.map Just
                                     }
                             }
 
@@ -315,7 +314,7 @@ view { form, status, companies, locations } =
             , sublabel = Nothing
             , onChange = OnFieldChange Title
             , placeholder = I18n.translate I18n.French I18n.TitlePlaceholder
-            , required = False
+            , required = True
             , value = form.title.value
             }
         , Select.view

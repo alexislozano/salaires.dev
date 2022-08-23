@@ -80,12 +80,12 @@ impl SalaryRepository for SupabaseSalaryRepository {
 #[derive(Deserialize, Serialize)]
 pub struct SupabaseSalary {
     company: String,
+    title: String,
     location: String,
     compensation: i32,
     date: NaiveDate,
     stock: Option<i32>,
     level: Option<String>,
-    title: Option<String>,
     company_xp: Option<i32>,
     total_xp: Option<i32>,
 }
@@ -94,12 +94,12 @@ impl From<Salary> for SupabaseSalary {
     fn from(salary: Salary) -> Self {
         Self {
             company: salary.company.into(),
+            title: salary.title.into(),
             location: salary.location.into(),
             compensation: salary.compensation.into(),
             date: salary.date.into(),
             stock: salary.stock.map(|stock| stock.into()),
             level: salary.level.map(|level| level.into()),
-            title: salary.title.map(|title| title.into()),
             company_xp: salary.company_xp.map(|company_xp| company_xp.into()),
             total_xp: salary.total_xp.map(|total_xp| total_xp.into()),
         }
@@ -112,6 +112,7 @@ impl TryFrom<SupabaseSalary> for Salary {
     fn try_from(salary: SupabaseSalary) -> Result<Self, Self::Error> {
         Ok(Self::new(
             salary.company.try_into()?,
+            salary.title.try_into()?,
             salary.location.try_into()?,
             salary.compensation.try_into()?,
             salary.date.into(),
@@ -121,11 +122,6 @@ impl TryFrom<SupabaseSalary> for Salary {
                 None
             },
             if let Some(raw) = salary.level {
-                Some(raw.try_into()?)
-            } else {
-                None
-            },
-            if let Some(raw) = salary.title {
                 Some(raw.try_into()?)
             } else {
                 None

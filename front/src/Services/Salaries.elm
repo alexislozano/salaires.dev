@@ -52,7 +52,7 @@ type alias Body =
     , level : Maybe Level
     , companyXp : Maybe Xp
     , totalXp : Maybe Xp
-    , title : Maybe Title
+    , title : Title
     }
 
 
@@ -60,11 +60,11 @@ encode : Body -> Value
 encode body =
     object
         [ ( "company", Company.encode body.company )
+        , ( "title", Title.encode body.title )
         , ( "location", Location.encode body.location )
         , ( "compensation", Compensation.encode body.compensation )
         , ( "token", Token.encode body.token )
         , ( "stock", body.stock |> Maybe.map Stock.encode |> Maybe.withDefault null )
-        , ( "title", body.title |> Maybe.map Title.encode |> Maybe.withDefault null )
         , ( "level", body.level |> Maybe.map Level.encode |> Maybe.withDefault null )
         , ( "company_xp", body.companyXp |> Maybe.map Xp.encode |> Maybe.withDefault null )
         , ( "total_xp", body.totalXp |> Maybe.map Xp.encode |> Maybe.withDefault null )
@@ -73,12 +73,12 @@ encode body =
 
 type alias Response =
     { company : Company
+    , title : Title
     , location : Location
     , compensation : Compensation
     , date : Date
     , stock : Maybe Stock
     , level : Maybe Level
-    , title : Maybe Title
     , companyXp : Maybe Xp
     , totalXp : Maybe Xp
     }
@@ -93,12 +93,12 @@ decoder : Decoder Salary
 decoder =
     succeed Response
         |> required "company" Company.decoder
+        |> required "title" Title.decoder
         |> required "location" Location.decoder
         |> required "compensation" Compensation.decoder
         |> required "date" Date.decoder
         |> required "stock" (maybe Stock.decoder)
         |> required "level" (maybe Level.decoder)
-        |> required "title" (maybe Title.decoder)
         |> required "company_xp" (maybe Xp.decoder)
         |> required "total_xp" (maybe Xp.decoder)
         |> andThen toSalaryDecoder

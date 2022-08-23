@@ -14,12 +14,12 @@ use serde::Deserialize;
 #[derive(Deserialize, Clone)]
 pub struct Request {
     company: String,
+    title: String,
     location: String,
     compensation: i32,
     token: String,
     stock: Option<i32>,
     level: Option<String>,
-    title: Option<String>,
     company_xp: Option<i32>,
     total_xp: Option<i32>,
 }
@@ -30,6 +30,7 @@ impl TryFrom<Request> for Salary {
     fn try_from(request: Request) -> Result<Self, Self::Error> {
         Ok(Self::new(
             request.company.try_into()?,
+            request.title.try_into()?,
             request.location.try_into()?,
             request.compensation.try_into()?,
             Utc::today().naive_utc().into(),
@@ -39,11 +40,6 @@ impl TryFrom<Request> for Salary {
                 None
             },
             if let Some(raw) = request.level {
-                Some(raw.try_into()?)
-            } else {
-                None
-            },
-            if let Some(raw) = request.title {
                 Some(raw.try_into()?)
             } else {
                 None

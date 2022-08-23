@@ -3,6 +3,15 @@ pub struct Title {
     raw: String,
 }
 
+impl Title {
+    #[cfg(test)]
+    pub fn test() -> Self {
+        Self {
+            raw: String::from("Dev Fullstack"),
+        }
+    }
+}
+
 impl From<Title> for String {
     fn from(title: Title) -> Self {
         title.raw
