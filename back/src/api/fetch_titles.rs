@@ -31,9 +31,6 @@ pub async fn fetch_titles(
             .map(|title| title.into())
             .collect::<Vec<Response>>()
             .into()),
-        Err(use_cases::fetch_titles::Error::Unknown(str)) => {
-            println!("ERR: {:?}", str);
-            Err((StatusCode::INTERNAL_SERVER_ERROR, str))
-        }
+        Err(use_cases::fetch_titles::Error::Unknown(str)) =>  Err((StatusCode::INTERNAL_SERVER_ERROR, str))
     }
 }

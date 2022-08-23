@@ -35,7 +35,7 @@ impl TitleRepository for SupabaseTitleRepository {
     async fn fetch_all(&self) -> Result<Vec<Title>, FetchAllError> {
         let client = reqwest::Client::new();
         let res = match client
-            .get(format!("{}titles?select=*&order=title", self.url))
+            .get(format!("{}titles?select=*&order=title&title=neq.NULL", self.url))
             .headers(self.headers())
             .send()
             .await
