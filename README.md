@@ -89,6 +89,7 @@ create table salaries (
     id uuid primary key not null default uuid_generate_v4(),
     location varchar not null,
     company varchar not null,
+    title varchar not null,
     date date not null default now(),
     compensation numeric not null,
     stock numeric,
@@ -123,5 +124,13 @@ create view companies as (
 ```sql
 create view locations as (
     select distinct location from salaries
+);
+```
+
+### Créer la vue des Intitulé de post
+
+```sql
+create view titles as (
+    select distinct title from salaries
 );
 ```
