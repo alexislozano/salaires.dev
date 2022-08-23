@@ -2,7 +2,7 @@ module Services.Salaries exposing (..)
 
 import Flags exposing (Flags)
 import Http
-import Json.Decode exposing (Decoder, andThen, list, maybe, succeed)
+import Json.Decode as Decode exposing (Decoder, andThen, list, maybe, succeed)
 import Json.Decode.Pipeline exposing (required)
 import Json.Encode exposing (Value, null, object)
 import Models.Company as Company exposing (Company)
@@ -14,7 +14,6 @@ import Models.Salary as Salary exposing (Salary)
 import Models.Stock as Stock exposing (Stock)
 import Models.Token as Token exposing (Token)
 import Models.Xp as Xp exposing (Xp)
-import Utils
 
 
 getAll : Flags -> (Result Http.Error (List Salary) -> msg) -> Cmd msg
@@ -83,7 +82,7 @@ type alias Response =
 
 toSalaryDecoder : Response -> Decoder Salary
 toSalaryDecoder response =
-    Salary.tryNew response |> Utils.resultDecoder
+    Salary.new response |> Decode.succeed
 
 
 decoder : Decoder Salary

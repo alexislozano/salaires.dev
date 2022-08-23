@@ -33,6 +33,6 @@ toFields (Salary fields) =
     fields
 
 
-tryNew : Fields -> Result String Salary
-tryNew fields =
-    Ok (Salary fields)
+new : Fields -> Salary
+new fields =
+    Salary fields
