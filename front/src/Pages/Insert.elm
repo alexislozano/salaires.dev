@@ -309,6 +309,15 @@ view { form, status, companies, locations } =
             , required = True
             , value = form.company.value
             }
+        , Input.view
+            { error = error form.title.parsed
+            , label = I18n.translate I18n.French I18n.Title
+            , sublabel = Nothing
+            , onChange = OnFieldChange Title
+            , placeholder = I18n.translate I18n.French I18n.TitlePlaceholder
+            , required = False
+            , value = form.title.value
+            }
         , Select.view
             { error = error form.location.parsed
             , id = "locations"
@@ -354,15 +363,6 @@ view { form, status, companies, locations } =
             , placeholder = "10"
             , required = False
             , value = form.totalXp.value
-            }
-        , Input.view
-            { error = error form.title.parsed
-            , label = I18n.translate I18n.French I18n.Title
-            , sublabel = Nothing
-            , onChange = OnFieldChange Title
-            , placeholder = "Fullstack Developer"
-            , required = False
-            , value = form.title.value
             }
         , Input.view
             { error = error form.level.parsed

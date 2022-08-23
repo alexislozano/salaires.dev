@@ -122,6 +122,9 @@ head { sort } =
             [ Table.Company
                 |> Table.header sort
                 |> header Table.Company
+            , Table.Title
+                |> Table.header sort
+                |> header Table.Level
             , Table.Location
                 |> Table.header sort
                 |> header Table.Location
@@ -138,9 +141,6 @@ head { sort } =
                 |> Table.header sort
                 |> header Table.TotalXp
             , Table.Level
-                |> Table.header sort
-                |> header Table.Level
-            , Table.Title
                 |> Table.header sort
                 |> header Table.Level
             , Table.Date
@@ -216,6 +216,11 @@ row index salary =
             |> Company.toString
             |> cell
         , Salary.toFields salary
+            |> .title
+            |> Maybe.map Title.toString
+            |> Maybe.withDefault ""
+            |> cell
+        , Salary.toFields salary
             |> .location
             |> Location.toString
             |> cell
@@ -241,11 +246,6 @@ row index salary =
         , Salary.toFields salary
             |> .level
             |> Maybe.map Level.toString
-            |> Maybe.withDefault ""
-            |> cell
-        , Salary.toFields salary
-            |> .title
-            |> Maybe.map Title.toString
             |> Maybe.withDefault ""
             |> cell
         , Salary.toFields salary

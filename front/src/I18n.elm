@@ -39,6 +39,7 @@ type Key
     | InYears
     | InEuros
     | CompensationHelp
+    | TitlePlaceholder
     | TheSiteIsInMaintenance
 
 
@@ -148,3 +149,7 @@ translate lang key =
 
                 TheSiteIsInMaintenance ->
                     "Le site est en maintenance"
+
+                TitlePlaceholder ->
+                    "Dev fullstack"
+
