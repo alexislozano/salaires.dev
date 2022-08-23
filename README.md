@@ -127,7 +127,7 @@ create view locations as (
 );
 ```
 
-### Créer la vue des Intitulé de post
+### Créer la vue des intitulés de poste
 
 ```sql
 create view titles as (

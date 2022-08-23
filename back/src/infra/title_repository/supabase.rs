@@ -47,7 +47,6 @@ impl TitleRepository for SupabaseTitleRepository {
         let supabase_titles = match res.json::<Vec<SupabaseTitle>>().await {
             Ok(titles) => titles,
             Err(e) => {
-                println!("ERR {:?}", e);
                 return Err(FetchAllError::Unknown("could not parse json"));
             }
         };

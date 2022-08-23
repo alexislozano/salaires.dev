@@ -31,7 +31,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn it_should_return_all_locations_otherwise() {
+    async fn it_should_return_all_titles_otherwise() {
         let title = Title::test();
         let repo = Arc::new(InMemoryTitleRepository::new());
         repo.insert(title.clone());
