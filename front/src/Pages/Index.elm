@@ -217,7 +217,8 @@ row index salary =
             |> cell
         , Salary.toFields salary
             |> .title
-            |> Title.toString
+            |> Maybe.map Title.toString
+            |> Maybe.withDefault ""
             |> cell
         , Salary.toFields salary
             |> .location

@@ -3,7 +3,7 @@ use super::{Company, Compensation, Date, Level, Location, Stock, Title, Xp};
 #[derive(Clone, Debug, PartialEq)]
 pub struct Salary {
     pub company: Company,
-    pub title: Title,
+    pub title: Option<Title>,
     pub location: Location,
     pub compensation: Compensation,
     pub date: Date,
@@ -18,7 +18,7 @@ impl Salary {
     pub fn test() -> Self {
         Self {
             company: Company::test(),
-            title: Title::test(),
+            title: None,
             location: Location::test(),
             compensation: Compensation::test(),
             date: Date::test(),
@@ -31,7 +31,7 @@ impl Salary {
 
     pub fn new(
         company: Company,
-        title: Title,
+        title: Option<Title>,
         location: Location,
         compensation: Compensation,
         date: Date,

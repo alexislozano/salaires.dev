@@ -11,7 +11,7 @@ use serde::Serialize;
 #[derive(Serialize)]
 pub struct Response {
     company: String,
-    title: String,
+    title: Option<String>,
     location: String,
     compensation: i32,
     date: NaiveDate,
@@ -25,7 +25,7 @@ impl From<Salary> for Response {
     fn from(salary: Salary) -> Self {
         Self {
             company: salary.company.into(),
-            title: salary.title.into(),
+            title: salary.title.map(|title| title.into()),
             location: salary.location.into(),
             compensation: salary.compensation.into(),
             date: salary.date.into(),

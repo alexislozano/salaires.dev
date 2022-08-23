@@ -46,9 +46,7 @@ impl TitleRepository for SupabaseTitleRepository {
 
         let supabase_titles = match res.json::<Vec<SupabaseTitle>>().await {
             Ok(titles) => titles,
-            Err(e) => {
-                return Err(FetchAllError::Unknown("could not parse json"));
-            }
+            _ => return Err(FetchAllError::Unknown("could not parse json"))
         };
 
         let mut titles = vec![];

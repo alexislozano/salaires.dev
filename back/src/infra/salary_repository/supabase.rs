@@ -80,7 +80,7 @@ impl SalaryRepository for SupabaseSalaryRepository {
 #[derive(Deserialize, Serialize)]
 pub struct SupabaseSalary {
     company: String,
-    title: String,
+    title: Option<String>,
     location: String,
     compensation: i32,
     date: NaiveDate,
@@ -94,7 +94,7 @@ impl From<Salary> for SupabaseSalary {
     fn from(salary: Salary) -> Self {
         Self {
             company: salary.company.into(),
-            title: salary.title.into(),
+            title: salary.title.map(|title| title.into()),
             location: salary.location.into(),
             compensation: salary.compensation.into(),
             date: salary.date.into(),
@@ -112,7 +112,11 @@ impl TryFrom<SupabaseSalary> for Salary {
     fn try_from(salary: SupabaseSalary) -> Result<Self, Self::Error> {
         Ok(Self::new(
             salary.company.try_into()?,
-            salary.title.try_into()?,
+            if let Some(raw) = salary.title {
+                Some(raw.try_into()?)
+            } else {
+                None
+            },
             salary.location.try_into()?,
             salary.compensation.try_into()?,
             salary.date.into(),

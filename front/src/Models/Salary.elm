@@ -17,12 +17,12 @@ type Salary
 type alias Fields =
     { -- required
       company : Company
-    , title : Title
     , location : Location
     , compensation : Compensation
     , date : Date
 
     -- optional
+    , title : Maybe Title
     , stock : Maybe Stock
     , level : Maybe Level
     , companyXp : Maybe Xp

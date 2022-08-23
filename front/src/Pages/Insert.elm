@@ -35,7 +35,7 @@ type alias Model =
 type alias Form =
     { token : { value : String, parsed : Result String Token }
     , company : { value : String, parsed : Result String Company }
-    , title : { value : String, parsed : Result String (Title) }
+    , title : { value : String, parsed : Result String (Maybe Title) }
     , location : { value : String, parsed : Result String Location }
     , compensation : { value : String, parsed : Result String Compensation }
     , stock : { value : String, parsed : Result String (Maybe Stock) }
@@ -114,7 +114,7 @@ init flags =
     in
     ( { form =
             { company = { value = "", parsed = Err " " }
-            , title = { value = "", parsed = Err " " }
+            , title = { value = "", parsed = Ok Nothing }
             , location = { value = "", parsed = Err " " }
             , compensation = { value = "", parsed = Err " " }
             , token = { value = "", parsed = Err " " }
@@ -200,7 +200,11 @@ update flags msg model =
                             { form
                                 | title =
                                     { value = value
-                                    , parsed = Title.tryFromString value
+                                    , parsed =
+                                        if String.isEmpty value then
+                                            Ok Nothing
+                                        else
+                                            Title.tryFromString value |> Result.map Just
                                     }
                             }
 
@@ -323,7 +327,7 @@ view { form, status, companies, locations, titles } =
             , options = List.map Title.toString titles
             , onChange = OnFieldChange Title
             , placeholder = I18n.translate I18n.French I18n.TitlePlaceholder
-            , required = True
+            , required = False
             , value = form.title.value
             }
         , Select.view
