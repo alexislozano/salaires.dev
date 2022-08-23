@@ -8,6 +8,7 @@ import Notification
 import Pages.Index as Index
 import Pages.Insert as Insert
 import Pages.Login as Login
+import Pages.Maintenance as Maintenance
 import Pages.NoInsert as NoInsert
 import Pages.NotFound as NotFound
 import Route
@@ -21,6 +22,7 @@ type Model
     | NoInsertModel NoInsert.Model
     | LoginModel Login.Model
     | NotFoundModel NotFound.Model
+    | MaintenanceModel Maintenance.Model
 
 
 type Msg
@@ -29,26 +31,32 @@ type Msg
     | NoInsertMsg NoInsert.Msg
     | LoginMsg Login.Msg
     | NotFoundMsg NotFound.Msg
+    | MaintenanceMsg Maintenance.Msg
 
 
 init : Flags -> Url -> ( Model, Cmd Msg )
 init flags url =
-    case Route.parse url of
-        Route.Index ->
-            Index.init flags
-                |> Utils.map IndexModel IndexMsg
+    if flags.maintenance then
+        Maintenance.init flags
+            |> Utils.map MaintenanceModel MaintenanceMsg
 
-        Route.Insert ->
-            Insert.init flags
-                |> Utils.map InsertModel InsertMsg
+    else
+        case Route.parse url of
+            Route.Index ->
+                Index.init flags
+                    |> Utils.map IndexModel IndexMsg
 
-        Route.Login ->
-            Login.init flags
-                |> Utils.map LoginModel LoginMsg
+            Route.Insert ->
+                Insert.init flags
+                    |> Utils.map InsertModel InsertMsg
 
-        Route.NotFound ->
-            NotFound.init flags
-                |> Utils.map NotFoundModel NotFoundMsg
+            Route.Login ->
+                Login.init flags
+                    |> Utils.map LoginModel LoginMsg
+
+            Route.NotFound ->
+                NotFound.init flags
+                    |> Utils.map NotFoundModel NotFoundMsg
 
 
 update : Flags -> Msg -> Model -> ( Model, Cmd Msg )
@@ -73,6 +81,10 @@ update flags msg model =
         ( NotFoundMsg subMsg, NotFoundModel subModel ) ->
             NotFound.update subMsg subModel
                 |> Utils.map NotFoundModel NotFoundMsg
+
+        ( MaintenanceMsg subMsg, MaintenanceModel subModel ) ->
+            Maintenance.update subMsg subModel
+                |> Utils.map MaintenanceModel MaintenanceMsg
 
         _ ->
             ( model, Cmd.none )
@@ -126,5 +138,9 @@ view model mNotification =
                     NotFoundModel subModel ->
                         NotFound.view subModel
                             |> List.map (Html.map NotFoundMsg)
+
+                    MaintenanceModel subModel ->
+                        Maintenance.view subModel
+                            |> List.map (Html.map MaintenanceMsg)
                )
         )

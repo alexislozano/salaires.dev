@@ -1,4 +1,4 @@
-module Pages.NotFound exposing (..)
+module Pages.Maintenance exposing (..)
 
 import Css
 import Flags exposing (Flags)
@@ -37,5 +37,5 @@ view _ =
             , Css.justifyContent Css.center
             ]
         ]
-        [ Html.text (I18n.translate I18n.French I18n.ThisPageDoesNotExist) ]
+        [ Html.text (I18n.translate I18n.French I18n.TheSiteIsInMaintenance) ]
     ]

@@ -38,6 +38,7 @@ type Key
     | InYears
     | InEuros
     | CompensationHelp
+    | TheSiteIsInMaintenance
 
 
 translate : Lang -> Key -> String
@@ -140,3 +141,6 @@ translate lang key =
 
                 CompensationHelp ->
                     "fixe + variable en € / an"
+
+                TheSiteIsInMaintenance ->
+                    "Le site est en maintenance"

@@ -4,5 +4,6 @@ Elm.Main.init({
     node: document.getElementById("root"),
     flags: {
         apiUrl: process.env.API_URL,
+        maintenance: process.env.MAINTENANCE === "true",
     },
 });
