@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 async-trait = "0.1"
 axum = "0.5.15"
+captcha = "0.0.9"
 chrono = { version = "0.4", features = ["serde"] }
 dotenv = "0.15.0"
 lettre = { version = "0.10", default-features = false, features = ["builder", "hostname", "pool", "smtp-transport", "tokio1-rustls-tls"] }

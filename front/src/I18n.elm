@@ -41,6 +41,7 @@ type Key
     | CompensationHelp
     | TitlePlaceholder
     | TheSiteIsInMaintenance
+    | Captcha
 
 
 translate : Lang -> Key -> String
@@ -64,7 +65,7 @@ translate lang key =
                     "Niveau"
 
                 Title ->
-                     "Intitulé du poste"
+                    "Intitulé du poste"
 
                 CompanyXp ->
                     "Expérience entreprise"
@@ -153,3 +154,5 @@ translate lang key =
                 TitlePlaceholder ->
                     "Dev fullstack"
 
+                Captcha ->
+                    "Captcha"

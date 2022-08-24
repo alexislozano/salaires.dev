@@ -1,6 +1,7 @@
-use crate::domain::models::{Email, Token};
+use crate::domain::models::{Captcha, Email, Token};
 use crate::infra::{
-    token_repository::InsertError, token_sender::SendError, TokenRepository, TokenSender,
+    captcha_repository::DeleteError, token_repository::InsertError, token_sender::SendError,
+    CaptchaRepository, TokenRepository, TokenSender,
 };
 use std::sync::Arc;
 
@@ -9,13 +10,20 @@ pub enum Error {
 }
 
 pub async fn send_token(
-    repo: Arc<dyn TokenRepository>,
+    captcha_repo: Arc<dyn CaptchaRepository>,
+    token_repo: Arc<dyn TokenRepository>,
     sender: Arc<dyn TokenSender>,
+    captcha: Captcha,
     email: Email,
 ) -> Result<(), Error> {
+    match captcha_repo.delete(captcha).await {
+        Ok(_) => {}
+        Err(DeleteError::Unknown(str)) => return Err(Error::Unknown(str)),
+    }
+
     let token = Token::generate();
 
-    match repo.insert(token.clone()).await {
+    match token_repo.insert(token.clone()).await {
         Ok(()) => {}
         Err(InsertError::Unknown(str)) => return Err(Error::Unknown(str)),
     };
@@ -31,15 +39,49 @@ pub async fn send_token(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::infra::{InMemoryTokenRepository, StubTokenSender};
+    use crate::infra::{InMemoryCaptchaRepository, InMemoryTokenRepository, StubTokenSender};
+
+    #[tokio::test]
+    async fn it_should_return_an_unknown_error_when_the_captcha_could_not_be_deleted() {
+        let captcha = Captcha::test();
+        let email = Email::test();
+        let captcha_repo = Arc::new(InMemoryCaptchaRepository::new().with_error());
+        let token_repo = Arc::new(InMemoryTokenRepository::new());
+        let sender = Arc::new(StubTokenSender::new());
+
+        let res = send_token(captcha_repo, token_repo, sender, captcha, email).await;
+
+        match res {
+            Err(Error::Unknown(_)) => {}
+            _ => unreachable!(),
+        };
+    }
+
+    #[tokio::test]
+    async fn it_should_return_an_unknown_error_when_the_captcha_is_not_found() {
+        let captcha = Captcha::test();
+        let email = Email::test();
+        let captcha_repo = Arc::new(InMemoryCaptchaRepository::new());
+        let token_repo = Arc::new(InMemoryTokenRepository::new());
+        let sender = Arc::new(StubTokenSender::new());
+
+        let res = send_token(captcha_repo, token_repo, sender, captcha, email).await;
+
+        match res {
+            Err(Error::Unknown(_)) => {}
+            _ => unreachable!(),
+        };
+    }
 
     #[tokio::test]
     async fn it_should_return_an_unknown_error_when_the_token_could_not_be_inserted() {
+        let captcha = Captcha::test();
         let email = Email::test();
-        let repo = Arc::new(InMemoryTokenRepository::new().with_error());
+        let captcha_repo = Arc::new(InMemoryCaptchaRepository::new());
+        let token_repo = Arc::new(InMemoryTokenRepository::new().with_error());
         let sender = Arc::new(StubTokenSender::new());
 
-        let res = send_token(repo, sender, email).await;
+        let res = send_token(captcha_repo, token_repo, sender, captcha, email).await;
 
         match res {
             Err(Error::Unknown(_)) => {}
@@ -49,11 +91,13 @@ mod tests {
 
     #[tokio::test]
     async fn it_should_return_an_unknown_error_when_the_token_could_not_be_sent() {
+        let captcha = Captcha::test();
         let email = Email::test();
-        let repo = Arc::new(InMemoryTokenRepository::new());
+        let captcha_repo = Arc::new(InMemoryCaptchaRepository::new());
+        let token_repo = Arc::new(InMemoryTokenRepository::new());
         let sender = Arc::new(StubTokenSender::new().with_error());
 
-        let res = send_token(repo, sender, email).await;
+        let res = send_token(captcha_repo, token_repo, sender, captcha, email).await;
 
         match res {
             Err(Error::Unknown(_)) => {}
@@ -63,14 +107,17 @@ mod tests {
 
     #[tokio::test]
     async fn it_should_return_ok_otherwise() {
+        let captcha = Captcha::test();
         let email = Email::test();
-        let repo = Arc::new(InMemoryTokenRepository::new());
+        let captcha_repo = Arc::new(InMemoryCaptchaRepository::new());
+        captcha_repo.insert(captcha.clone()).await.ok();
+        let token_repo = Arc::new(InMemoryTokenRepository::new());
         let sender = Arc::new(StubTokenSender::new());
 
-        let res = send_token(repo, sender, email).await;
+        let res = send_token(captcha_repo, token_repo, sender, captcha, email).await;
 
         match res {
-            Ok(()) => {}
+            Ok(_) => {}
             _ => unreachable!(),
         };
     }

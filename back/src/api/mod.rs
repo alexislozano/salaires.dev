@@ -1,3 +1,4 @@
+mod compute_challenge;
 mod fetch_companies;
 mod fetch_locations;
 mod fetch_salaries;
@@ -6,8 +7,8 @@ mod insert_salary;
 mod send_token;
 
 use crate::infra::{
-    CompanyRepository, LocationRepository, SalaryRepository, TitleRepository, TokenRepository,
-    TokenSender,
+    CaptchaRepository, CompanyRepository, LocationRepository, SalaryRepository, TitleRepository,
+    TokenRepository, TokenSender,
 };
 use axum::{
     error_handling::HandleErrorLayer,
@@ -15,6 +16,7 @@ use axum::{
     routing::{get, post},
     Extension, Router,
 };
+use compute_challenge::compute_challenge;
 use fetch_companies::fetch_companies;
 use fetch_locations::fetch_locations;
 use fetch_salaries::fetch_salaries;
@@ -32,6 +34,7 @@ pub async fn serve(
     title_repo: Arc<dyn TitleRepository>,
     token_repo: Arc<dyn TokenRepository>,
     token_sender: Arc<dyn TokenSender>,
+    captcha_repo: Arc<dyn CaptchaRepository>,
 ) {
     let port = env::var("PORT").expect("PORT env var");
     let url = format!("0.0.0.0:{port}");
@@ -57,15 +60,17 @@ pub async fn serve(
             "/locations",
             get(fetch_locations).layer(Extension(location_repo)),
         )
-        .route(
-            "/titles",
-            get(fetch_titles).layer(Extension(title_repo))
-        )
+        .route("/titles", get(fetch_titles).layer(Extension(title_repo)))
         .route(
             "/tokens",
             post(send_token)
+                .layer(Extension(captcha_repo.clone()))
                 .layer(Extension(token_repo))
                 .layer(Extension(token_sender)),
+        )
+        .route(
+            "/challenge",
+            get(compute_challenge).layer(Extension(captcha_repo)),
         )
         .layer(CorsLayer::permissive().allow_origin(origin))
         .layer(

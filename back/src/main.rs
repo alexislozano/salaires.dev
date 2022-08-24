@@ -6,8 +6,9 @@ use std::sync::Arc;
 
 use dotenv::dotenv;
 use infra::{
-    EmailTokenSender, SupabaseCompanyRepository, SupabaseLocationRepository,
-    SupabaseSalaryRepository, SupabaseTitleRepository, SupabaseTokenRepository,
+    EmailTokenSender, SupabaseCaptchaRepository, SupabaseCompanyRepository,
+    SupabaseLocationRepository, SupabaseSalaryRepository, SupabaseTitleRepository,
+    SupabaseTokenRepository,
 };
 
 #[tokio::main]
@@ -20,6 +21,7 @@ async fn main() {
     let title_repo = Arc::new(SupabaseTitleRepository::new());
     let token_repo = Arc::new(SupabaseTokenRepository::new());
     let token_sender = Arc::new(EmailTokenSender::new());
+    let captcha_repo = Arc::new(SupabaseCaptchaRepository::new());
 
     api::serve(
         salary_repo,
@@ -28,6 +30,7 @@ async fn main() {
         title_repo,
         token_repo,
         token_sender,
+        captcha_repo,
     )
     .await;
 }

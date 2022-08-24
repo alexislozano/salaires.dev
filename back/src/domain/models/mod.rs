@@ -1,3 +1,4 @@
+pub mod captcha;
 mod company;
 mod compensation;
 mod date;
@@ -11,6 +12,7 @@ mod token;
 mod xp;
 
 pub use self::{
-    company::Company, compensation::Compensation, date::Date, email::Email, level::Level,
-    location::Location, salary::Salary, stock::Stock, title::Title, token::Token, xp::Xp,
+    captcha::Captcha, captcha::Challenge, company::Company, compensation::Compensation, date::Date,
+    email::Email, level::Level, location::Location, salary::Salary, stock::Stock, title::Title,
+    token::Token, xp::Xp,
 };

@@ -82,6 +82,32 @@ to public
 using (true);
 ```
 
+### Créer la table des captchas
+
+```sql
+create table captchas (
+    id int4 primary key not null generated always as identity,
+    captcha varchar not null
+);
+
+alter table captchas enable row level security;
+
+create policy "Enable read access for all users" on "public"."captchas"
+as permissive for select
+to public
+using (true);
+
+create policy "Enable insert access for all users" on "public"."captchas"
+as permissive for insert
+to public
+with check (true);
+
+create policy "Enable delete access for all users" on "public"."captchas"
+as permissive for delete
+to public
+using (true);
+```
+
 ### Créer la table des salaires
 
 ```sql

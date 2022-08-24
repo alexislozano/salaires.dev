@@ -1,9 +1,15 @@
+pub mod captcha_repository;
 pub mod company_repository;
 pub mod location_repository;
 pub mod salary_repository;
 pub mod title_repository;
 pub mod token_repository;
 pub mod token_sender;
+
+pub use captcha_repository::CaptchaRepository;
+pub use captcha_repository::{
+    in_memory::InMemoryCaptchaRepository, supabase::SupabaseCaptchaRepository,
+};
 
 pub use company_repository::CompanyRepository;
 pub use company_repository::{
