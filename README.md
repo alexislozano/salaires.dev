@@ -89,7 +89,7 @@ create table salaries (
     id uuid primary key not null default uuid_generate_v4(),
     location varchar not null,
     company varchar not null,
-    title varchar not null,
+    title varchar,
     date date not null default now(),
     compensation numeric not null,
     stock numeric,
