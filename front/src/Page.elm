@@ -1,14 +1,13 @@
 module Page exposing (..)
 
--- import Pages.Insert as Insert
--- import Pages.Login as Login
-
 import Css
 import Flags exposing (Flags)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Notification
 import Pages.Index as Index
+import Pages.Insert as Insert
+import Pages.Login as Login
 import Pages.Maintenance as Maintenance
 import Pages.NoInsert as NoInsert
 import Pages.NotFound as NotFound
@@ -19,18 +18,18 @@ import Utils
 
 type Model
     = IndexModel Index.Model
-      -- | InsertModel Insert.Model
+    | InsertModel Insert.Model
     | NoInsertModel NoInsert.Model
-      -- | LoginModel Login.Model
+    | LoginModel Login.Model
     | NotFoundModel NotFound.Model
     | MaintenanceModel Maintenance.Model
 
 
 type Msg
     = IndexMsg Index.Msg
-      -- | InsertMsg Insert.Msg
+    | InsertMsg Insert.Msg
     | NoInsertMsg NoInsert.Msg
-      -- | LoginMsg Login.Msg
+    | LoginMsg Login.Msg
     | NotFoundMsg NotFound.Msg
     | MaintenanceMsg Maintenance.Msg
 
@@ -48,12 +47,22 @@ init flags url =
                     |> Utils.map IndexModel IndexMsg
 
             Route.Insert ->
-                NoInsert.init flags
-                    |> Utils.map NoInsertModel NoInsertMsg
+                if flags.noInsert then
+                    NoInsert.init flags
+                        |> Utils.map NoInsertModel NoInsertMsg
+
+                else
+                    Insert.init flags
+                        |> Utils.map InsertModel InsertMsg
 
             Route.Login ->
-                NoInsert.init flags
-                    |> Utils.map NoInsertModel NoInsertMsg
+                if flags.noInsert then
+                    NoInsert.init flags
+                        |> Utils.map NoInsertModel NoInsertMsg
+
+                else
+                    Login.init flags
+                        |> Utils.map LoginModel LoginMsg
 
             Route.NotFound ->
                 NotFound.init flags
@@ -61,22 +70,24 @@ init flags url =
 
 
 update : Flags -> Msg -> Model -> ( Model, Cmd Msg )
-update _ msg model =
+update flags msg model =
     case ( msg, model ) of
         ( IndexMsg subMsg, IndexModel subModel ) ->
             Index.update subMsg subModel
                 |> Utils.map IndexModel IndexMsg
 
-        -- ( InsertMsg subMsg, InsertModel subModel ) ->
-        --     Insert.update flags subMsg subModel
-        --         |> Utils.map InsertModel InsertMsg
+        ( InsertMsg subMsg, InsertModel subModel ) ->
+            Insert.update flags subMsg subModel
+                |> Utils.map InsertModel InsertMsg
+
         ( NoInsertMsg subMsg, NoInsertModel subModel ) ->
             NoInsert.update subMsg subModel
                 |> Utils.map NoInsertModel NoInsertMsg
 
-        -- ( LoginMsg subMsg, LoginModel subModel ) ->
-        --     Login.update flags subMsg subModel
-        --         |> Utils.map LoginModel LoginMsg
+        ( LoginMsg subMsg, LoginModel subModel ) ->
+            Login.update flags subMsg subModel
+                |> Utils.map LoginModel LoginMsg
+
         ( NotFoundMsg subMsg, NotFoundModel subModel ) ->
             NotFound.update subMsg subModel
                 |> Utils.map NotFoundModel NotFoundMsg
@@ -92,10 +103,12 @@ update _ msg model =
 extractNotification : Msg -> Maybe Notification.Msg
 extractNotification msg =
     case msg of
-        -- LoginMsg subMsg ->
-        --     Login.extractNotification subMsg
-        -- InsertMsg subMsg ->
-        -- Insert.extractNotification subMsg
+        LoginMsg subMsg ->
+            Login.extractNotification subMsg
+
+        InsertMsg subMsg ->
+            Insert.extractNotification subMsg
+
         _ ->
             Nothing
 
@@ -120,16 +133,18 @@ view model mNotification =
                         Index.view subModel
                             |> List.map (Html.map IndexMsg)
 
-                    -- InsertModel subModel ->
-                    -- Insert.view subModel
-                    --     |> List.map (Html.map InsertMsg)
+                    InsertModel subModel ->
+                        Insert.view subModel
+                            |> List.map (Html.map InsertMsg)
+
                     NoInsertModel subModel ->
                         NoInsert.view subModel
                             |> List.map (Html.map NoInsertMsg)
 
-                    -- LoginModel subModel ->
-                    --     Login.view subModel
-                    --         |> List.map (Html.map LoginMsg)
+                    LoginModel subModel ->
+                        Login.view subModel
+                            |> List.map (Html.map LoginMsg)
+
                     NotFoundModel subModel ->
                         NotFound.view subModel
                             |> List.map (Html.map NotFoundMsg)

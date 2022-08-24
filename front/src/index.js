@@ -5,5 +5,6 @@ Elm.Main.init({
     flags: {
         apiUrl: process.env.API_URL,
         maintenance: process.env.MAINTENANCE === "true",
+        noInsert: process.env.NO_INSERT === "true",
     },
 });
