@@ -131,6 +131,6 @@ create view locations as (
 
 ```sql
 create view titles as (
-    select distinct title from salaries
+    select distinct title from salaries where title is not null
 );
 ```
