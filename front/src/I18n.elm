@@ -11,6 +11,7 @@ type Key
     | Compensation
     | Stock
     | Level
+    | Title
     | CompanyXp
     | TotalXp
     | Date
@@ -38,6 +39,7 @@ type Key
     | InYears
     | InEuros
     | CompensationHelp
+    | TitlePlaceholder
     | TheSiteIsInMaintenance
 
 
@@ -60,6 +62,9 @@ translate lang key =
 
                 Level ->
                     "Niveau"
+
+                Title ->
+                     "Intitulé du poste"
 
                 CompanyXp ->
                     "Expérience entreprise"
@@ -144,3 +149,7 @@ translate lang key =
 
                 TheSiteIsInMaintenance ->
                     "Le site est en maintenance"
+
+                TitlePlaceholder ->
+                    "Dev fullstack"
+

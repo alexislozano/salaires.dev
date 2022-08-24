@@ -1,6 +1,7 @@
 pub mod company_repository;
 pub mod location_repository;
 pub mod salary_repository;
+pub mod title_repository;
 pub mod token_repository;
 pub mod token_sender;
 
@@ -13,6 +14,9 @@ pub use location_repository::LocationRepository;
 pub use location_repository::{
     in_memory::InMemoryLocationRepository, supabase::SupabaseLocationRepository,
 };
+
+pub use title_repository::TitleRepository;
+pub use title_repository::{in_memory::InMemoryTitleRepository, supabase::SupabaseTitleRepository};
 
 pub use salary_repository::SalaryRepository;
 pub use salary_repository::{

@@ -13,12 +13,14 @@ import Models.Compensation as Compensation exposing (Compensation)
 import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
 import Models.Stock as Stock exposing (Stock)
+import Models.Title as Title exposing (Title)
 import Models.Token as Token exposing (Token)
 import Models.Xp as Xp exposing (Xp)
 import Notification
 import Services.Companies as Companies
 import Services.Locations as Locations
 import Services.Salaries as Salaries
+import Services.Titles as Titles
 
 
 type alias Model =
@@ -26,12 +28,14 @@ type alias Model =
     , status : Status
     , companies : List Company
     , locations : List Location
+    , titles : List Title
     }
 
 
 type alias Form =
     { token : { value : String, parsed : Result String Token }
     , company : { value : String, parsed : Result String Company }
+    , title : { value : String, parsed : Result String (Maybe Title) }
     , location : { value : String, parsed : Result String Location }
     , compensation : { value : String, parsed : Result String Compensation }
     , stock : { value : String, parsed : Result String (Maybe Stock) }
@@ -47,10 +51,11 @@ body form =
         ( Ok company, Ok location, Ok compensation ) ->
             case ( form.stock.parsed, form.level.parsed, form.companyXp.parsed ) of
                 ( Ok stock, Ok level, Ok companyXp ) ->
-                    case ( form.totalXp.parsed, form.token.parsed ) of
-                        ( Ok totalXp, Ok token ) ->
+                    case ( form.totalXp.parsed, form.title.parsed, form.token.parsed ) of
+                        ( Ok totalXp, Ok title, Ok token ) ->
                             Just
                                 { company = company
+                                , title = title
                                 , location = location
                                 , compensation = compensation
                                 , token = token
@@ -84,11 +89,13 @@ type Field
     | CompanyXp
     | TotalXp
     | Level
+    | Title
 
 
 type Msg
     = GotAllCompanies (Result Http.Error (List Company))
     | GotAllLocations (Result Http.Error (List Location))
+    | GotAllTitles (Result Http.Error (List Title))
     | Sent (Result Http.Error ())
     | OnFieldChange Field String
     | Send
@@ -102,10 +109,12 @@ init flags =
             Cmd.batch
                 [ Companies.getAll flags GotAllCompanies
                 , Locations.getAll flags GotAllLocations
+                , Titles.getAll flags GotAllTitles
                 ]
     in
     ( { form =
             { company = { value = "", parsed = Err " " }
+            , title = { value = "", parsed = Ok Nothing }
             , location = { value = "", parsed = Err " " }
             , compensation = { value = "", parsed = Err " " }
             , token = { value = "", parsed = Err " " }
@@ -117,6 +126,7 @@ init flags =
       , status = Init
       , companies = []
       , locations = []
+      , titles = []
       }
     , cmd
     )
@@ -137,11 +147,18 @@ update flags msg model =
         GotAllLocations _ ->
             ( model, Cmd.none )
 
+        GotAllTitles (Ok titles) ->
+            ( { model | titles = titles }, Cmd.none )
+
+        GotAllTitles _ ->
+            ( model, Cmd.none )
+
         Sent (Ok _) ->
             ( { model | status = Init }
             , Cmd.batch
                 [ Companies.getAll flags GotAllCompanies
                 , Locations.getAll flags GotAllLocations
+                , Titles.getAll flags GotAllTitles
                 , Notification.send NotificationMsg Notification.SalaryInserted
                 ]
             )
@@ -176,6 +193,18 @@ update flags msg model =
                                 | company =
                                     { value = value
                                     , parsed = Company.tryFromString value
+                                    }
+                            }
+
+                        Title ->
+                            { form
+                                | title =
+                                    { value = value
+                                    , parsed =
+                                        if String.isEmpty value then
+                                            Ok Nothing
+                                        else
+                                            Title.tryFromString value |> Result.map Just
                                     }
                             }
 
@@ -269,7 +298,7 @@ extractNotification msg =
 
 
 view : Model -> List (Html Msg)
-view { form, status, companies, locations } =
+view { form, status, companies, locations, titles } =
     [ Form.view
         { title = I18n.translate I18n.French I18n.IAddMySalary }
         [ Input.view
@@ -290,6 +319,16 @@ view { form, status, companies, locations } =
             , placeholder = "Google"
             , required = True
             , value = form.company.value
+            }
+        , Select.view
+            { error = error form.title.parsed
+            , id = "titles"
+            , label = I18n.translate I18n.French I18n.Title
+            , options = List.map Title.toString titles
+            , onChange = OnFieldChange Title
+            , placeholder = I18n.translate I18n.French I18n.TitlePlaceholder
+            , required = False
+            , value = form.title.value
             }
         , Select.view
             { error = error form.location.parsed

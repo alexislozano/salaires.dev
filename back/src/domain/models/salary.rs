@@ -1,8 +1,9 @@
-use super::{Company, Compensation, Date, Level, Location, Stock, Xp};
+use super::{Company, Compensation, Date, Level, Location, Stock, Title, Xp};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Salary {
     pub company: Company,
+    pub title: Option<Title>,
     pub location: Location,
     pub compensation: Compensation,
     pub date: Date,
@@ -17,6 +18,7 @@ impl Salary {
     pub fn test() -> Self {
         Self {
             company: Company::test(),
+            title: None,
             location: Location::test(),
             compensation: Compensation::test(),
             date: Date::test(),
@@ -29,6 +31,7 @@ impl Salary {
 
     pub fn new(
         company: Company,
+        title: Option<Title>,
         location: Location,
         compensation: Compensation,
         date: Date,
@@ -39,6 +42,7 @@ impl Salary {
     ) -> Self {
         Self {
             company,
+            title,
             location,
             compensation,
             date,

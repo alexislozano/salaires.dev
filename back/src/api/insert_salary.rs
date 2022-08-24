@@ -14,6 +14,7 @@ use serde::Deserialize;
 #[derive(Deserialize, Clone)]
 pub struct Request {
     company: String,
+    title: Option<String>,
     location: String,
     compensation: i32,
     token: String,
@@ -29,6 +30,11 @@ impl TryFrom<Request> for Salary {
     fn try_from(request: Request) -> Result<Self, Self::Error> {
         Ok(Self::new(
             request.company.try_into()?,
+            if let Some(raw) = request.title {
+                Some(raw.try_into()?)
+            } else {
+                None
+            },
             request.location.try_into()?,
             request.compensation.try_into()?,
             Utc::today().naive_utc().into(),

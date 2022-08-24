@@ -1,20 +1,20 @@
 use std::sync::Mutex;
 
-use super::{FetchAllError, LocationRepository};
-use crate::domain::models::Location;
+use super::{FetchAllError, TitleRepository};
+use crate::domain::models::Title;
 use async_trait::async_trait;
 
-pub struct InMemoryLocationRepository {
+pub struct InMemoryTitleRepository {
     error: bool,
-    locations: Mutex<Vec<Location>>,
+    titles: Mutex<Vec<Title>>,
 }
 
-impl InMemoryLocationRepository {
+impl InMemoryTitleRepository {
     #[cfg(test)]
     pub fn new() -> Self {
         Self {
             error: false,
-            locations: Mutex::new(vec![]),
+            titles: Mutex::new(vec![]),
         }
     }
 
@@ -27,19 +27,19 @@ impl InMemoryLocationRepository {
     }
 
     #[cfg(test)]
-    pub fn insert(&self, location: Location) {
-        self.locations.lock().unwrap().push(location);
+    pub fn insert(&self, title: Title) {
+        self.titles.lock().unwrap().push(title);
     }
 }
 
 #[async_trait]
-impl LocationRepository for InMemoryLocationRepository {
-    async fn fetch_all(&self) -> Result<Vec<Location>, FetchAllError> {
+impl TitleRepository for InMemoryTitleRepository {
+    async fn fetch_all(&self) -> Result<Vec<Title>, FetchAllError> {
         if self.error {
             return Err(FetchAllError::Unknown("error flag is on"));
         }
 
-        let lock = match self.locations.lock() {
+        let lock = match self.titles.lock() {
             Ok(lock) => lock,
             _ => return Err(FetchAllError::Unknown("could not acquire lock")),
         };

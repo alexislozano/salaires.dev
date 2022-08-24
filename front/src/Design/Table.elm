@@ -8,6 +8,7 @@ import Models.Level
 import Models.Location
 import Models.Salary as Salary exposing (Salary(..))
 import Models.Stock
+import Models.Title
 import Models.Xp
 import Utils
 
@@ -16,6 +17,7 @@ type Column
     = Company
     | Location
     | Level
+    | Title
     | CompanyXp
     | TotalXp
     | Compensation
@@ -50,6 +52,9 @@ title column =
         Level ->
             I18n.translate I18n.French I18n.Level
 
+        Title ->
+            I18n.translate I18n.French I18n.Title
+
         CompanyXp ->
             I18n.translate I18n.French I18n.CompanyXp
 
@@ -76,6 +81,9 @@ subtitle column =
             ""
 
         Level ->
+            ""
+
+        Title ->
             ""
 
         CompanyXp ->
@@ -136,6 +144,9 @@ sort { column, direction } salaries =
                 Level ->
                     \s1 s2 -> Utils.compareMaybe Models.Level.compare s1.level s2.level
 
+                Title ->
+                    \s1 s2 -> Utils.compareMaybe Models.Title.compare s1.title s2.title
+
                 CompanyXp ->
                     \s1 s2 -> Utils.compareMaybe Models.Xp.compare s1.companyXp s2.companyXp
 
@@ -184,6 +195,9 @@ equal c1 c2 =
             True
 
         ( Level, Level ) ->
+            True
+
+        ( Title, Title ) ->
             True
 
         ( CompanyXp, CompanyXp ) ->

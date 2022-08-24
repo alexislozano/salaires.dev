@@ -1,6 +1,7 @@
 pub mod fetch_companies;
 pub mod fetch_locations;
 pub mod fetch_salaries;
+pub mod fetch_titles;
 pub mod insert_salary;
 pub mod send_token;
 

@@ -12,6 +12,7 @@ import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
 import Models.Salary as Salary exposing (Salary)
 import Models.Stock as Stock exposing (Stock)
+import Models.Title as Title exposing (Title)
 import Models.Token as Token exposing (Token)
 import Models.Xp as Xp exposing (Xp)
 
@@ -51,6 +52,7 @@ type alias Body =
     , level : Maybe Level
     , companyXp : Maybe Xp
     , totalXp : Maybe Xp
+    , title : Maybe Title
     }
 
 
@@ -58,6 +60,7 @@ encode : Body -> Value
 encode body =
     object
         [ ( "company", Company.encode body.company )
+        , ( "title", body.title |> Maybe.map Title.encode |> Maybe.withDefault null )
         , ( "location", Location.encode body.location )
         , ( "compensation", Compensation.encode body.compensation )
         , ( "token", Token.encode body.token )
@@ -70,6 +73,7 @@ encode body =
 
 type alias Response =
     { company : Company
+    , title : Maybe Title
     , location : Location
     , compensation : Compensation
     , date : Date
@@ -89,6 +93,7 @@ decoder : Decoder Salary
 decoder =
     succeed Response
         |> required "company" Company.decoder
+        |> required "title" (maybe Title.decoder)
         |> required "location" Location.decoder
         |> required "compensation" Compensation.decoder
         |> required "date" Date.decoder
