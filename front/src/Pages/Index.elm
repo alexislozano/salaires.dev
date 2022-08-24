@@ -124,7 +124,7 @@ head { sort } =
                 |> header Table.Company
             , Table.Title
                 |> Table.header sort
-                |> header Table.Level
+                |> header Table.Title
             , Table.Location
                 |> Table.header sort
                 |> header Table.Location
