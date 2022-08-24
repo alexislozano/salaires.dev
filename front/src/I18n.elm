@@ -42,6 +42,7 @@ type Key
     | TitlePlaceholder
     | TheSiteIsInMaintenance
     | Captcha
+    | ComputingCaptcha
 
 
 translate : Lang -> Key -> String
@@ -156,3 +157,6 @@ translate lang key =
 
                 Captcha ->
                     "Captcha"
+
+                ComputingCaptcha ->
+                    "Calcul du captcha..."

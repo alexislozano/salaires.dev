@@ -9,6 +9,7 @@ import Design.Input as Input
 import Design.Link as Link
 import Flags exposing (Flags)
 import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
 import Http
 import I18n
 import Models.Captcha as Captcha exposing (Captcha)
@@ -189,7 +190,16 @@ view { form, status, challenge } =
             ]
 
         Nothing ->
-            []
+            [ Html.div
+                [ Attributes.css
+                    [ Css.displayFlex
+                    , Css.height (Css.pct 100)
+                    , Css.alignItems Css.center
+                    , Css.justifyContent Css.center
+                    ]
+                ]
+                [ Html.text (I18n.translate I18n.French I18n.ComputingCaptcha) ]
+            ]
 
 
 error : Result String a -> Maybe String
