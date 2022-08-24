@@ -61,7 +61,8 @@ Pour créer les tables et vues dont salaires.dev a besoin, vous pouvez lancer le
 ```sql
 create table tokens (
     id int4 primary key not null generated always as identity,
-    token varchar not null
+    token varchar not null,
+    created_at timestamp not null default now()
 );
 
 alter table tokens enable row level security;
@@ -87,7 +88,8 @@ using (true);
 ```sql
 create table captchas (
     id int4 primary key not null generated always as identity,
-    captcha varchar not null
+    captcha varchar not null,
+    created_at timestamp not null default now()
 );
 
 alter table captchas enable row level security;
