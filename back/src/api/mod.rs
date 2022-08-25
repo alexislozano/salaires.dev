@@ -44,7 +44,7 @@ pub async fn serve(
         .expect("APP_URL env var")
         .parse::<HeaderValue>()
         .expect("APP_URL should be an url");
-    let salary_rl = 10;
+    let complex_rl = 10;
     let default_rl = 1;
 
     let app = Router::new()
@@ -66,7 +66,7 @@ pub async fn serve(
                     .layer(Extension(token_repo.clone()))
                     .layer(HandleErrorLayer::new(|_| async { TIMEOUT }))
                     .layer(BufferLayer::new(1024))
-                    .layer(RateLimitLayer::new(1, Duration::from_secs(salary_rl))),
+                    .layer(RateLimitLayer::new(1, Duration::from_secs(complex_rl))),
             ),
         )
         .route(
@@ -108,7 +108,7 @@ pub async fn serve(
                     .layer(Extension(token_sender))
                     .layer(HandleErrorLayer::new(|_| async { TIMEOUT }))
                     .layer(BufferLayer::new(1024))
-                    .layer(RateLimitLayer::new(1, Duration::from_secs(default_rl))),
+                    .layer(RateLimitLayer::new(1, Duration::from_secs(complex_rl))),
             ),
         )
         .route(
@@ -118,7 +118,7 @@ pub async fn serve(
                     .layer(Extension(captcha_repo))
                     .layer(HandleErrorLayer::new(|_| async { TIMEOUT }))
                     .layer(BufferLayer::new(1024))
-                    .layer(RateLimitLayer::new(1, Duration::from_secs(default_rl))),
+                    .layer(RateLimitLayer::new(1, Duration::from_secs(complex_rl))),
             ),
         )
         .layer(CorsLayer::permissive().allow_origin(origin));
