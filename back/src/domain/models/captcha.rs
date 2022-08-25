@@ -44,7 +44,7 @@ impl From<Challenge> for String {
 }
 
 pub fn generate() -> Result<(Captcha, Challenge), ()> {
-    let captcha = captcha_lib::gen(Difficulty::Medium);
+    let captcha = captcha_lib::gen(Difficulty::Hard);
     let value = captcha.chars_as_string();
     let img = captcha.as_base64().ok_or(())?;
     Ok((Captcha { raw: value }, Challenge { raw: img }))
