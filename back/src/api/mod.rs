@@ -11,8 +11,7 @@ use crate::infra::{
     TokenRepository, TokenSender,
 };
 use axum::{
-    error_handling::HandleErrorLayer,
-    http::{HeaderValue, StatusCode},
+    http::HeaderValue,
     routing::{get, post},
     Extension, Router,
 };
@@ -23,11 +22,9 @@ use fetch_salaries::fetch_salaries;
 use fetch_titles::fetch_titles;
 use insert_salary::insert_salary;
 use send_token::send_token;
-use std::{env, sync::Arc, time::Duration};
-use tower::{buffer::BufferLayer, limit::RateLimitLayer, ServiceBuilder};
+use std::{env, sync::Arc};
+use tower::ServiceBuilder;
 use tower_http::cors::CorsLayer;
-
-const TIMEOUT: (reqwest::StatusCode, &str) = (StatusCode::REQUEST_TIMEOUT, "timeout");
 
 pub async fn serve(
     salary_repo: Arc<dyn SalaryRepository>,
@@ -44,82 +41,41 @@ pub async fn serve(
         .expect("APP_URL env var")
         .parse::<HeaderValue>()
         .expect("APP_URL should be an url");
-    let complex_rl = 10;
-    let default_rl = 1;
 
     let app = Router::new()
         .route(
             "/salaries",
-            get(fetch_salaries).layer(
-                ServiceBuilder::new()
-                    .layer(Extension(salary_repo.clone()))
-                    .layer(HandleErrorLayer::new(|_| async { TIMEOUT }))
-                    .layer(BufferLayer::new(1024))
-                    .layer(RateLimitLayer::new(1, Duration::from_secs(default_rl))),
-            ),
+            get(fetch_salaries).layer(Extension(salary_repo.clone())),
         )
         .route(
             "/salaries",
             post(insert_salary).layer(
                 ServiceBuilder::new()
                     .layer(Extension(salary_repo))
-                    .layer(Extension(token_repo.clone()))
-                    .layer(HandleErrorLayer::new(|_| async { TIMEOUT }))
-                    .layer(BufferLayer::new(1024))
-                    .layer(RateLimitLayer::new(1, Duration::from_secs(complex_rl))),
+                    .layer(Extension(token_repo.clone())),
             ),
         )
         .route(
             "/companies",
-            get(fetch_companies).layer(
-                ServiceBuilder::new()
-                    .layer(Extension(company_repo))
-                    .layer(HandleErrorLayer::new(|_| async { TIMEOUT }))
-                    .layer(BufferLayer::new(1024))
-                    .layer(RateLimitLayer::new(1, Duration::from_secs(default_rl))),
-            ),
+            get(fetch_companies).layer(Extension(company_repo)),
         )
         .route(
             "/locations",
-            get(fetch_locations).layer(
-                ServiceBuilder::new()
-                    .layer(Extension(location_repo))
-                    .layer(HandleErrorLayer::new(|_| async { TIMEOUT }))
-                    .layer(BufferLayer::new(1024))
-                    .layer(RateLimitLayer::new(1, Duration::from_secs(default_rl))),
-            ),
+            get(fetch_locations).layer(Extension(location_repo)),
         )
-        .route(
-            "/titles",
-            get(fetch_titles).layer(
-                ServiceBuilder::new()
-                    .layer(Extension(title_repo))
-                    .layer(HandleErrorLayer::new(|_| async { TIMEOUT }))
-                    .layer(BufferLayer::new(1024))
-                    .layer(RateLimitLayer::new(1, Duration::from_secs(default_rl))),
-            ),
-        )
+        .route("/titles", get(fetch_titles).layer(Extension(title_repo)))
         .route(
             "/tokens",
             post(send_token).layer(
                 ServiceBuilder::new()
                     .layer(Extension(captcha_repo.clone()))
                     .layer(Extension(token_repo))
-                    .layer(Extension(token_sender))
-                    .layer(HandleErrorLayer::new(|_| async { TIMEOUT }))
-                    .layer(BufferLayer::new(1024))
-                    .layer(RateLimitLayer::new(1, Duration::from_secs(complex_rl))),
+                    .layer(Extension(token_sender)),
             ),
         )
         .route(
             "/challenge",
-            get(compute_challenge).layer(
-                ServiceBuilder::new()
-                    .layer(Extension(captcha_repo))
-                    .layer(HandleErrorLayer::new(|_| async { TIMEOUT }))
-                    .layer(BufferLayer::new(1024))
-                    .layer(RateLimitLayer::new(1, Duration::from_secs(complex_rl))),
-            ),
+            get(compute_challenge).layer(Extension(captcha_repo)),
         )
         .layer(CorsLayer::permissive().allow_origin(origin));
 
