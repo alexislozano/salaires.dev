@@ -24,15 +24,6 @@ type Key
     | Sending
     | ThisPageDoesNotExist
     | InsertIsDownForNow
-    | Token
-    | ShouldBeSixCharactersLong
-    | ShouldContainAnAt
-    | Email
-    | GetAToken
-    | IGotAToken
-    | LoginBanner
-    | EmailSent
-    | EmailSendingError
     | SalaryInserted
     | SalaryInstertingError
     | LoadingData
@@ -41,8 +32,6 @@ type Key
     | CompensationHelp
     | TitlePlaceholder
     | TheSiteIsInMaintenance
-    | Captcha
-    | ComputingCaptcha
 
 
 translate : Lang -> Key -> String
@@ -104,33 +93,6 @@ translate lang key =
                 InsertIsDownForNow ->
                     "Il n'est plus possible d'ajouter des salaires pour le moment."
 
-                Token ->
-                    "Code de confirmation"
-
-                ShouldBeSixCharactersLong ->
-                    "Cette valeur doit comporter six caractères"
-
-                ShouldContainAnAt ->
-                    "Doit comporter un @"
-
-                Email ->
-                    "Email"
-
-                GetAToken ->
-                    "Obtenir un code de confirmation"
-
-                IGotAToken ->
-                    "J'ai reçu un code de confirmation"
-
-                LoginBanner ->
-                    "Entrez une adresse email et recevez un code de confirmation que vous pourrez utiliser dans le formulaire d'ajout de salaire. L'adresse entrée ne sert qu'à recevoir le code, elle n'est pas enregistrée."
-
-                EmailSent ->
-                    "Un email a éte envoyé"
-
-                EmailSendingError ->
-                    "L'email n'a pas pu être envoyé"
-
                 SalaryInserted ->
                     "Le salaire a été ajouté"
 
@@ -154,9 +116,3 @@ translate lang key =
 
                 TitlePlaceholder ->
                     "Dev fullstack"
-
-                Captcha ->
-                    "Captcha"
-
-                ComputingCaptcha ->
-                    "Calcul du captcha..."

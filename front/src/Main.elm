@@ -137,6 +137,6 @@ header =
             ]
         , Link.view []
             { label = I18n.translate I18n.French I18n.IAddMySalary
-            , url = Route.toString Route.Login
+            , url = Route.toString Route.Insert
             }
         ]

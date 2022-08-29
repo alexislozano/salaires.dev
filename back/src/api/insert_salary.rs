@@ -1,11 +1,8 @@
 use std::sync::Arc;
 
 use crate::{
-    domain::{
-        models::{Salary, Token},
-        use_cases,
-    },
-    infra::{SalaryRepository, TokenRepository},
+    domain::{models::Salary, use_cases},
+    infra::SalaryRepository,
 };
 use axum::{http::StatusCode, Extension, Json};
 use chrono::Utc;
@@ -17,7 +14,6 @@ pub struct Request {
     title: Option<String>,
     location: String,
     compensation: i32,
-    token: String,
     stock: Option<i32>,
     level: Option<String>,
     company_xp: Option<i32>,
@@ -62,19 +58,10 @@ impl TryFrom<Request> for Salary {
     }
 }
 
-impl TryFrom<Request> for Token {
-    type Error = ();
-
-    fn try_from(request: Request) -> Result<Self, Self::Error> {
-        Ok(request.token.try_into()?)
-    }
-}
-
 type Error = (StatusCode, &'static str);
 
 pub async fn insert_salary(
     Extension(salary_repo): Extension<Arc<dyn SalaryRepository>>,
-    Extension(token_repo): Extension<Arc<dyn TokenRepository>>,
     Json(request): Json<Request>,
 ) -> Result<Json<()>, Error> {
     let salary = match request.clone().try_into() {
@@ -82,12 +69,7 @@ pub async fn insert_salary(
         _ => return Err((StatusCode::BAD_REQUEST, "bad body")),
     };
 
-    let token = match request.try_into() {
-        Ok(token) => token,
-        _ => return Err((StatusCode::BAD_REQUEST, "bad body")),
-    };
-
-    match use_cases::insert_salary(salary_repo, token_repo, salary, token).await {
+    match use_cases::insert_salary(salary_repo, salary).await {
         Ok(()) => Ok(().into()),
         Err(use_cases::insert_salary::Error::Unknown(str)) => {
             Err((StatusCode::INTERNAL_SERVER_ERROR, str))

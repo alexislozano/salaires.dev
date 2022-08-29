@@ -5,7 +5,7 @@ import Design.Form as Form
 import Design.Input as Input
 import Design.Select as Select
 import Flags exposing (Flags)
-import Html.Styled as Html exposing (Html)
+import Html.Styled exposing (Html)
 import Http
 import I18n
 import Models.Company as Company exposing (Company)
@@ -14,7 +14,6 @@ import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
 import Models.Stock as Stock exposing (Stock)
 import Models.Title as Title exposing (Title)
-import Models.Token as Token exposing (Token)
 import Models.Xp as Xp exposing (Xp)
 import Notification
 import Services.Companies as Companies
@@ -33,8 +32,7 @@ type alias Model =
 
 
 type alias Form =
-    { token : { value : String, parsed : Result String Token }
-    , company : { value : String, parsed : Result String Company }
+    { company : { value : String, parsed : Result String Company }
     , title : { value : String, parsed : Result String (Maybe Title) }
     , location : { value : String, parsed : Result String Location }
     , compensation : { value : String, parsed : Result String Compensation }
@@ -51,14 +49,13 @@ body form =
         ( Ok company, Ok location, Ok compensation ) ->
             case ( form.stock.parsed, form.level.parsed, form.companyXp.parsed ) of
                 ( Ok stock, Ok level, Ok companyXp ) ->
-                    case ( form.totalXp.parsed, form.title.parsed, form.token.parsed ) of
-                        ( Ok totalXp, Ok title, Ok token ) ->
+                    case ( form.totalXp.parsed, form.title.parsed ) of
+                        ( Ok totalXp, Ok title ) ->
                             Just
                                 { company = company
                                 , title = title
                                 , location = location
                                 , compensation = compensation
-                                , token = token
                                 , stock = stock
                                 , level = level
                                 , companyXp = companyXp
@@ -84,7 +81,6 @@ type Field
     = Company
     | Location
     | Compensation
-    | Token
     | Stock
     | CompanyXp
     | TotalXp
@@ -117,7 +113,6 @@ init flags =
             , title = { value = "", parsed = Ok Nothing }
             , location = { value = "", parsed = Err " " }
             , compensation = { value = "", parsed = Err " " }
-            , token = { value = "", parsed = Err " " }
             , level = { value = "", parsed = Ok Nothing }
             , companyXp = { value = "", parsed = Ok Nothing }
             , totalXp = { value = "", parsed = Ok Nothing }
@@ -203,6 +198,7 @@ update flags msg model =
                                     , parsed =
                                         if String.isEmpty value then
                                             Ok Nothing
+
                                         else
                                             Title.tryFromString value |> Result.map Just
                                     }
@@ -221,14 +217,6 @@ update flags msg model =
                                 | compensation =
                                     { value = value
                                     , parsed = Compensation.tryFromString value
-                                    }
-                            }
-
-                        Token ->
-                            { form
-                                | token =
-                                    { value = value
-                                    , parsed = Token.tryFromString value
                                     }
                             }
 
@@ -301,16 +289,7 @@ view : Model -> List (Html Msg)
 view { form, status, companies, locations, titles } =
     [ Form.view
         { title = I18n.translate I18n.French I18n.IAddMySalary }
-        [ Input.view
-            { error = error form.token.parsed
-            , label = I18n.translate I18n.French I18n.Token
-            , sublabel = Nothing
-            , onChange = OnFieldChange Token
-            , placeholder = "123456"
-            , required = True
-            , value = form.token.value
-            }
-        , Select.view
+        [ Select.view
             { error = error form.company.parsed
             , id = "companies"
             , label = I18n.translate I18n.French I18n.Company

@@ -7,7 +7,6 @@ import Url.Parser
 type Route
     = Index
     | Insert
-    | Login
     | NotFound
 
 
@@ -26,7 +25,6 @@ parser =
     Url.Parser.oneOf
         [ Url.Parser.map Index <| Url.Parser.top
         , Url.Parser.map Insert <| Url.Parser.s "insert"
-        , Url.Parser.map Login <| Url.Parser.s "login"
         ]
 
 
@@ -38,9 +36,6 @@ toString route =
 
         Insert ->
             "/insert"
-
-        Login ->
-            "/login"
 
         NotFound ->
             "/notfound"

@@ -7,7 +7,6 @@ import Html.Styled.Attributes as Attributes
 import Notification
 import Pages.Index as Index
 import Pages.Insert as Insert
-import Pages.Login as Login
 import Pages.Maintenance as Maintenance
 import Pages.NoInsert as NoInsert
 import Pages.NotFound as NotFound
@@ -19,26 +18,20 @@ import Utils
 type Model
     = IndexModel Index.Model
     | InsertModel Insert.Model
-    | NoInsertModel NoInsert.Model
-    | LoginModel Login.Model
-    | NotFoundModel NotFound.Model
-    | MaintenanceModel Maintenance.Model
+    | NoInsertModel
+    | NotFoundModel
+    | MaintenanceModel
 
 
 type Msg
     = IndexMsg Index.Msg
     | InsertMsg Insert.Msg
-    | NoInsertMsg NoInsert.Msg
-    | LoginMsg Login.Msg
-    | NotFoundMsg NotFound.Msg
-    | MaintenanceMsg Maintenance.Msg
 
 
 init : Flags -> Url -> ( Model, Cmd Msg )
 init flags url =
     if flags.maintenance then
-        Maintenance.init flags
-            |> Utils.map MaintenanceModel MaintenanceMsg
+        ( MaintenanceModel, Cmd.none )
 
     else
         case Route.parse url of
@@ -48,25 +41,14 @@ init flags url =
 
             Route.Insert ->
                 if flags.noInsert then
-                    NoInsert.init flags
-                        |> Utils.map NoInsertModel NoInsertMsg
+                    ( NoInsertModel, Cmd.none )
 
                 else
                     Insert.init flags
                         |> Utils.map InsertModel InsertMsg
 
-            Route.Login ->
-                if flags.noInsert then
-                    NoInsert.init flags
-                        |> Utils.map NoInsertModel NoInsertMsg
-
-                else
-                    Login.init flags
-                        |> Utils.map LoginModel LoginMsg
-
             Route.NotFound ->
-                NotFound.init flags
-                    |> Utils.map NotFoundModel NotFoundMsg
+                ( NotFoundModel, Cmd.none )
 
 
 update : Flags -> Msg -> Model -> ( Model, Cmd Msg )
@@ -80,22 +62,6 @@ update flags msg model =
             Insert.update flags subMsg subModel
                 |> Utils.map InsertModel InsertMsg
 
-        ( NoInsertMsg subMsg, NoInsertModel subModel ) ->
-            NoInsert.update subMsg subModel
-                |> Utils.map NoInsertModel NoInsertMsg
-
-        ( LoginMsg subMsg, LoginModel subModel ) ->
-            Login.update flags subMsg subModel
-                |> Utils.map LoginModel LoginMsg
-
-        ( NotFoundMsg subMsg, NotFoundModel subModel ) ->
-            NotFound.update subMsg subModel
-                |> Utils.map NotFoundModel NotFoundMsg
-
-        ( MaintenanceMsg subMsg, MaintenanceModel subModel ) ->
-            Maintenance.update subMsg subModel
-                |> Utils.map MaintenanceModel MaintenanceMsg
-
         _ ->
             ( model, Cmd.none )
 
@@ -103,9 +69,6 @@ update flags msg model =
 extractNotification : Msg -> Maybe Notification.Msg
 extractNotification msg =
     case msg of
-        LoginMsg subMsg ->
-            Login.extractNotification subMsg
-
         InsertMsg subMsg ->
             Insert.extractNotification subMsg
 
@@ -137,20 +100,13 @@ view model mNotification =
                         Insert.view subModel
                             |> List.map (Html.map InsertMsg)
 
-                    NoInsertModel subModel ->
-                        NoInsert.view subModel
-                            |> List.map (Html.map NoInsertMsg)
+                    NoInsertModel ->
+                        NoInsert.view
 
-                    LoginModel subModel ->
-                        Login.view subModel
-                            |> List.map (Html.map LoginMsg)
+                    NotFoundModel ->
+                        NotFound.view
 
-                    NotFoundModel subModel ->
-                        NotFound.view subModel
-                            |> List.map (Html.map NotFoundMsg)
-
-                    MaintenanceModel subModel ->
-                        Maintenance.view subModel
-                            |> List.map (Html.map MaintenanceMsg)
+                    MaintenanceModel ->
+                        Maintenance.view
                )
         )

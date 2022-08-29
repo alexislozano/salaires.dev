@@ -10,9 +10,7 @@ import Task
 
 
 type Msg
-    = EmailSent
-    | EmailSendingError
-    | SalaryInserted
+    = SalaryInserted
     | SalaryInsertingError
 
 
@@ -46,12 +44,6 @@ view msg =
         ]
         [ Html.text <|
             case msg of
-                EmailSent ->
-                    I18n.translate I18n.French I18n.EmailSent
-
-                EmailSendingError ->
-                    I18n.translate I18n.French I18n.EmailSendingError
-
                 SalaryInserted ->
                     I18n.translate I18n.French I18n.SalaryInserted
 

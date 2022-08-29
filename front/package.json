@@ -3,12 +3,14 @@
   "source": "src/index.html",
   "scripts": {
     "dev": "parcel --host 0.0.0.0",
-    "build": "parcel build"
+    "build": "parcel build",
+    "check": "elm-review --template jfmengels/elm-review-unused/example"
   },
   "devDependencies": {
     "@parcel/transformer-elm": "^2.7.0",
     "elm": "^0.19.1-5",
     "elm-format": "^0.8.5",
+    "elm-review": "^2.7.4",
     "parcel": "^2.7.0"
   },
   "dependencies": {
