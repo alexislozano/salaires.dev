@@ -1,7 +1,11 @@
+pub mod captcha_service;
 pub mod company_repository;
 pub mod location_repository;
 pub mod salary_repository;
 pub mod title_repository;
+
+pub use captcha_service::CaptchaService;
+pub use captcha_service::{hcaptcha::HCaptchaService, stub::StubCaptchaService};
 
 pub use company_repository::CompanyRepository;
 pub use company_repository::{

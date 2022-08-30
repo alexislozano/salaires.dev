@@ -51,6 +51,16 @@ init flags url =
                 ( NotFoundModel, Cmd.none )
 
 
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    case model of
+        InsertModel _ ->
+            Insert.subscriptions |> Sub.map InsertMsg
+
+        _ ->
+            Sub.none
+
+
 update : Flags -> Msg -> Model -> ( Model, Cmd Msg )
 update flags msg model =
     case ( msg, model ) of
@@ -76,8 +86,8 @@ extractNotification msg =
             Nothing
 
 
-view : Model -> Maybe Notification.Msg -> Html Msg
-view model mNotification =
+view : Flags -> Model -> Maybe Notification.Msg -> Html Msg
+view flags model mNotification =
     Html.main_
         [ Attributes.css
             [ Css.overflow Css.auto
@@ -97,7 +107,7 @@ view model mNotification =
                             |> List.map (Html.map IndexMsg)
 
                     InsertModel subModel ->
-                        Insert.view subModel
+                        Insert.view flags subModel
                             |> List.map (Html.map InsertMsg)
 
                     NoInsertModel ->

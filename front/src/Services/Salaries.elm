@@ -5,6 +5,7 @@ import Http
 import Json.Decode as Decode exposing (Decoder, andThen, list, maybe, succeed)
 import Json.Decode.Pipeline exposing (required)
 import Json.Encode exposing (Value, null, object)
+import Models.Captcha as Captcha exposing (Captcha)
 import Models.Company as Company exposing (Company)
 import Models.Compensation as Compensation exposing (Compensation)
 import Models.Date as Date exposing (Date)
@@ -51,6 +52,7 @@ type alias Body =
     , companyXp : Maybe Xp
     , totalXp : Maybe Xp
     , title : Maybe Title
+    , captcha : Captcha
     }
 
 
@@ -65,6 +67,7 @@ encode body =
         , ( "level", body.level |> Maybe.map Level.encode |> Maybe.withDefault null )
         , ( "company_xp", body.companyXp |> Maybe.map Xp.encode |> Maybe.withDefault null )
         , ( "total_xp", body.totalXp |> Maybe.map Xp.encode |> Maybe.withDefault null )
+        , ( "captcha", Captcha.encode body.captcha )
         ]
 
 

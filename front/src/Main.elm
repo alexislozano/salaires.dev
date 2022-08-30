@@ -51,8 +51,8 @@ init flags url key =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+subscriptions model =
+    Page.subscriptions model.page |> Sub.map PageMsg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -92,7 +92,7 @@ view model =
     { title = "salaires.dev"
     , body =
         [ header
-        , Page.view model.page model.notification |> Html.map PageMsg
+        , Page.view model.flags model.page model.notification |> Html.map PageMsg
         , Global.global
             [ Global.body
                 [ Css.backgroundColor Palette.sand

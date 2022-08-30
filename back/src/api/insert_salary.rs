@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use crate::{
-    domain::{models::Salary, use_cases},
-    infra::SalaryRepository,
+    domain::{models::Captcha, models::Salary, use_cases},
+    infra::{CaptchaService, SalaryRepository},
 };
 use axum::{http::StatusCode, Extension, Json};
 use chrono::Utc;
@@ -18,6 +18,7 @@ pub struct Request {
     level: Option<String>,
     company_xp: Option<i32>,
     total_xp: Option<i32>,
+    captcha: String,
 }
 
 impl TryFrom<Request> for Salary {
@@ -58,9 +59,18 @@ impl TryFrom<Request> for Salary {
     }
 }
 
+impl TryFrom<Request> for Captcha {
+    type Error = ();
+
+    fn try_from(request: Request) -> Result<Self, Self::Error> {
+        Ok(request.captcha.try_into()?)
+    }
+}
+
 type Error = (StatusCode, &'static str);
 
 pub async fn insert_salary(
+    Extension(captcha_service): Extension<Arc<dyn CaptchaService>>,
     Extension(salary_repo): Extension<Arc<dyn SalaryRepository>>,
     Json(request): Json<Request>,
 ) -> Result<Json<()>, Error> {
@@ -69,7 +79,12 @@ pub async fn insert_salary(
         _ => return Err((StatusCode::BAD_REQUEST, "bad body")),
     };
 
-    match use_cases::insert_salary(salary_repo, salary).await {
+    let captcha = match request.try_into() {
+        Ok(captcha) => captcha,
+        _ => return Err((StatusCode::BAD_REQUEST, "bad body")),
+    };
+
+    match use_cases::insert_salary(captcha_service, salary_repo, captcha, salary).await {
         Ok(()) => Ok(().into()),
         Err(use_cases::insert_salary::Error::Unknown(str)) => {
             Err((StatusCode::INTERNAL_SERVER_ERROR, str))

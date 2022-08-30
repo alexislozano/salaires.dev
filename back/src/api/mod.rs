@@ -4,7 +4,9 @@ mod fetch_salaries;
 mod fetch_titles;
 mod insert_salary;
 
-use crate::infra::{CompanyRepository, LocationRepository, SalaryRepository, TitleRepository};
+use crate::infra::{
+    CaptchaService, CompanyRepository, LocationRepository, SalaryRepository, TitleRepository,
+};
 use axum::{
     http::HeaderValue,
     routing::{get, post},
@@ -23,6 +25,7 @@ pub async fn serve(
     company_repo: Arc<dyn CompanyRepository>,
     location_repo: Arc<dyn LocationRepository>,
     title_repo: Arc<dyn TitleRepository>,
+    captcha_service: Arc<dyn CaptchaService>,
 ) {
     let port = env::var("PORT").expect("PORT env var");
     let url = format!("0.0.0.0:{port}");
@@ -38,7 +41,9 @@ pub async fn serve(
         )
         .route(
             "/salaries",
-            post(insert_salary).layer(Extension(salary_repo)),
+            post(insert_salary)
+                .layer(Extension(salary_repo))
+                .layer(Extension(captcha_service)),
         )
         .route(
             "/companies",

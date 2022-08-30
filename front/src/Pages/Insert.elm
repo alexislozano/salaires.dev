@@ -2,12 +2,14 @@ module Pages.Insert exposing (..)
 
 import Design.Button as Button
 import Design.Form as Form
+import Design.HCaptcha as HCaptcha
 import Design.Input as Input
 import Design.Select as Select
 import Flags exposing (Flags)
 import Html.Styled exposing (Html)
 import Http
 import I18n
+import Models.Captcha as Captcha exposing (Captcha)
 import Models.Company as Company exposing (Company)
 import Models.Compensation as Compensation exposing (Compensation)
 import Models.Level as Level exposing (Level)
@@ -16,6 +18,7 @@ import Models.Stock as Stock exposing (Stock)
 import Models.Title as Title exposing (Title)
 import Models.Xp as Xp exposing (Xp)
 import Notification
+import Ports
 import Services.Companies as Companies
 import Services.Locations as Locations
 import Services.Salaries as Salaries
@@ -40,6 +43,7 @@ type alias Form =
     , level : { value : String, parsed : Result String (Maybe Level) }
     , companyXp : { value : String, parsed : Result String (Maybe Xp) }
     , totalXp : { value : String, parsed : Result String (Maybe Xp) }
+    , captcha : Maybe Captcha
     }
 
 
@@ -49,8 +53,8 @@ body form =
         ( Ok company, Ok location, Ok compensation ) ->
             case ( form.stock.parsed, form.level.parsed, form.companyXp.parsed ) of
                 ( Ok stock, Ok level, Ok companyXp ) ->
-                    case ( form.totalXp.parsed, form.title.parsed ) of
-                        ( Ok totalXp, Ok title ) ->
+                    case ( form.totalXp.parsed, form.title.parsed, form.captcha ) of
+                        ( Ok totalXp, Ok title, Just captcha ) ->
                             Just
                                 { company = company
                                 , title = title
@@ -60,6 +64,7 @@ body form =
                                 , level = level
                                 , companyXp = companyXp
                                 , totalXp = totalXp
+                                , captcha = captcha
                                 }
 
                         _ ->
@@ -86,6 +91,7 @@ type Field
     | TotalXp
     | Level
     | Title
+    | Captcha
 
 
 type Msg
@@ -106,6 +112,7 @@ init flags =
                 [ Companies.getAll flags GotAllCompanies
                 , Locations.getAll flags GotAllLocations
                 , Titles.getAll flags GotAllTitles
+                , Ports.renderCaptcha ()
                 ]
     in
     ( { form =
@@ -117,6 +124,7 @@ init flags =
             , companyXp = { value = "", parsed = Ok Nothing }
             , totalXp = { value = "", parsed = Ok Nothing }
             , stock = { value = "", parsed = Ok Nothing }
+            , captcha = Nothing
             }
       , status = Init
       , companies = []
@@ -125,6 +133,11 @@ init flags =
       }
     , cmd
     )
+
+
+subscriptions : Sub Msg
+subscriptions =
+    Ports.captchaReceived (OnFieldChange Captcha)
 
 
 update : Flags -> Msg -> Model -> ( Model, Cmd Msg )
@@ -271,6 +284,9 @@ update flags msg model =
                                             Xp.tryFromString value |> Result.map Just
                                     }
                             }
+
+                        Captcha ->
+                            { form | captcha = Just <| Captcha.fromString value }
             in
             ( { model | form = newForm, status = Init }, Cmd.none )
 
@@ -285,8 +301,8 @@ extractNotification msg =
             Nothing
 
 
-view : Model -> List (Html Msg)
-view { form, status, companies, locations, titles } =
+view : Flags -> Model -> List (Html Msg)
+view { hCaptchaKey } { form, status, companies, locations, titles } =
     [ Form.view
         { title = I18n.translate I18n.French I18n.IAddMySalary }
         [ Select.view
@@ -364,6 +380,7 @@ view { form, status, companies, locations, titles } =
             , required = False
             , value = form.level.value
             }
+        , HCaptcha.view { key = hCaptchaKey }
         , Button.view
             { disabled = disabled status form
             , label =
