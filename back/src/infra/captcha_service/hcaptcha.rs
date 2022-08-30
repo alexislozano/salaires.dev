@@ -1,6 +1,7 @@
 use super::{CaptchaService, ValidateError};
 use crate::domain::models::Captcha;
 use async_trait::async_trait;
+use serde::Deserialize;
 use std::{collections::HashMap, env};
 
 pub struct HCaptchaService {
@@ -28,14 +29,30 @@ impl HCaptchaService {
 impl CaptchaService for HCaptchaService {
     async fn validate(&self, captcha: Captcha) -> Result<(), ValidateError> {
         let client = reqwest::Client::new();
-        match client
-            .post("http://httpbin.org")
+        let res = match client
+            .post("https://hcaptcha.com/siteverify")
             .form(&self.form(captcha))
             .send()
             .await
         {
-            Ok(_) => Ok(()),
-            _ => return Err(ValidateError::Unknown("the captcha is invalid")),
+            Ok(res) => res,
+            _ => return Err(ValidateError::Unknown("could not send request")),
+        };
+
+        let hcaptcha_response = match res.json::<HCaptchaResponse>().await {
+            Ok(res) => res,
+            _ => return Err(ValidateError::Unknown("could not convert to domain")),
+        };
+
+        if hcaptcha_response.success {
+            Ok(())
+        } else {
+            Err(ValidateError::Unknown("the captcha is invalid"))
         }
     }
+}
+
+#[derive(Deserialize)]
+pub struct HCaptchaResponse {
+    success: bool,
 }
