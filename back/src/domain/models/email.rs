@@ -1,4 +1,20 @@
-#[derive(Clone)]
+const FORBIDDEN_DOMAINS: [&str; 13] = [
+    "gmail",
+    "yahoo",
+    "hotmail",
+    "aol",
+    "wanadoo",
+    "msn",
+    "live",
+    "free",
+    "outlook",
+    "laposte",
+    "protonmail",
+    "yopmail",
+    "minutemail",
+];
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct Email {
     raw: String,
 }
@@ -17,7 +33,11 @@ impl TryFrom<String> for Email {
 
     fn try_from(raw: String) -> Result<Self, Self::Error> {
         if raw.contains("@") {
-            Ok(Self { raw })
+            if FORBIDDEN_DOMAINS.contains(&raw.as_str()) {
+                Err(())
+            } else {
+                Ok(Self { raw })
+            }
         } else {
             Err(())
         }

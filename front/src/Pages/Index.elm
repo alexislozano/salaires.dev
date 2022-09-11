@@ -18,8 +18,10 @@ import Models.Salary as Salary exposing (Salary)
 import Models.Stock as Stock
 import Models.Title as Title
 import Models.Xp as Xp
+import Notification
 import Result exposing (Result(..))
 import Services.Salaries as Salaries
+import Services.Tokens as Tokens
 import Utils exposing (HttpData(..))
 
 
@@ -37,14 +39,23 @@ type alias Sort =
 
 type Msg
     = GotAllSalaries (Result Http.Error (List Salary))
+    | Confirmed (Result Http.Error ())
+    | NotificationMsg Notification.Msg
     | Clicked Table.Column
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Flags -> Maybe String -> ( Model, Cmd Msg )
+init flags mToken =
     let
-        cmd =
+        cmds =
             Salaries.getAll flags GotAllSalaries
+                :: (case mToken of
+                        Just token ->
+                            [ Tokens.post flags Confirmed token ]
+
+                        Nothing ->
+                            []
+                   )
     in
     ( { salaries = Loading
       , sort =
@@ -52,7 +63,7 @@ init flags =
             , direction = Table.defaultDirection
             }
       }
-    , cmd
+    , Cmd.batch cmds
     )
 
 
@@ -64,6 +75,19 @@ update msg model =
 
         GotAllSalaries (Err _) ->
             ( { model | salaries = Failure }, Cmd.none )
+
+        Confirmed (Ok _) ->
+            ( model
+            , Notification.send NotificationMsg Notification.TokenConfirmationSuccess
+            )
+
+        Confirmed (Err _) ->
+            ( model
+            , Notification.send NotificationMsg Notification.TokenConfirmationError
+            )
+
+        NotificationMsg _ ->
+            ( model, Cmd.none )
 
         Clicked column ->
             let
@@ -78,6 +102,16 @@ update msg model =
                     }
             in
             ( { model | sort = sort }, Cmd.none )
+
+
+extractNotification : Msg -> Maybe Notification.Msg
+extractNotification msg =
+    case msg of
+        NotificationMsg subMsg ->
+            Just subMsg
+
+        _ ->
+            Nothing
 
 
 view : Model -> List (Html Msg)

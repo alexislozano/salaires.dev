@@ -35,8 +35,8 @@ init flags url =
 
     else
         case Route.parse url of
-            Route.Index ->
-                Index.init flags
+            Route.Index token ->
+                Index.init flags token
                     |> Utils.map IndexModel IndexMsg
 
             Route.Insert ->
@@ -79,11 +79,11 @@ update flags msg model =
 extractNotification : Msg -> Maybe Notification.Msg
 extractNotification msg =
     case msg of
+        IndexMsg subMsg ->
+            Index.extractNotification subMsg
+
         InsertMsg subMsg ->
             Insert.extractNotification subMsg
-
-        _ ->
-            Nothing
 
 
 view : Flags -> Model -> Maybe Notification.Msg -> Html Msg

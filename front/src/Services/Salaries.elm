@@ -9,6 +9,7 @@ import Models.Captcha as Captcha exposing (Captcha)
 import Models.Company as Company exposing (Company)
 import Models.Compensation as Compensation exposing (Compensation)
 import Models.Date as Date exposing (Date)
+import Models.Email as Email exposing (Email)
 import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
 import Models.Salary as Salary exposing (Salary)
@@ -44,7 +45,8 @@ post flags msg body =
 
 
 type alias Body =
-    { company : Company
+    { email : Email
+    , company : Company
     , location : Location
     , compensation : Compensation
     , stock : Maybe Stock
@@ -59,7 +61,8 @@ type alias Body =
 encode : Body -> Value
 encode body =
     object
-        [ ( "company", Company.encode body.company )
+        [ ( "email", Email.encode body.email )
+        , ( "company", Company.encode body.company )
         , ( "title", body.title |> Maybe.map Title.encode |> Maybe.withDefault null )
         , ( "location", Location.encode body.location )
         , ( "compensation", Compensation.encode body.compensation )

@@ -12,6 +12,8 @@ import Task
 type Msg
     = SalaryInserted
     | SalaryInsertingError
+    | TokenConfirmationSuccess
+    | TokenConfirmationError
 
 
 send : (Msg -> msg) -> Msg -> Cmd msg
@@ -49,4 +51,10 @@ view msg =
 
                 SalaryInsertingError ->
                     I18n.translate I18n.French I18n.SalaryInstertingError
+
+                TokenConfirmationSuccess ->
+                    I18n.translate I18n.French I18n.TokenConfirmationSuccess
+
+                TokenConfirmationError ->
+                    I18n.translate I18n.French I18n.TokenConfirmationError
         ]

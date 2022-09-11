@@ -32,6 +32,12 @@ type Key
     | CompensationHelp
     | TitlePlaceholder
     | TheSiteIsInMaintenance
+    | EmailShouldContainAnAt
+    | Email
+    | EmailShouldBePro
+    | TokenConfirmationSuccess
+    | TokenConfirmationError
+    | EmailExplanation
 
 
 translate : Lang -> Key -> String
@@ -94,7 +100,7 @@ translate lang key =
                     "Il n'est plus possible d'ajouter des salaires pour le moment."
 
                 SalaryInserted ->
-                    "Le salaire a été ajouté"
+                    "Le salaire a été ajouté, un email de confirmation a été envoyé"
 
                 SalaryInstertingError ->
                     "Le salaire n'a pas pu être ajouté"
@@ -116,3 +122,21 @@ translate lang key =
 
                 TitlePlaceholder ->
                     "Dev fullstack"
+
+                EmailShouldContainAnAt ->
+                    "Une adresse email doit comporter un @"
+
+                Email ->
+                    "Email"
+
+                EmailShouldBePro ->
+                    "L'adresse email doit être professionnelle"
+
+                TokenConfirmationSuccess ->
+                    "Le salaire a bien été confirmé, il sera publié prochainement"
+
+                TokenConfirmationError ->
+                    "Le salaire n'a pas pu être confirmé"
+
+                EmailExplanation ->
+                    "L'adresse email et l'entreprise renseignées doivent correspondre. Sans cela, le salaire ne sera pas publié."

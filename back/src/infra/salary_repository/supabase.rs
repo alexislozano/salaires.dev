@@ -1,10 +1,11 @@
-use super::{FetchAllError, InsertError, SalaryRepository};
-use crate::domain::models::Salary;
+use super::{ConfirmError, FetchAllError, InsertError, SalaryRepository};
+use crate::domain::models::{Id, Salary, Status};
 use async_trait::async_trait;
 use axum::http::HeaderMap;
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 use std::env;
+use uuid::Uuid;
 
 pub struct SupabaseSalaryRepository {
     url: String,
@@ -33,10 +34,28 @@ impl SupabaseSalaryRepository {
 
 #[async_trait]
 impl SalaryRepository for SupabaseSalaryRepository {
+    async fn confirm(&self, id: Id) -> Result<(), ConfirmError> {
+        let client = reqwest::Client::new();
+        match client
+            .patch(format!("{}salaries?id=eq.{}", self.url, Uuid::from(id)))
+            .headers(self.headers())
+            .json(&SupabaseStatus::from(Status::Confirmed))
+            .send()
+            .await
+        {
+            Ok(_) => Ok(()),
+            _ => Err(ConfirmError::Unknown("could not send request")),
+        }
+    }
+
     async fn fetch_all(&self) -> Result<Vec<Salary>, FetchAllError> {
         let client = reqwest::Client::new();
         let res = match client
-            .get(format!("{}salaries?select=*", self.url))
+            .get(format!(
+                "{}salaries?select=*&status=eq.{}",
+                self.url,
+                String::from(Status::Published)
+            ))
             .headers(self.headers())
             .send()
             .await
@@ -79,6 +98,8 @@ impl SalaryRepository for SupabaseSalaryRepository {
 
 #[derive(Deserialize, Serialize)]
 pub struct SupabaseSalary {
+    id: Uuid,
+    email: String,
     company: String,
     title: Option<String>,
     location: String,
@@ -88,11 +109,14 @@ pub struct SupabaseSalary {
     level: Option<String>,
     company_xp: Option<i32>,
     total_xp: Option<i32>,
+    status: String,
 }
 
 impl From<Salary> for SupabaseSalary {
     fn from(salary: Salary) -> Self {
         Self {
+            id: salary.id.into(),
+            email: salary.email.into(),
             company: salary.company.into(),
             title: salary.title.map(|title| title.into()),
             location: salary.location.into(),
@@ -102,6 +126,7 @@ impl From<Salary> for SupabaseSalary {
             level: salary.level.map(|level| level.into()),
             company_xp: salary.company_xp.map(|company_xp| company_xp.into()),
             total_xp: salary.total_xp.map(|total_xp| total_xp.into()),
+            status: salary.status.into(),
         }
     }
 }
@@ -111,6 +136,8 @@ impl TryFrom<SupabaseSalary> for Salary {
 
     fn try_from(salary: SupabaseSalary) -> Result<Self, Self::Error> {
         Ok(Self::new(
+            salary.id.into(),
+            salary.email.try_into()?,
             salary.company.try_into()?,
             if let Some(raw) = salary.title {
                 Some(raw.try_into()?)
@@ -140,6 +167,20 @@ impl TryFrom<SupabaseSalary> for Salary {
             } else {
                 None
             },
+            salary.status.try_into()?,
         ))
+    }
+}
+
+#[derive(Serialize)]
+struct SupabaseStatus {
+    status: String,
+}
+
+impl From<Status> for SupabaseStatus {
+    fn from(status: Status) -> Self {
+        Self {
+            status: status.into(),
+        }
     }
 }

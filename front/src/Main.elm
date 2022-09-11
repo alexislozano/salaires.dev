@@ -128,7 +128,7 @@ header =
             ]
             [ Link.view []
                 { label = "salaires.dev"
-                , url = Route.toString Route.Index
+                , url = Route.toString (Route.Index Nothing)
                 }
             , Link.view []
                 { label = "Github"

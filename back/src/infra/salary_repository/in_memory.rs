@@ -1,7 +1,7 @@
 use std::sync::Mutex;
 
-use super::{FetchAllError, InsertError, SalaryRepository};
-use crate::domain::models::Salary;
+use super::{ConfirmError, FetchAllError, InsertError, SalaryRepository};
+use crate::domain::models::{Id, Salary};
 use async_trait::async_trait;
 
 pub struct InMemorySalaryRepository {
@@ -29,6 +29,26 @@ impl InMemorySalaryRepository {
 
 #[async_trait]
 impl SalaryRepository for InMemorySalaryRepository {
+    async fn confirm(&self, id: Id) -> Result<(), ConfirmError> {
+        if self.error {
+            return Err(ConfirmError::Unknown("error flag is on"));
+        }
+
+        let mut lock = match self.salaries.lock() {
+            Ok(lock) => lock,
+            _ => return Err(ConfirmError::Unknown("could not acquire lock")),
+        };
+
+        let index = match lock.iter().position(|s| s.id == id) {
+            Some(index) => index,
+            None => return Err(ConfirmError::Unknown("salary not found")),
+        };
+
+        lock[index].confirm();
+
+        Ok(())
+    }
+
     async fn fetch_all(&self) -> Result<Vec<Salary>, FetchAllError> {
         if self.error {
             return Err(FetchAllError::Unknown("error flag is on"));

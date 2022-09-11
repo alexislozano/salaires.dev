@@ -1,3 +1,4 @@
+mod confirm_token;
 mod fetch_companies;
 mod fetch_locations;
 mod fetch_salaries;
@@ -6,12 +7,14 @@ mod insert_salary;
 
 use crate::infra::{
     CaptchaService, CompanyRepository, LocationRepository, SalaryRepository, TitleRepository,
+    TokenRepository, TokenSender,
 };
 use axum::{
     http::HeaderValue,
     routing::{get, post},
     Extension, Router,
 };
+use confirm_token::confirm_token;
 use fetch_companies::fetch_companies;
 use fetch_locations::fetch_locations;
 use fetch_salaries::fetch_salaries;
@@ -26,6 +29,8 @@ pub async fn serve(
     location_repo: Arc<dyn LocationRepository>,
     title_repo: Arc<dyn TitleRepository>,
     captcha_service: Arc<dyn CaptchaService>,
+    token_repo: Arc<dyn TokenRepository>,
+    token_sender: Arc<dyn TokenSender>,
 ) {
     let port = env::var("PORT").expect("PORT env var");
     let url = format!("0.0.0.0:{port}");
@@ -42,8 +47,10 @@ pub async fn serve(
         .route(
             "/salaries",
             post(insert_salary)
-                .layer(Extension(salary_repo))
-                .layer(Extension(captcha_service)),
+                .layer(Extension(salary_repo.clone()))
+                .layer(Extension(captcha_service))
+                .layer(Extension(token_repo.clone()))
+                .layer(Extension(token_sender)),
         )
         .route(
             "/companies",
@@ -54,6 +61,12 @@ pub async fn serve(
             get(fetch_locations).layer(Extension(location_repo)),
         )
         .route("/titles", get(fetch_titles).layer(Extension(title_repo)))
+        .route(
+            "/tokens",
+            post(confirm_token)
+                .layer(Extension(token_repo))
+                .layer(Extension(salary_repo)),
+        )
         .layer(CorsLayer::permissive().allow_origin(origin));
 
     axum::Server::bind(&url.parse().unwrap())

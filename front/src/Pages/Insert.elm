@@ -1,5 +1,6 @@
 module Pages.Insert exposing (..)
 
+import Design.Banner as Banner
 import Design.Button as Button
 import Design.Form as Form
 import Design.HCaptcha as HCaptcha
@@ -12,6 +13,7 @@ import I18n
 import Models.Captcha as Captcha exposing (Captcha)
 import Models.Company as Company exposing (Company)
 import Models.Compensation as Compensation exposing (Compensation)
+import Models.Email as Email exposing (Email)
 import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
 import Models.Stock as Stock exposing (Stock)
@@ -35,7 +37,8 @@ type alias Model =
 
 
 type alias Form =
-    { company : { value : String, parsed : Result String Company }
+    { email : { value : String, parsed : Result String Email }
+    , company : { value : String, parsed : Result String Company }
     , title : { value : String, parsed : Result String (Maybe Title) }
     , location : { value : String, parsed : Result String Location }
     , compensation : { value : String, parsed : Result String Compensation }
@@ -55,17 +58,23 @@ body form =
                 ( Ok stock, Ok level, Ok companyXp ) ->
                     case ( form.totalXp.parsed, form.title.parsed, form.captcha ) of
                         ( Ok totalXp, Ok title, Just captcha ) ->
-                            Just
-                                { company = company
-                                , title = title
-                                , location = location
-                                , compensation = compensation
-                                , stock = stock
-                                , level = level
-                                , companyXp = companyXp
-                                , totalXp = totalXp
-                                , captcha = captcha
-                                }
+                            case form.email.parsed of
+                                Ok email ->
+                                    Just
+                                        { email = email
+                                        , company = company
+                                        , title = title
+                                        , location = location
+                                        , compensation = compensation
+                                        , stock = stock
+                                        , level = level
+                                        , companyXp = companyXp
+                                        , totalXp = totalXp
+                                        , captcha = captcha
+                                        }
+
+                                _ ->
+                                    Nothing
 
                         _ ->
                             Nothing
@@ -83,7 +92,8 @@ type Status
 
 
 type Field
-    = Company
+    = Email
+    | Company
     | Location
     | Compensation
     | Stock
@@ -116,7 +126,8 @@ init flags =
                 ]
     in
     ( { form =
-            { company = { value = "", parsed = Err " " }
+            { email = { value = "", parsed = Err " " }
+            , company = { value = "", parsed = Err " " }
             , title = { value = "", parsed = Ok Nothing }
             , location = { value = "", parsed = Err " " }
             , compensation = { value = "", parsed = Err " " }
@@ -196,6 +207,14 @@ update flags msg model =
 
                 newForm =
                     case field of
+                        Email ->
+                            { form
+                                | email =
+                                    { value = value
+                                    , parsed = Email.tryFromString value
+                                    }
+                            }
+
                         Company ->
                             { form
                                 | company =
@@ -305,7 +324,18 @@ view : Flags -> Model -> List (Html Msg)
 view { hCaptchaKey } { form, status, companies, locations, titles } =
     [ Form.view
         { title = I18n.translate I18n.French I18n.IAddMySalary }
-        [ Select.view
+        [ Banner.view
+            { text = I18n.translate I18n.French I18n.EmailExplanation }
+        , Input.view
+            { error = error form.email.parsed
+            , label = I18n.translate I18n.French I18n.Email
+            , sublabel = Nothing
+            , onChange = OnFieldChange Email
+            , placeholder = "moi@exemple.fr"
+            , required = True
+            , value = form.email.value
+            }
+        , Select.view
             { error = error form.company.parsed
             , id = "companies"
             , label = I18n.translate I18n.French I18n.Company

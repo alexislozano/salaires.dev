@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use crate::{
-    domain::{models::Captcha, models::Salary, use_cases},
-    infra::{CaptchaService, SalaryRepository},
+    domain::{models::Captcha, models::Id, models::Salary, models::Status, use_cases},
+    infra::{CaptchaService, SalaryRepository, TokenRepository, TokenSender},
 };
 use axum::{http::StatusCode, Extension, Json};
 use chrono::Utc;
@@ -10,6 +10,7 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Clone)]
 pub struct Request {
+    email: String,
     company: String,
     title: Option<String>,
     location: String,
@@ -26,6 +27,8 @@ impl TryFrom<Request> for Salary {
 
     fn try_from(request: Request) -> Result<Self, Self::Error> {
         Ok(Self::new(
+            Id::generate(),
+            request.email.try_into()?,
             request.company.try_into()?,
             if let Some(raw) = request.title {
                 Some(raw.try_into()?)
@@ -55,6 +58,7 @@ impl TryFrom<Request> for Salary {
             } else {
                 None
             },
+            Status::Waiting,
         ))
     }
 }
@@ -72,6 +76,8 @@ type Error = (StatusCode, &'static str);
 pub async fn insert_salary(
     Extension(captcha_service): Extension<Arc<dyn CaptchaService>>,
     Extension(salary_repo): Extension<Arc<dyn SalaryRepository>>,
+    Extension(token_repo): Extension<Arc<dyn TokenRepository>>,
+    Extension(token_sender): Extension<Arc<dyn TokenSender>>,
     Json(request): Json<Request>,
 ) -> Result<Json<()>, Error> {
     let salary = match request.clone().try_into() {
@@ -84,7 +90,16 @@ pub async fn insert_salary(
         _ => return Err((StatusCode::BAD_REQUEST, "bad body")),
     };
 
-    match use_cases::insert_salary(captcha_service, salary_repo, captcha, salary).await {
+    match use_cases::insert_salary(
+        captcha_service,
+        salary_repo,
+        token_repo,
+        token_sender,
+        captcha,
+        salary,
+    )
+    .await
+    {
         Ok(()) => Ok(().into()),
         Err(use_cases::insert_salary::Error::Unknown(str)) => {
             Err((StatusCode::INTERNAL_SERVER_ERROR, str))
