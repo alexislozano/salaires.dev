@@ -67,7 +67,6 @@ create table salaries (
     title varchar,
     date date not null default now(),
     compensation numeric not null,
-    stock numeric,
     level varchar,
     company_xp int8,
     total_xp int8,

@@ -7,7 +7,6 @@ import Models.Date
 import Models.Level
 import Models.Location
 import Models.Salary as Salary exposing (Salary(..))
-import Models.Stock
 import Models.Title
 import Models.Xp
 import Utils
@@ -21,7 +20,6 @@ type Column
     | CompanyXp
     | TotalXp
     | Compensation
-    | Stock
     | Date
 
 
@@ -64,9 +62,6 @@ title column =
         Compensation ->
             I18n.translate I18n.French I18n.Compensation
 
-        Stock ->
-            I18n.translate I18n.French I18n.Stock
-
         Date ->
             I18n.translate I18n.French I18n.Date
 
@@ -94,9 +89,6 @@ subtitle column =
 
         Compensation ->
             I18n.translate I18n.French I18n.CompensationHelp
-
-        Stock ->
-            I18n.translate I18n.French I18n.InEuros
 
         Date ->
             ""
@@ -156,9 +148,6 @@ sort { column, direction } salaries =
                 Compensation ->
                     \s1 s2 -> Models.Compensation.compare s1.compensation s2.compensation
 
-                Stock ->
-                    \s1 s2 -> Utils.compareMaybe Models.Stock.compare s1.stock s2.stock
-
                 Date ->
                     \s1 s2 -> Models.Date.compare s1.date s2.date
     in
@@ -207,9 +196,6 @@ equal c1 c2 =
             True
 
         ( Compensation, Compensation ) ->
-            True
-
-        ( Stock, Stock ) ->
             True
 
         ( Date, Date ) ->

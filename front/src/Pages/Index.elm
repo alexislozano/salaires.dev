@@ -15,7 +15,6 @@ import Models.Date as Date
 import Models.Level as Level
 import Models.Location as Location
 import Models.Salary as Salary exposing (Salary)
-import Models.Stock as Stock
 import Models.Title as Title
 import Models.Xp as Xp
 import Notification
@@ -165,9 +164,6 @@ head { sort } =
             , Table.Compensation
                 |> Table.header sort
                 |> header Table.Compensation
-            , Table.Stock
-                |> Table.header sort
-                |> header Table.Stock
             , Table.CompanyXp
                 |> Table.header sort
                 |> header Table.CompanyXp
@@ -261,11 +257,6 @@ row index salary =
         , Salary.toFields salary
             |> .compensation
             |> Compensation.toString
-            |> cell
-        , Salary.toFields salary
-            |> .stock
-            |> Maybe.map Stock.toString
-            |> Maybe.withDefault ""
             |> cell
         , Salary.toFields salary
             |> .companyXp

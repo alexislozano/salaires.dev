@@ -13,7 +13,6 @@ import Models.Email as Email exposing (Email)
 import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
 import Models.Salary as Salary exposing (Salary)
-import Models.Stock as Stock exposing (Stock)
 import Models.Title as Title exposing (Title)
 import Models.Xp as Xp exposing (Xp)
 
@@ -49,7 +48,6 @@ type alias Body =
     , company : Company
     , location : Location
     , compensation : Compensation
-    , stock : Maybe Stock
     , level : Maybe Level
     , companyXp : Maybe Xp
     , totalXp : Maybe Xp
@@ -66,7 +64,6 @@ encode body =
         , ( "title", body.title |> Maybe.map Title.encode |> Maybe.withDefault null )
         , ( "location", Location.encode body.location )
         , ( "compensation", Compensation.encode body.compensation )
-        , ( "stock", body.stock |> Maybe.map Stock.encode |> Maybe.withDefault null )
         , ( "level", body.level |> Maybe.map Level.encode |> Maybe.withDefault null )
         , ( "company_xp", body.companyXp |> Maybe.map Xp.encode |> Maybe.withDefault null )
         , ( "total_xp", body.totalXp |> Maybe.map Xp.encode |> Maybe.withDefault null )
@@ -80,7 +77,6 @@ type alias Response =
     , location : Location
     , compensation : Compensation
     , date : Date
-    , stock : Maybe Stock
     , level : Maybe Level
     , companyXp : Maybe Xp
     , totalXp : Maybe Xp
@@ -100,7 +96,6 @@ decoder =
         |> required "location" Location.decoder
         |> required "compensation" Compensation.decoder
         |> required "date" Date.decoder
-        |> required "stock" (maybe Stock.decoder)
         |> required "level" (maybe Level.decoder)
         |> required "company_xp" (maybe Xp.decoder)
         |> required "total_xp" (maybe Xp.decoder)

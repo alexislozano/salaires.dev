@@ -9,7 +9,6 @@ type Key
     = Company
     | Location
     | Compensation
-    | Stock
     | Level
     | Title
     | CompanyXp
@@ -53,9 +52,6 @@ translate lang key =
 
                 Compensation ->
                     "Rémunération brute"
-
-                Stock ->
-                    "Stock"
 
                 Level ->
                     "Niveau"

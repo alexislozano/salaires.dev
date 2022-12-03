@@ -15,7 +15,6 @@ pub struct Request {
     title: Option<String>,
     location: String,
     compensation: i32,
-    stock: Option<i32>,
     level: Option<String>,
     company_xp: Option<i32>,
     total_xp: Option<i32>,
@@ -38,11 +37,6 @@ impl TryFrom<Request> for Salary {
             request.location.try_into()?,
             request.compensation.try_into()?,
             Utc::today().naive_utc().into(),
-            if let Some(raw) = request.stock {
-                Some(raw.try_into()?)
-            } else {
-                None
-            },
             if let Some(raw) = request.level {
                 Some(raw.try_into()?)
             } else {

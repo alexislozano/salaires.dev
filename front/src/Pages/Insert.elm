@@ -16,7 +16,6 @@ import Models.Compensation as Compensation exposing (Compensation)
 import Models.Email as Email exposing (Email)
 import Models.Level as Level exposing (Level)
 import Models.Location as Location exposing (Location)
-import Models.Stock as Stock exposing (Stock)
 import Models.Title as Title exposing (Title)
 import Models.Xp as Xp exposing (Xp)
 import Notification
@@ -42,7 +41,6 @@ type alias Form =
     , title : { value : String, parsed : Result String (Maybe Title) }
     , location : { value : String, parsed : Result String Location }
     , compensation : { value : String, parsed : Result String Compensation }
-    , stock : { value : String, parsed : Result String (Maybe Stock) }
     , level : { value : String, parsed : Result String (Maybe Level) }
     , companyXp : { value : String, parsed : Result String (Maybe Xp) }
     , totalXp : { value : String, parsed : Result String (Maybe Xp) }
@@ -54,8 +52,8 @@ body : Form -> Maybe Salaries.Body
 body form =
     case ( form.company.parsed, form.location.parsed, form.compensation.parsed ) of
         ( Ok company, Ok location, Ok compensation ) ->
-            case ( form.stock.parsed, form.level.parsed, form.companyXp.parsed ) of
-                ( Ok stock, Ok level, Ok companyXp ) ->
+            case ( form.level.parsed, form.companyXp.parsed ) of
+                ( Ok level, Ok companyXp ) ->
                     case ( form.totalXp.parsed, form.title.parsed, form.captcha ) of
                         ( Ok totalXp, Ok title, Just captcha ) ->
                             case form.email.parsed of
@@ -66,7 +64,6 @@ body form =
                                         , title = title
                                         , location = location
                                         , compensation = compensation
-                                        , stock = stock
                                         , level = level
                                         , companyXp = companyXp
                                         , totalXp = totalXp
@@ -96,7 +93,6 @@ type Field
     | Company
     | Location
     | Compensation
-    | Stock
     | CompanyXp
     | TotalXp
     | Level
@@ -134,7 +130,6 @@ init flags =
             , level = { value = "", parsed = Ok Nothing }
             , companyXp = { value = "", parsed = Ok Nothing }
             , totalXp = { value = "", parsed = Ok Nothing }
-            , stock = { value = "", parsed = Ok Nothing }
             , captcha = Nothing
             }
       , status = Init
@@ -252,19 +247,6 @@ update flags msg model =
                                     }
                             }
 
-                        Stock ->
-                            { form
-                                | stock =
-                                    { value = value
-                                    , parsed =
-                                        if String.isEmpty value then
-                                            Ok Nothing
-
-                                        else
-                                            Stock.tryFromString value |> Result.map Just
-                                    }
-                            }
-
                         Level ->
                             { form
                                 | level =
@@ -373,15 +355,6 @@ view { hCaptchaKey } { form, status, companies, locations, titles } =
             , placeholder = "40000"
             , required = True
             , value = form.compensation.value
-            }
-        , Input.view
-            { error = error form.stock.parsed
-            , label = I18n.translate I18n.French I18n.Stock
-            , sublabel = Just <| I18n.translate I18n.French I18n.InEuros
-            , onChange = OnFieldChange Stock
-            , placeholder = "10000"
-            , required = False
-            , value = form.stock.value
             }
         , Input.view
             { error = error form.companyXp.parsed
