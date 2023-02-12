@@ -4,7 +4,7 @@ use crate::{
     domain::{models::Token, use_cases},
     infra::{SalaryRepository, TokenRepository},
 };
-use axum::{http::StatusCode, Extension, Json};
+use axum::{extract::Json, extract::State, http::StatusCode};
 use serde::Deserialize;
 
 #[derive(Deserialize, Clone)]
@@ -23,8 +23,8 @@ impl TryFrom<Request> for Token {
 type Error = (StatusCode, &'static str);
 
 pub async fn confirm_token(
-    Extension(token_repo): Extension<Arc<dyn TokenRepository>>,
-    Extension(salary_repo): Extension<Arc<dyn SalaryRepository>>,
+    State(token_repo): State<Arc<dyn TokenRepository>>,
+    State(salary_repo): State<Arc<dyn SalaryRepository>>,
     Json(request): Json<Request>,
 ) -> Result<Json<()>, Error> {
     let token = match request.try_into() {

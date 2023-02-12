@@ -4,7 +4,7 @@ use crate::{
     domain::{models::Captcha, models::Id, models::Salary, models::Status, use_cases},
     infra::{CaptchaService, SalaryRepository, TokenRepository, TokenSender},
 };
-use axum::{http::StatusCode, Extension, Json};
+use axum::{extract::State, http::StatusCode, Json};
 use chrono::Utc;
 use serde::Deserialize;
 
@@ -36,7 +36,7 @@ impl TryFrom<Request> for Salary {
             },
             request.location.try_into()?,
             request.compensation.try_into()?,
-            Utc::today().naive_utc().into(),
+            Utc::now().date_naive().into(),
             if let Some(raw) = request.level {
                 Some(raw.try_into()?)
             } else {
@@ -68,10 +68,10 @@ impl TryFrom<Request> for Captcha {
 type Error = (StatusCode, &'static str);
 
 pub async fn insert_salary(
-    Extension(captcha_service): Extension<Arc<dyn CaptchaService>>,
-    Extension(salary_repo): Extension<Arc<dyn SalaryRepository>>,
-    Extension(token_repo): Extension<Arc<dyn TokenRepository>>,
-    Extension(token_sender): Extension<Arc<dyn TokenSender>>,
+    State(captcha_service): State<Arc<dyn CaptchaService>>,
+    State(salary_repo): State<Arc<dyn SalaryRepository>>,
+    State(token_repo): State<Arc<dyn TokenRepository>>,
+    State(token_sender): State<Arc<dyn TokenSender>>,
     Json(request): Json<Request>,
 ) -> Result<Json<()>, Error> {
     let salary = match request.clone().try_into() {

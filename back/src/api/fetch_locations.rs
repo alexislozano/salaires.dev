@@ -4,7 +4,7 @@ use crate::{
     domain::{models::Location, use_cases},
     infra::LocationRepository,
 };
-use axum::{http::StatusCode, Extension, Json};
+use axum::{extract::State, http::StatusCode, Json};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -23,7 +23,7 @@ impl From<Location> for Response {
 type Error = (StatusCode, &'static str);
 
 pub async fn fetch_locations(
-    Extension(repo): Extension<Arc<dyn LocationRepository>>,
+    State(repo): State<Arc<dyn LocationRepository>>,
 ) -> Result<Json<Vec<Response>>, Error> {
     match use_cases::fetch_locations(repo).await {
         Ok(locations) => Ok(locations

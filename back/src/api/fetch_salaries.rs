@@ -4,7 +4,7 @@ use crate::{
     domain::{models::Salary, use_cases},
     infra::SalaryRepository,
 };
-use axum::{http::StatusCode, Extension, Json};
+use axum::{extract::State, http::StatusCode, Json};
 use chrono::NaiveDate;
 use serde::Serialize;
 
@@ -38,7 +38,7 @@ impl From<Salary> for Response {
 type Error = (StatusCode, &'static str);
 
 pub async fn fetch_salaries(
-    Extension(repo): Extension<Arc<dyn SalaryRepository>>,
+    State(repo): State<Arc<dyn SalaryRepository>>,
 ) -> Result<Json<Vec<Response>>, Error> {
     match use_cases::fetch_salaries(repo).await {
         Ok(salaries) => Ok(salaries

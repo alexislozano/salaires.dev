@@ -4,7 +4,7 @@ use crate::{
     domain::{models::Title, use_cases},
     infra::TitleRepository,
 };
-use axum::{http::StatusCode, Extension, Json};
+use axum::{extract::State, http::StatusCode, Json};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -23,7 +23,7 @@ impl From<Title> for Response {
 type Error = (StatusCode, &'static str);
 
 pub async fn fetch_titles(
-    Extension(repo): Extension<Arc<dyn TitleRepository>>,
+    State(repo): State<Arc<dyn TitleRepository>>,
 ) -> Result<Json<Vec<Response>>, Error> {
     match use_cases::fetch_titles(repo).await {
         Ok(titles) => Ok(titles

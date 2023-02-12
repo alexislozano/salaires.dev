@@ -4,7 +4,7 @@ use crate::{
     domain::{models::Company, use_cases},
     infra::CompanyRepository,
 };
-use axum::{http::StatusCode, Extension, Json};
+use axum::{extract::State, http::StatusCode, Json};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -23,7 +23,7 @@ impl From<Company> for Response {
 type Error = (StatusCode, &'static str);
 
 pub async fn fetch_companies(
-    Extension(repo): Extension<Arc<dyn CompanyRepository>>,
+    State(repo): State<Arc<dyn CompanyRepository>>,
 ) -> Result<Json<Vec<Response>>, Error> {
     match use_cases::fetch_companies(repo).await {
         Ok(companies) => Ok(companies

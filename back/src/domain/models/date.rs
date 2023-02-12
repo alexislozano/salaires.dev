@@ -9,7 +9,7 @@ impl Date {
     #[cfg(test)]
     pub fn test() -> Self {
         Self {
-            raw: NaiveDate::from_ymd(2022, 1, 1),
+            raw: NaiveDate::from_ymd_opt(2022, 1, 1).unwrap(),
         }
     }
 }

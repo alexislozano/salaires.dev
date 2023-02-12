@@ -14,6 +14,6 @@ mod xp;
 
 pub use self::{
     captcha::Captcha, company::Company, compensation::Compensation, date::Date, email::Email,
-    id::Id, level::Level, location::Location, salary::Salary, status::Status,
-    title::Title, token::Token, xp::Xp,
+    id::Id, level::Level, location::Location, salary::Salary, status::Status, title::Title,
+    token::Token, xp::Xp,
 };
