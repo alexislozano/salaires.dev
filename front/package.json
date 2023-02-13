@@ -7,13 +7,13 @@
     "check": "elm-review --template jfmengels/elm-review-unused/example"
   },
   "devDependencies": {
-    "@parcel/transformer-elm": "^2.7.0",
+    "@parcel/transformer-elm": "^2.8.3",
     "elm": "^0.19.1-5",
     "elm-format": "^0.8.5",
-    "elm-review": "^2.7.4",
-    "parcel": "^2.7.0"
+    "elm-review": "^2.9.1",
+    "parcel": "^2.8.3"
   },
   "dependencies": {
-    "elm-json": "^0.2.12"
+    "elm-json": "^0.2.13"
   }
 }
