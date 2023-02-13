@@ -39,7 +39,7 @@ impl TokenSender for EmailTokenSender {
 
         let body = match Body::new_with_encoding(
             format!(
-                "Confirmez votre salaires en cliquant sur ce lien:\n{}/?token={}",
+                "Confirmez votre salaire en cliquant sur ce lien:\n{}/?token={}",
                 self.app_url,
                 String::from(token)
             ),
