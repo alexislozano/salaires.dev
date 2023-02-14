@@ -270,7 +270,7 @@ row index salary =
             |> cell
         , Salary.toFields salary
             |> .level
-            |> Maybe.map Level.toString
+            |> Maybe.map Level.toWording
             |> Maybe.withDefault ""
             |> cell
         , Salary.toFields salary

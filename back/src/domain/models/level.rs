@@ -1,11 +1,18 @@
 #[derive(Clone, Debug, PartialEq)]
-pub struct Level {
-    raw: String,
+pub enum Level {
+    Junior,
+    Mid,
+    Senior,
 }
 
 impl From<Level> for String {
     fn from(level: Level) -> Self {
-        level.raw
+        match level {
+            Level::Junior => "Junior",
+            Level::Mid => "Mid",
+            Level::Senior => "Senior",
+        }
+        .into()
     }
 }
 
@@ -13,10 +20,11 @@ impl TryFrom<String> for Level {
     type Error = ();
 
     fn try_from(raw: String) -> Result<Self, Self::Error> {
-        if raw.is_empty() {
-            Err(())
-        } else {
-            Ok(Self { raw })
+        match raw.as_str() {
+            "Junior" => Ok(Self::Junior),
+            "Mid" => Ok(Self::Mid),
+            "Senior" => Ok(Self::Senior),
+            _ => Err(()),
         }
     }
 }

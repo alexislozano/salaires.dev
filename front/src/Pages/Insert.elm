@@ -2,6 +2,7 @@ module Pages.Insert exposing (..)
 
 import Design.Banner as Banner
 import Design.Button as Button
+import Design.Dropdown as Dropdown
 import Design.Form as Form
 import Design.HCaptcha as HCaptcha
 import Design.Input as Input
@@ -337,6 +338,25 @@ view { hCaptchaKey } { form, status, companies, locations, titles } =
             , required = False
             , value = form.title.value
             }
+        , let
+            options =
+                { key = "", label = "-" }
+                    :: (Level.all
+                            |> List.map
+                                (\level ->
+                                    { key = Level.toString level, label = Level.toWording level }
+                                )
+                       )
+          in
+          Dropdown.view
+            { error = error form.level.parsed
+            , label = I18n.translate I18n.French I18n.Level
+            , sublabel = Nothing
+            , onChange = OnFieldChange Level
+            , options = options
+            , required = False
+            , value = form.level.value
+            }
         , Select.view
             { error = error form.location.parsed
             , id = "locations"
@@ -373,15 +393,6 @@ view { hCaptchaKey } { form, status, companies, locations, titles } =
             , placeholder = "10"
             , required = False
             , value = form.totalXp.value
-            }
-        , Input.view
-            { error = error form.level.parsed
-            , label = I18n.translate I18n.French I18n.Level
-            , sublabel = Nothing
-            , onChange = OnFieldChange Level
-            , placeholder = "2"
-            , required = False
-            , value = form.level.value
             }
         , HCaptcha.view { key = hCaptchaKey }
         , Button.view

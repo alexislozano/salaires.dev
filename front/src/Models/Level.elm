@@ -7,16 +7,30 @@ import Utils
 
 
 type Level
-    = Level String
+    = Junior
+    | Mid
+    | Senior
+
+
+all : List Level
+all =
+    [ Junior, Mid, Senior ]
 
 
 tryFromString : String -> Result String Level
 tryFromString level =
-    if String.length level > 0 then
-        Ok (Level level)
+    case level of
+        "Junior" ->
+            Ok Junior
 
-    else
-        Err (I18n.translate I18n.French I18n.ShouldNotBeEmpty)
+        "Mid" ->
+            Ok Mid
+
+        "Senior" ->
+            Ok Senior
+
+        _ ->
+            Err (I18n.translate I18n.French I18n.LevelIsNotInTheProvidedChoices)
 
 
 decoder : Decoder Level
@@ -27,13 +41,34 @@ decoder =
 
 
 encode : Level -> Value
-encode (Level level) =
-    Encode.string level
+encode level =
+    Encode.string (toString level)
 
 
 toString : Level -> String
-toString (Level level) =
-    level
+toString level =
+    case level of
+        Junior ->
+            "Junior"
+
+        Mid ->
+            "Mid"
+
+        Senior ->
+            "Senior"
+
+
+toWording : Level -> String
+toWording level =
+    case level of
+        Junior ->
+            I18n.translate I18n.French I18n.Junior
+
+        Mid ->
+            I18n.translate I18n.French I18n.Mid
+
+        Senior ->
+            I18n.translate I18n.French I18n.Senior
 
 
 compare : Level -> Level -> Order

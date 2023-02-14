@@ -37,6 +37,10 @@ type Key
     | TokenConfirmationSuccess
     | TokenConfirmationError
     | EmailExplanation
+    | Junior
+    | Mid
+    | Senior
+    | LevelIsNotInTheProvidedChoices
 
 
 translate : Lang -> Key -> String
@@ -136,3 +140,15 @@ translate lang key =
 
                 EmailExplanation ->
                     "L'adresse email et l'entreprise renseignées doivent correspondre. Sans cela, le salaire ne sera pas publié."
+
+                Junior ->
+                    "Junior"
+
+                Mid ->
+                    "Intermédiaire"
+
+                Senior ->
+                    "Senior"
+
+                LevelIsNotInTheProvidedChoices ->
+                    "Le niveau n'est pas dans les choix proposés."
