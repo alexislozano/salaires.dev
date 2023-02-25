@@ -1,9 +1,4 @@
-mod confirm_token;
-mod fetch_companies;
-mod fetch_locations;
-mod fetch_salaries;
-mod fetch_titles;
-mod insert_salary;
+mod api;
 mod state;
 
 use crate::infra::{
@@ -15,12 +10,6 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use confirm_token::confirm_token;
-use fetch_companies::fetch_companies;
-use fetch_locations::fetch_locations;
-use fetch_salaries::fetch_salaries;
-use fetch_titles::fetch_titles;
-use insert_salary::insert_salary;
 use state::State;
 use std::{env, sync::Arc};
 use tower_http::cors::CorsLayer;
@@ -52,12 +41,12 @@ pub async fn serve(
     );
 
     let app = Router::new()
-        .route("/salaries", get(fetch_salaries))
-        .route("/salaries", post(insert_salary))
-        .route("/companies", get(fetch_companies))
-        .route("/locations", get(fetch_locations))
-        .route("/titles", get(fetch_titles))
-        .route("/tokens", post(confirm_token))
+        .route("/api/salaries", get(api::fetch_salaries))
+        .route("/api/salaries", post(api::insert_salary))
+        .route("/api/companies", get(api::fetch_companies))
+        .route("/api/locations", get(api::fetch_locations))
+        .route("/api/titles", get(api::fetch_titles))
+        .route("/api/tokens", post(api::confirm_token))
         .with_state(state)
         .layer(CorsLayer::permissive().allow_origin(origin));
 
