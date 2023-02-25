@@ -1,4 +1,4 @@
-mod api;
+mod app;
 mod domain;
 mod infra;
 
@@ -22,7 +22,7 @@ async fn main() {
     let token_repo = Arc::new(SupabaseTokenRepository::new());
     let token_sender = Arc::new(EmailTokenSender::new());
 
-    api::serve(
+    app::serve(
         salary_repo,
         company_repo,
         location_repo,
