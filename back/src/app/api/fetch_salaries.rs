@@ -1,10 +1,10 @@
-use std::sync::Arc;
+use std::{sync::Arc, collections::HashMap};
 
 use crate::{
     domain::{models::{Salary, salary::Order}, use_cases},
     infra::SalaryRepository,
 };
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{extract::{State, Query}, http::StatusCode, Json};
 use chrono::NaiveDate;
 use serde::Serialize;
 
@@ -39,8 +39,11 @@ type Error = (StatusCode, &'static str);
 
 pub async fn fetch_salaries(
     State(repo): State<Arc<dyn SalaryRepository>>,
+    Query(params): Query<HashMap<String, String>>
 ) -> Result<Json<Vec<Response>>, Error> {
-    match use_cases::fetch_salaries(repo, Order::default()).await {
+    let order = Order::from(params);
+
+    match use_cases::fetch_salaries(repo, order).await {
         Ok(salaries) => Ok(salaries
             .into_iter()
             .map(|salary| salary.into())

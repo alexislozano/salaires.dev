@@ -1,4 +1,4 @@
-use std::cmp::Ordering;
+use std::{cmp::Ordering, collections::HashMap};
 
 use super::{Company, Compensation, Date, Email, Id, Level, Location, Status, Title, Xp};
 
@@ -87,8 +87,8 @@ impl Salary {
 
 #[derive(Clone)]
 pub struct Order {
-    key: Key,
-    direction: Direction
+    pub key: Key,
+    pub direction: Direction
 }
 
 impl Order {
@@ -99,7 +99,21 @@ impl Order {
 
 impl Default for Order {
     fn default() -> Self {
-        Self { key: Key::Date, direction: Direction::Desc }
+        Self { key: Key::default(), direction: Direction::default() }
+    }
+}
+
+impl From<HashMap<String, String>> for Order {
+    fn from(hash: HashMap<String, String>) -> Self {
+        let key = match hash.get("key") {
+            Some(k) => Key::from(String::from(k)),
+            None => Key::default()
+        };
+        let direction = match hash.get("direction") {
+            Some(d) => Direction::from(String::from(d)),
+            None => Direction::default()
+        };
+        Self::new(key, direction)
     }
 }
 
@@ -115,21 +129,40 @@ pub enum Key {
     Date,
 }
 
-impl TryFrom<String> for Key {
-    type Error = ();
+impl Default for Key {
+    fn default() -> Self {
+        Self::Date
+    }
+}
 
-    fn try_from(key: String) -> Result<Self, Self::Error> {
+impl From<String> for Key {
+    fn from(key: String) -> Self {
         match key.as_str() {
-            "company" => Ok(Self::Company),
-            "title" => Ok(Self::Title),
-            "location" => Ok(Self::Location),
-            "compensation" => Ok(Self::Compensation),
-            "company_xp" => Ok(Self::CompanyXp),
-            "total_xp" => Ok(Self::TotalXp),
-            "level" => Ok(Self::Level),
-            "date" => Ok(Self::Date),
-            _ => Err(())
+            "company" => Self::Company,
+            "title" => Self::Title,
+            "location" => Self::Location,
+            "compensation" => Self::Compensation,
+            "company_xp" => Self::CompanyXp,
+            "total_xp" => Self::TotalXp,
+            "level" => Self::Level,
+            "date" => Self::Date,
+            _ => Self::default()
         }
+    }
+}
+
+impl From<Key> for String {
+    fn from(key: Key) -> Self {
+        match key {
+            Key::Company => "company",
+            Key::Title => "title",
+            Key::Location => "location",
+            Key::Compensation => "compensation",
+            Key::CompanyXp => "company_xp",
+            Key::TotalXp => "total_xp",
+            Key::Level => "level",
+            Key::Date => "date",
+        }.into()
     }
 }
 
@@ -139,14 +172,27 @@ pub enum Direction {
     Desc
 }
 
-impl TryFrom<String> for Direction {
-    type Error = ();
+impl Default for Direction {
+    fn default() -> Self {
+        Self::Desc
+    }
+}
 
-    fn try_from(direction: String) -> Result<Self, Self::Error> {
+impl From<String> for Direction {
+    fn from(direction: String) -> Self {
         match direction.as_str() {
-            "asc" => Ok(Self::Asc),
-            "desc" => Ok(Self::Desc),
-            _ => Err(())
+            "asc" => Self::Asc,
+            "desc" => Self::Desc,
+            _ => Self::default()
         }
+    }
+}
+
+impl From<Direction> for String {
+    fn from(direction: Direction) -> Self {
+        match direction {
+            Direction::Asc => "asc",
+            Direction::Desc => "desc",
+        }.into()
     }
 }

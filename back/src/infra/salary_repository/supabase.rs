@@ -52,9 +52,11 @@ impl SalaryRepository for SupabaseSalaryRepository {
         let client = reqwest::Client::new();
         let res = match client
             .get(format!(
-                "{}salaries?select=*&status=eq.{}",
+                "{}salaries?select=*&status=eq.{}&order={}.{}",
                 self.url,
-                String::from(Status::Published)
+                String::from(Status::Published),
+                String::from(order.key),
+                String::from(order.direction)
             ))
             .headers(self.headers())
             .send()
