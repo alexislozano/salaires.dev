@@ -5,6 +5,12 @@ pub enum Level {
     Senior,
 }
 
+impl Level {
+    pub fn all() -> Vec<Level> {
+        vec![Self::Junior, Self::Mid, Self::Senior]
+    }
+}
+
 impl From<Level> for String {
     fn from(level: Level) -> Self {
         match level {

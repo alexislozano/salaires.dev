@@ -1,5 +1,6 @@
 mod api;
 mod state;
+mod www;
 
 use crate::infra::{
     CaptchaService, CompanyRepository, LocationRepository, SalaryRepository, TitleRepository,
@@ -41,6 +42,8 @@ pub async fn serve(
     );
 
     let app = Router::new()
+        .route("/", get(www::index))
+        .route("/insert", get(www::insert))
         .route("/api/salaries", get(api::fetch_salaries))
         .route("/api/salaries", post(api::insert_salary))
         .route("/api/companies", get(api::fetch_companies))

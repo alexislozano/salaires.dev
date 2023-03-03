@@ -1,7 +1,7 @@
 mod confirm_token;
 mod fetch_companies;
-mod fetch_salaries;
 mod fetch_locations;
+mod fetch_salaries;
 mod fetch_titles;
 mod insert_salary;
 
