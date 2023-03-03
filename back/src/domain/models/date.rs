@@ -20,6 +20,12 @@ impl From<Date> for NaiveDate {
     }
 }
 
+impl From<Date> for String {
+    fn from(date: Date) -> Self {
+        date.raw.format("%Y-%m-%d").to_string()
+    }
+}
+
 impl From<NaiveDate> for Date {
     fn from(raw: NaiveDate) -> Self {
         Self { raw }

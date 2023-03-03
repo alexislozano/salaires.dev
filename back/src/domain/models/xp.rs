@@ -9,6 +9,12 @@ impl From<Xp> for i32 {
     }
 }
 
+impl From<Xp> for String {
+    fn from(xp: Xp) -> Self {
+        format!("{}", xp.raw)
+    }
+}
+
 impl TryFrom<i32> for Xp {
     type Error = ();
 

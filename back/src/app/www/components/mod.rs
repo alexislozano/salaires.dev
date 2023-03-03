@@ -7,3 +7,4 @@ pub mod label;
 pub mod link;
 pub mod palette;
 pub mod select;
+pub mod table;

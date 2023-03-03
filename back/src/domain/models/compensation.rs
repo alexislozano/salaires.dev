@@ -16,6 +16,12 @@ impl From<Compensation> for i32 {
     }
 }
 
+impl From<Compensation> for String {
+    fn from(compensation: Compensation) -> Self {
+        format!("{}K", compensation.raw / 1000)
+    }
+}
+
 impl TryFrom<i32> for Compensation {
     type Error = ();
 
