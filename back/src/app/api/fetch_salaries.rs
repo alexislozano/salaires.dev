@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    domain::{models::Salary, use_cases},
+    domain::{models::{Salary, salary::Order}, use_cases},
     infra::SalaryRepository,
 };
 use axum::{extract::State, http::StatusCode, Json};
@@ -40,7 +40,7 @@ type Error = (StatusCode, &'static str);
 pub async fn fetch_salaries(
     State(repo): State<Arc<dyn SalaryRepository>>,
 ) -> Result<Json<Vec<Response>>, Error> {
-    match use_cases::fetch_salaries(repo).await {
+    match use_cases::fetch_salaries(repo, Order::default()).await {
         Ok(salaries) => Ok(salaries
             .into_iter()
             .map(|salary| salary.into())

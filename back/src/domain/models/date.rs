@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Date {
     raw: NaiveDate,
 }

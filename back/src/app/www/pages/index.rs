@@ -5,7 +5,7 @@ use maud::Markup;
 
 use crate::{
     domain::{
-        models::{Level, Salary},
+        models::{salary::Key, Level, Salary, salary::Order},
         use_cases,
     },
     infra::SalaryRepository,
@@ -16,18 +16,6 @@ use super::super::{
     i18n::I18n,
     templates::{page, _500},
 };
-
-#[derive(Clone)]
-enum Key {
-    Company,
-    Title,
-    Location,
-    Compensation,
-    CompanyXp,
-    TotalXp,
-    Level,
-    Date,
-}
 
 impl Extract<Key> for Salary {
     fn extract(&self, key: Key) -> String {
@@ -67,7 +55,7 @@ impl Extract<Key> for Salary {
 }
 
 pub async fn index(State(repo): State<Arc<dyn SalaryRepository>>) -> Markup {
-    let salaries = match use_cases::fetch_salaries(repo).await {
+    let salaries = match use_cases::fetch_salaries(repo, Order::default()).await {
         Ok(salaries) => salaries,
         Err(use_cases::fetch_salaries::Error::Unknown(str)) => return _500::view(str),
     };

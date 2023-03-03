@@ -6,7 +6,7 @@ mod email;
 mod id;
 mod level;
 mod location;
-mod salary;
+pub mod salary;
 mod status;
 mod title;
 mod token;
