@@ -30,7 +30,7 @@ pub trait Extract<K> {
 
 pub fn view<T, K>(items: Vec<T>, columns: Vec<Column<K>>, order: Order<K>) -> Markup
 where
-    K: Clone + PartialEq,
+    K: Clone + PartialEq + Into<String>,
     T: Extract<K>,
 {
     html! {
@@ -48,7 +48,7 @@ where
 
 fn head<K>(columns: &Vec<Column<K>>, order: &Order<K>) -> Markup
 where
-    K: PartialEq,
+    K: Clone + PartialEq + Into<String>,
 {
     html! {
         thead
@@ -67,6 +67,10 @@ where
                             ))
                             {
                                 button
+                                    id=(format!(
+                                        "{key}-button",
+                                        key=column.key.clone().into()
+                                    ))
                                     style=(format!("
                                             height: 48px;
                                             width: 100%;
