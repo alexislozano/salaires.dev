@@ -93,7 +93,13 @@ pub fn body(main: Markup) -> Markup {
             ))
         {
             (header())
-            (main)
+            main
+                style="
+                    overflow: auto;
+                    flex-grow: 1;"
+                {
+                    (main)
+                }
         }
     }
 }

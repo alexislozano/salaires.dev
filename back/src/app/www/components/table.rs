@@ -135,7 +135,7 @@ where
                                 style="
                                     height: 48px;
                                     padding: 0 16px;
-                                    white-space: no-wrap;"
+                                    white-space: nowrap;"
                                 {
                                     (item.extract(column.key.clone()))
                                 }
