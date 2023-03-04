@@ -71,6 +71,6 @@ impl TryFrom<SupabaseLocation> for Location {
     type Error = ();
 
     fn try_from(location: SupabaseLocation) -> Result<Self, Self::Error> {
-        Ok(location.location.try_into()?)
+        Ok(location.location.try_into().or(Err(()))?)
     }
 }

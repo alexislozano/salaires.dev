@@ -4,7 +4,7 @@ use crate::app::www::components::{label, palette};
 
 pub fn view(
     error: Option<&str>,
-    id: &str,
+    name: &str,
     label: &str,
     options: Vec<String>,
     placeholder: &str,
@@ -13,6 +13,7 @@ pub fn view(
 ) -> Markup {
     html! {
         label
+            id=(name)
             style=(format!("
                     display: flex;
                     flex-direction: column;
@@ -33,11 +34,22 @@ pub fn view(
                         border_color=border_color(error),
                         background_color=palette::WHITE
                     ))
-                    list=(id)
+                    list=(format!("{name}-list"))
                     placeholder=(placeholder)
-                    value=(value);
+                    value=(value)
+                    name=(name)
+                    hx-get="/validate"
+                    hx-target=(format!("#{name}"));
+                span
+                    style=(format!("
+                            color: {color};",
+                        color=palette::RED
+                    ))
+                    {
+                        (error.unwrap_or(" "))
+                    }
                 datalist
-                    id=(id)
+                    id=(format!("{name}-list"))
                     {
                         @for option in options {
                             option

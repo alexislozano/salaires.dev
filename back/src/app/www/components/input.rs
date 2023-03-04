@@ -4,6 +4,7 @@ use super::{label, palette};
 
 pub fn view(
     error: Option<&str>,
+    name: &str,
     label: &str,
     sublabel: Option<&str>,
     placeholder: &str,
@@ -12,6 +13,7 @@ pub fn view(
 ) -> Markup {
     html! {
         label
+            id=(name)
             style="
                 display: flex;
                 flex-direction: column;
@@ -31,7 +33,18 @@ pub fn view(
                     ))
                     type="text"
                     value=(value)
-                    placeholder=(placeholder);
+                    placeholder=(placeholder)
+                    name=(name)
+                    hx-get="/validate"
+                    hx-target=(format!("#{name}"));
+                span
+                    style=(format!("
+                            color: {color};",
+                        color=palette::RED
+                    ))
+                    {
+                        (error.unwrap_or(" "))
+                    }
             }
     }
 }

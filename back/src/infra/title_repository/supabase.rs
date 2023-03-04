@@ -71,6 +71,6 @@ impl TryFrom<SupabaseTitle> for Title {
     type Error = ();
 
     fn try_from(title: SupabaseTitle) -> Result<Self, Self::Error> {
-        Ok(title.title.try_into()?)
+        Ok(title.title.try_into().or(Err(()))?)
     }
 }

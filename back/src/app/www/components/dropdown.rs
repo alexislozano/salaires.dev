@@ -18,6 +18,7 @@ impl Choice {
 
 pub fn view(
     error: Option<&str>,
+    name: &str,
     label: &str,
     sublabel: Option<&str>,
     choices: Vec<Choice>,
@@ -26,6 +27,7 @@ pub fn view(
 ) -> Markup {
     html! {
         label
+            id=(name)
             style=(format!("
                     display: flex;
                     flex-direction: column;
@@ -46,6 +48,10 @@ pub fn view(
                         border_color=border_color(error),
                         background_color=palette::WHITE
                     ))
+                    name=(name)
+                    hx-get="/validate"
+                    hx-target=(format!("#{name}"))
+                    hx-trigger="blur"
                     {
                         @for choice in choices {
                             option
@@ -55,6 +61,14 @@ pub fn view(
                                     (choice.label)
                                 }
                         }
+                    }
+                span
+                    style=(format!("
+                            color: {color};",
+                        color=palette::RED
+                    ))
+                    {
+                        (error.unwrap_or(" "))
                     }
             }
     }

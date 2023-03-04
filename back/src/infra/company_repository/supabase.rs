@@ -71,6 +71,6 @@ impl TryFrom<SupabaseCompany> for Company {
     type Error = ();
 
     fn try_from(company: SupabaseCompany) -> Result<Self, Self::Error> {
-        Ok(company.company.try_into()?)
+        Ok(company.company.try_into().or(Err(()))?)
     }
 }

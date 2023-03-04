@@ -28,18 +28,27 @@ impl Email {
     }
 }
 
+#[derive(Debug)]
+pub enum Error {
+    NotContainingAnAt,
+    NotPro,
+}
+
 impl TryFrom<String> for Email {
-    type Error = ();
+    type Error = Error;
 
     fn try_from(raw: String) -> Result<Self, Self::Error> {
         if raw.contains("@") {
-            if FORBIDDEN_DOMAINS.contains(&raw.as_str()) {
-                Err(())
+            if FORBIDDEN_DOMAINS
+                .iter()
+                .any(|domain| raw.as_str().contains(domain))
+            {
+                Err(Error::NotPro)
             } else {
                 Ok(Self { raw })
             }
         } else {
-            Err(())
+            Err(Error::NotContainingAnAt)
         }
     }
 }

@@ -18,12 +18,16 @@ impl From<Location> for String {
     }
 }
 
+pub enum Error {
+    Empty,
+}
+
 impl TryFrom<String> for Location {
-    type Error = ();
+    type Error = Error;
 
     fn try_from(raw: String) -> Result<Self, Self::Error> {
         if raw.is_empty() {
-            Err(())
+            Err(Error::Empty)
         } else {
             Ok(Self { raw })
         }

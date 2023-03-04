@@ -22,14 +22,30 @@ impl From<Compensation> for String {
     }
 }
 
+pub enum Error {
+    Negative,
+    NotANumber,
+}
+
 impl TryFrom<i32> for Compensation {
-    type Error = ();
+    type Error = Error;
 
     fn try_from(raw: i32) -> Result<Self, Self::Error> {
         if raw < 0 {
-            Err(())
+            Err(Error::Negative)
         } else {
             Ok(Self { raw })
+        }
+    }
+}
+
+impl TryFrom<String> for Compensation {
+    type Error = Error;
+
+    fn try_from(raw: String) -> Result<Self, Self::Error> {
+        match raw.parse::<i32>() {
+            Ok(raw) => Compensation::try_from(raw),
+            _ => Err(Error::NotANumber),
         }
     }
 }

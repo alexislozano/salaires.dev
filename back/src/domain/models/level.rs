@@ -22,15 +22,19 @@ impl From<Level> for String {
     }
 }
 
+pub enum Error {
+    NotFound,
+}
+
 impl TryFrom<String> for Level {
-    type Error = ();
+    type Error = Error;
 
     fn try_from(raw: String) -> Result<Self, Self::Error> {
         match raw.as_str() {
             "Junior" => Ok(Self::Junior),
             "Mid" => Ok(Self::Mid),
             "Senior" => Ok(Self::Senior),
-            _ => Err(()),
+            _ => Err(Error::NotFound),
         }
     }
 }

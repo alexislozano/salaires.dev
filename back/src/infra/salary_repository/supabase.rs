@@ -137,28 +137,28 @@ impl TryFrom<SupabaseSalary> for Salary {
     fn try_from(salary: SupabaseSalary) -> Result<Self, Self::Error> {
         Ok(Self::new(
             salary.id.into(),
-            salary.email.try_into()?,
-            salary.company.try_into()?,
+            salary.email.try_into().or(Err(()))?,
+            salary.company.try_into().or(Err(()))?,
             if let Some(raw) = salary.title {
-                Some(raw.try_into()?)
+                Some(raw.try_into().or(Err(()))?)
             } else {
                 None
             },
-            salary.location.try_into()?,
-            salary.compensation.try_into()?,
+            salary.location.try_into().or(Err(()))?,
+            salary.compensation.try_into().or(Err(()))?,
             salary.date.into(),
             if let Some(raw) = salary.level {
-                Some(raw.try_into()?)
+                Some(raw.try_into().or(Err(()))?)
             } else {
                 None
             },
             if let Some(raw) = salary.company_xp {
-                Some(raw.try_into()?)
+                Some(raw.try_into().or(Err(()))?)
             } else {
                 None
             },
             if let Some(raw) = salary.total_xp {
-                Some(raw.try_into()?)
+                Some(raw.try_into().or(Err(()))?)
             } else {
                 None
             },

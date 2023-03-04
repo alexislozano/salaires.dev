@@ -27,28 +27,28 @@ impl TryFrom<Request> for Salary {
     fn try_from(request: Request) -> Result<Self, Self::Error> {
         Ok(Self::new(
             Id::generate(),
-            request.email.try_into()?,
-            request.company.try_into()?,
+            request.email.try_into().or(Err(()))?,
+            request.company.try_into().or(Err(()))?,
             if let Some(raw) = request.title {
-                Some(raw.try_into()?)
+                Some(raw.try_into().or(Err(()))?)
             } else {
                 None
             },
-            request.location.try_into()?,
-            request.compensation.try_into()?,
+            request.location.try_into().or(Err(()))?,
+            request.compensation.try_into().or(Err(()))?,
             Utc::now().date_naive().into(),
             if let Some(raw) = request.level {
-                Some(raw.try_into()?)
+                Some(raw.try_into().or(Err(()))?)
             } else {
                 None
             },
             if let Some(raw) = request.company_xp {
-                Some(raw.try_into()?)
+                Some(raw.try_into().or(Err(()))?)
             } else {
                 None
             },
             if let Some(raw) = request.total_xp {
-                Some(raw.try_into()?)
+                Some(raw.try_into().or(Err(()))?)
             } else {
                 None
             },

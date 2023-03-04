@@ -5,18 +5,18 @@ use maud::Markup;
 
 use crate::{
     app::www::{
-        components::{
-            banner,
-            dropdown::{self, Choice},
-            select,
+        components::banner,
+        fragments::{
+            company_field, company_xp_field, compensation_field, email_field, field, level_field,
+            location_field, title_field, total_xp_field,
         },
         i18n::I18n,
     },
-    domain::{models::Level, use_cases},
+    domain::use_cases,
     infra::{CompanyRepository, LocationRepository, TitleRepository},
 };
 
-use super::super::components::{form, input};
+use super::super::components::form;
 use super::super::templates::{page, _500};
 
 pub async fn insert(
@@ -39,97 +39,16 @@ pub async fn insert(
         Err(use_cases::fetch_titles::Error::Unknown(str)) => return _500::view(str),
     };
 
-    let choices = Level::all()
-        .iter()
-        .map(|level| {
-            let key = String::from(level.clone());
-            let label = match level {
-                Level::Junior => I18n::Junior.translate(),
-                Level::Mid => I18n::Mid.translate(),
-                Level::Senior => I18n::Senior.translate(),
-            };
-            Choice::new(key.as_str(), label)
-        })
-        .collect::<Vec<Choice>>();
-
     let elements = vec![
         banner::view(I18n::EmailExplanation.translate()),
-        input::view(
-            None,
-            I18n::Email.translate(),
-            None,
-            "moi@exemple.fr",
-            true,
-            "email",
-        ),
-        select::view(
-            None,
-            "companies",
-            I18n::Company.translate(),
-            companies
-                .into_iter()
-                .map(|company| String::from(company))
-                .collect::<Vec<String>>(),
-            "Google",
-            true,
-            "",
-        ),
-        select::view(
-            None,
-            "titles",
-            I18n::Title.translate(),
-            titles
-                .into_iter()
-                .map(|title| String::from(title))
-                .collect::<Vec<String>>(),
-            I18n::TitlePlaceholder.translate(),
-            false,
-            "",
-        ),
-        dropdown::view(
-            None,
-            I18n::Level.translate(),
-            None,
-            choices,
-            false,
-            String::from(Level::Junior).as_str(),
-        ),
-        select::view(
-            None,
-            "locations",
-            I18n::Location.translate(),
-            locations
-                .into_iter()
-                .map(|location| String::from(location))
-                .collect::<Vec<String>>(),
-            "Paris",
-            true,
-            "",
-        ),
-        input::view(
-            None,
-            I18n::Compensation.translate(),
-            Some(I18n::CompensationHelp.translate()),
-            "40000",
-            true,
-            "40000",
-        ),
-        input::view(
-            None,
-            I18n::CompanyXp.translate(),
-            Some(I18n::InYears.translate()),
-            "2",
-            false,
-            "2",
-        ),
-        input::view(
-            None,
-            I18n::TotalXp.translate(),
-            Some(I18n::InYears.translate()),
-            "10",
-            true,
-            "10",
-        ),
+        email_field::view(field::Internals::new("", field::Parsed::Init)),
+        company_field::view(field::Internals::new("", field::Parsed::Init), companies),
+        title_field::view(field::Internals::new("", field::Parsed::Init), titles),
+        level_field::view(field::Internals::new("", field::Parsed::Init)),
+        location_field::view(field::Internals::new("", field::Parsed::Init), locations),
+        compensation_field::view(field::Internals::new("", field::Parsed::Init)),
+        company_xp_field::view(field::Internals::new("", field::Parsed::Init)),
+        total_xp_field::view(field::Internals::new("", field::Parsed::Init)),
     ];
 
     page::view(form::view(I18n::IAddMySalary.translate(), elements))
