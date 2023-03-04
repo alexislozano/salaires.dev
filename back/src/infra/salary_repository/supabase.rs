@@ -1,5 +1,5 @@
 use super::{ConfirmError, FetchAllError, InsertError, SalaryRepository};
-use crate::domain::models::{Id, Salary, Status, salary::Order};
+use crate::domain::models::{Id, Order, Salary, Status, salary::Key};
 use async_trait::async_trait;
 use axum::http::HeaderMap;
 use chrono::NaiveDate;
@@ -48,7 +48,7 @@ impl SalaryRepository for SupabaseSalaryRepository {
         }
     }
 
-    async fn fetch_all(&self, order: Order) -> Result<Vec<Salary>, FetchAllError> {
+    async fn fetch_all(&self, order: Order<Key>) -> Result<Vec<Salary>, FetchAllError> {
         let client = reqwest::Client::new();
         let res = match client
             .get(format!(

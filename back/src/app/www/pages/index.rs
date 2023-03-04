@@ -1,11 +1,11 @@
-use std::sync::Arc;
+use std::{sync::Arc, collections::HashMap};
 
-use axum::extract::State;
+use axum::extract::{State, Query};
 use maud::Markup;
 
 use crate::{
     domain::{
-        models::{salary::Key, Level, Salary, salary::Order},
+        models::{salary::Key, Level, Salary, Order},
         use_cases,
     },
     infra::SalaryRepository,
@@ -54,8 +54,13 @@ impl Extract<Key> for Salary {
     }
 }
 
-pub async fn index(State(repo): State<Arc<dyn SalaryRepository>>) -> Markup {
-    let salaries = match use_cases::fetch_salaries(repo, Order::default()).await {
+pub async fn index(
+    State(repo): State<Arc<dyn SalaryRepository>>,
+    Query(params): Query<HashMap<String, String>>
+) -> Markup {
+    let order = Order::from(params);
+
+    let salaries = match use_cases::fetch_salaries(repo, order.clone()).await {
         Ok(salaries) => salaries,
         Err(use_cases::fetch_salaries::Error::Unknown(str)) => return _500::view(str),
     };
@@ -83,5 +88,5 @@ pub async fn index(State(repo): State<Arc<dyn SalaryRepository>>) -> Markup {
         Column::new(Key::Date, I18n::Date.translate(), ""),
     ];
 
-    page::view(table::view(salaries, columns))
+    page::view(table::view(salaries, columns, order))
 }

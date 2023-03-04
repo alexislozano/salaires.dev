@@ -1,7 +1,7 @@
 pub mod in_memory;
 pub mod supabase;
 
-use crate::domain::models::{Id, salary::Order, Salary};
+use crate::domain::models::{Id, Order, Salary, salary::Key};
 use async_trait::async_trait;
 
 pub enum ConfirmError {
@@ -19,6 +19,6 @@ pub enum InsertError {
 #[async_trait]
 pub trait SalaryRepository: Send + Sync {
     async fn confirm(&self, id: Id) -> Result<(), ConfirmError>;
-    async fn fetch_all(&self, order: Order) -> Result<Vec<Salary>, FetchAllError>;
+    async fn fetch_all(&self, order: Order<Key>) -> Result<Vec<Salary>, FetchAllError>;
     async fn insert(&self, salary: Salary) -> Result<(), InsertError>;
 }

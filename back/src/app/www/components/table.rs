@@ -1,5 +1,7 @@
 use maud::{html, Markup};
 
+use crate::domain::models::{Order, Direction};
+
 use super::super::components::palette;
 
 pub struct Column<K> {
@@ -22,9 +24,9 @@ pub trait Extract<K> {
     fn extract(&self, key: K) -> String;
 }
 
-pub fn view<T, K>(items: Vec<T>, columns: Vec<Column<K>>) -> Markup
+pub fn view<T, K>(items: Vec<T>, columns: Vec<Column<K>>, order: Order<K>) -> Markup
 where
-    K: Clone,
+    K: Clone + PartialEq,
     T: Extract<K>,
 {
     html! {
@@ -33,13 +35,16 @@ where
                 border-spacing: 0;
                 width: 100%;"
             {
-                (head(&columns))
+                (head(&columns, &order))
                 (body(&items, &columns))
             }
     }
 }
 
-fn head<K>(columns: &Vec<Column<K>>) -> Markup {
+fn head<K>(columns: &Vec<Column<K>>, order: &Order<K>) -> Markup
+where
+    K: PartialEq
+{
     html! {
         thead
             style="
@@ -75,7 +80,18 @@ fn head<K>(columns: &Vec<Column<K>>) -> Markup {
                                             style="
                                                 font-weight: bold;"
                                             {
-                                                (column.label)
+                                                @if column.key == order.key {
+                                                    (format!(
+                                                        "{label} {arrow}",
+                                                        label=column.label,
+                                                        arrow=match order.direction {
+                                                            Direction::Asc => "↑",
+                                                            Direction::Desc => "↓"
+                                                        }
+                                                    ))
+                                                } @else {
+                                                    (column.label)
+                                                }
                                             }
                                         span
                                             style="

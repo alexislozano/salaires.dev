@@ -1,4 +1,4 @@
-use crate::domain::models::{Salary, salary::Order};
+use crate::domain::models::{Salary, Order, salary::Key};
 use crate::infra::{salary_repository::FetchAllError, SalaryRepository};
 use std::sync::Arc;
 
@@ -6,7 +6,7 @@ pub enum Error {
     Unknown(&'static str),
 }
 
-pub async fn fetch_salaries(repo: Arc<dyn SalaryRepository>, order: Order) -> Result<Vec<Salary>, Error> {
+pub async fn fetch_salaries(repo: Arc<dyn SalaryRepository>, order: Order<Key>) -> Result<Vec<Salary>, Error> {
     match repo.fetch_all(order).await {
         Ok(salaries) => Ok(salaries),
         Err(FetchAllError::Unknown(str)) => Err(Error::Unknown(str)),
@@ -16,7 +16,7 @@ pub async fn fetch_salaries(repo: Arc<dyn SalaryRepository>, order: Order) -> Re
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::models::{salary::Key, salary::Direction};
+    use crate::domain::models::{salary::Key, Direction};
     use crate::infra::InMemorySalaryRepository;
 
     #[tokio::test]

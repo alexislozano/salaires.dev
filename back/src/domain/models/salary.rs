@@ -1,6 +1,6 @@
-use std::{cmp::Ordering, collections::HashMap};
+use std::cmp::Ordering;
 
-use super::{Company, Compensation, Date, Email, Id, Level, Location, Status, Title, Xp};
+use super::{Company, Compensation, Date, Email, Id, Level, Location, Status, Title, Xp, Direction, Order};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Salary {
@@ -67,7 +67,7 @@ impl Salary {
         self.status = Status::Confirmed;
     }
 
-    pub fn compare(a: &Salary, b: &Salary, order: &Order) -> Ordering {
+    pub fn compare(a: &Salary, b: &Salary, order: &Order<Key>) -> Ordering {
         let ordering = match order.key {
             Key::Company => a.company.cmp(&b.company),
             Key::Title => a.title.cmp(&b.title),
@@ -85,39 +85,7 @@ impl Salary {
     }
 }
 
-#[derive(Clone)]
-pub struct Order {
-    pub key: Key,
-    pub direction: Direction
-}
-
-impl Order {
-    pub fn new(key: Key, direction: Direction) -> Self {
-        Self { key, direction}
-    }
-}
-
-impl Default for Order {
-    fn default() -> Self {
-        Self { key: Key::default(), direction: Direction::default() }
-    }
-}
-
-impl From<HashMap<String, String>> for Order {
-    fn from(hash: HashMap<String, String>) -> Self {
-        let key = match hash.get("key") {
-            Some(k) => Key::from(String::from(k)),
-            None => Key::default()
-        };
-        let direction = match hash.get("direction") {
-            Some(d) => Direction::from(String::from(d)),
-            None => Direction::default()
-        };
-        Self::new(key, direction)
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum Key {
     Company,
     Title,
@@ -162,37 +130,6 @@ impl From<Key> for String {
             Key::TotalXp => "total_xp",
             Key::Level => "level",
             Key::Date => "date",
-        }.into()
-    }
-}
-
-#[derive(Clone)]
-pub enum Direction {
-    Asc,
-    Desc
-}
-
-impl Default for Direction {
-    fn default() -> Self {
-        Self::Desc
-    }
-}
-
-impl From<String> for Direction {
-    fn from(direction: String) -> Self {
-        match direction.as_str() {
-            "asc" => Self::Asc,
-            "desc" => Self::Desc,
-            _ => Self::default()
-        }
-    }
-}
-
-impl From<Direction> for String {
-    fn from(direction: Direction) -> Self {
-        match direction {
-            Direction::Asc => "asc",
-            Direction::Desc => "desc",
         }.into()
     }
 }

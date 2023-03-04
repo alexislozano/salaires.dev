@@ -1,7 +1,7 @@
 use std::{sync::Arc, collections::HashMap};
 
 use crate::{
-    domain::{models::{Salary, salary::Order}, use_cases},
+    domain::{models::{Order, Salary}, use_cases},
     infra::SalaryRepository,
 };
 use axum::{extract::{State, Query}, http::StatusCode, Json};
