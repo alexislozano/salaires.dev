@@ -1,5 +1,5 @@
 use super::{ConfirmError, FetchAllError, InsertError, SalaryRepository};
-use crate::domain::models::{Id, Order, Salary, Status, salary::Key};
+use crate::domain::models::{salary::Key, Id, Order, Salary, Status};
 use async_trait::async_trait;
 use axum::http::HeaderMap;
 use chrono::NaiveDate;

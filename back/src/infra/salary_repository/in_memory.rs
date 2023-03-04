@@ -1,7 +1,7 @@
 use std::sync::Mutex;
 
 use super::{ConfirmError, FetchAllError, InsertError, SalaryRepository};
-use crate::domain::models::{Id, Order, Salary, salary::Key};
+use crate::domain::models::{salary::Key, Id, Order, Salary};
 use async_trait::async_trait;
 
 pub struct InMemorySalaryRepository {

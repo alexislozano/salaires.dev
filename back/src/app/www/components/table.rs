@@ -1,6 +1,6 @@
 use maud::{html, Markup};
 
-use crate::domain::models::{Order, Direction};
+use crate::domain::models::{Direction, Order};
 
 use super::super::components::palette;
 
@@ -8,14 +8,16 @@ pub struct Column<K> {
     key: K,
     label: String,
     sublabel: String,
+    link: String,
 }
 
 impl<K> Column<K> {
-    pub fn new(key: K, label: &str, sublabel: &str) -> Self {
+    pub fn new(key: K, label: &str, sublabel: &str, link: &str) -> Self {
         Self {
             key,
             label: String::from(label),
             sublabel: String::from(sublabel),
+            link: String::from(link),
         }
     }
 }
@@ -43,7 +45,7 @@ where
 
 fn head<K>(columns: &Vec<Column<K>>, order: &Order<K>) -> Markup
 where
-    K: PartialEq
+    K: PartialEq,
 {
     html! {
         thead
@@ -61,20 +63,26 @@ where
                                 background_color=palette::SAND
                             ))
                             {
-                                button
-                                    style="
-                                        height: 48px;
-                                        width: 100%;
-                                        border: 0;
-                                        background-color: transparent;
-                                        padding: 8px 16px;
-                                        text-align: start;
-                                        cursor: pointer;
-                                        font-size: inherit;
-                                        font-family: inherit;
-                                        white-space: no-wrap;
-                                        display: flex;
-                                        flex-direction: column;"
+                                a
+                                    style=(format!("
+                                            height: 48px;
+                                            width: 100%;
+                                            border: 0;
+                                            background-color: transparent;
+                                            padding: 8px 16px;
+                                            text-align: start;
+                                            cursor: pointer;
+                                            font-size: inherit;
+                                            font-family: inherit;
+                                            white-space: nowrap;
+                                            display: flex;
+                                            flex-direction: column;
+                                            box-sizing: border-box;
+                                            color: {color};
+                                            text-decoration: none;",
+                                        color=palette::BLACK
+                                    ))
+                                    href=(column.link)
                                     {
                                         span
                                             style="
@@ -95,7 +103,8 @@ where
                                             }
                                         span
                                             style="
-                                                font-size: 12px;"
+                                                font-size: 12px;
+                                                font-weight: normal;"
                                             {
                                                 (column.sublabel)
                                             }

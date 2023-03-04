@@ -1,10 +1,17 @@
-use std::{sync::Arc, collections::HashMap};
+use std::{collections::HashMap, sync::Arc};
 
 use crate::{
-    domain::{models::{Order, Salary}, use_cases},
+    domain::{
+        models::{Order, Salary},
+        use_cases,
+    },
     infra::SalaryRepository,
 };
-use axum::{extract::{State, Query}, http::StatusCode, Json};
+use axum::{
+    extract::{Query, State},
+    http::StatusCode,
+    Json,
+};
 use chrono::NaiveDate;
 use serde::Serialize;
 
@@ -39,7 +46,7 @@ type Error = (StatusCode, &'static str);
 
 pub async fn fetch_salaries(
     State(repo): State<Arc<dyn SalaryRepository>>,
-    Query(params): Query<HashMap<String, String>>
+    Query(params): Query<HashMap<String, String>>,
 ) -> Result<Json<Vec<Response>>, Error> {
     let order = Order::from(params);
 

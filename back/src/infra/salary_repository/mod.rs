@@ -1,7 +1,7 @@
 pub mod in_memory;
 pub mod supabase;
 
-use crate::domain::models::{Id, Order, Salary, salary::Key};
+use crate::domain::models::{salary::Key, Id, Order, Salary};
 use async_trait::async_trait;
 
 pub enum ConfirmError {

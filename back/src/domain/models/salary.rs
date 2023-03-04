@@ -1,6 +1,8 @@
 use std::cmp::Ordering;
 
-use super::{Company, Compensation, Date, Email, Id, Level, Location, Status, Title, Xp, Direction, Order};
+use super::{
+    Company, Compensation, Date, Direction, Email, Id, Level, Location, Order, Status, Title, Xp,
+};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Salary {
@@ -76,11 +78,11 @@ impl Salary {
             Key::CompanyXp => a.company_xp.cmp(&b.company_xp),
             Key::TotalXp => a.total_xp.cmp(&b.total_xp),
             Key::Level => a.level.cmp(&b.level),
-            Key::Date => a.date.cmp(&b.date)
+            Key::Date => a.date.cmp(&b.date),
         };
         match order.direction {
             Direction::Asc => ordering,
-            Direction::Desc => ordering.reverse()
+            Direction::Desc => ordering.reverse(),
         }
     }
 }
@@ -114,7 +116,7 @@ impl From<String> for Key {
             "total_xp" => Self::TotalXp,
             "level" => Self::Level,
             "date" => Self::Date,
-            _ => Self::default()
+            _ => Self::default(),
         }
     }
 }
@@ -130,6 +132,7 @@ impl From<Key> for String {
             Key::TotalXp => "total_xp",
             Key::Level => "level",
             Key::Date => "date",
-        }.into()
+        }
+        .into()
     }
 }

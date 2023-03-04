@@ -1,11 +1,11 @@
-use std::{sync::Arc, collections::HashMap};
+use std::{collections::HashMap, sync::Arc};
 
-use axum::extract::{State, Query};
+use axum::extract::{Query, State};
 use maud::Markup;
 
 use crate::{
     domain::{
-        models::{salary::Key, Level, Salary, Order},
+        models::{salary::Key, Level, Order, Salary},
         use_cases,
     },
     infra::SalaryRepository,
@@ -56,7 +56,7 @@ impl Extract<Key> for Salary {
 
 pub async fn index(
     State(repo): State<Arc<dyn SalaryRepository>>,
-    Query(params): Query<HashMap<String, String>>
+    Query(params): Query<HashMap<String, String>>,
 ) -> Markup {
     let order = Order::from(params);
 
@@ -66,27 +66,51 @@ pub async fn index(
     };
 
     let columns = vec![
-        Column::new(Key::Company, I18n::Company.translate(), ""),
-        Column::new(Key::Title, I18n::Title.translate(), ""),
-        Column::new(Key::Location, I18n::Location.translate(), ""),
-        Column::new(
-            Key::Compensation,
-            I18n::Compensation.translate(),
-            I18n::CompensationHelp.translate(),
-        ),
-        Column::new(
-            Key::CompanyXp,
-            I18n::CompanyXp.translate(),
-            I18n::InYears.translate(),
-        ),
-        Column::new(
-            Key::TotalXp,
-            I18n::TotalXp.translate(),
-            I18n::InYears.translate(),
-        ),
-        Column::new(Key::Level, I18n::Level.translate(), ""),
-        Column::new(Key::Date, I18n::Date.translate(), ""),
+        build_column(Key::Company, order.clone()),
+        build_column(Key::Title, order.clone()),
+        build_column(Key::Location, order.clone()),
+        build_column(Key::Compensation, order.clone()),
+        build_column(Key::CompanyXp, order.clone()),
+        build_column(Key::TotalXp, order.clone()),
+        build_column(Key::Level, order.clone()),
+        build_column(Key::Date, order.clone()),
     ];
 
     page::view(table::view(salaries, columns, order))
+}
+
+fn build_column(key: Key, order: Order<Key>) -> Column<Key> {
+    let label = match key {
+        Key::Company => I18n::Company.translate(),
+        Key::Title => I18n::Title.translate(),
+        Key::Location => I18n::Location.translate(),
+        Key::Compensation => I18n::Compensation.translate(),
+        Key::CompanyXp => I18n::CompanyXp.translate(),
+        Key::TotalXp => I18n::TotalXp.translate(),
+        Key::Level => I18n::Level.translate(),
+        Key::Date => I18n::Date.translate(),
+    };
+
+    let sublabel = match key {
+        Key::Company => "",
+        Key::Title => "",
+        Key::Location => "",
+        Key::Compensation => I18n::CompensationHelp.translate(),
+        Key::CompanyXp => I18n::InYears.translate(),
+        Key::TotalXp => I18n::InYears.translate(),
+        Key::Level => "",
+        Key::Date => "",
+    };
+
+    let link = if key == order.key {
+        format!(
+            "/?key={key}&direction={direction}",
+            key = String::from(key.clone()),
+            direction = String::from(order.direction.reverse())
+        )
+    } else {
+        format!("/?key={key}", key = String::from(key.clone()))
+    };
+
+    Column::new(key, label, sublabel, link.as_str())
 }
