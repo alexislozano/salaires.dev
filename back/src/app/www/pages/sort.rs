@@ -5,13 +5,13 @@ use maud::Markup;
 
 use crate::{domain::models::Order, infra::SalaryRepository};
 
-use super::super::{fragments::salary_table, templates::page};
+use super::super::fragments::salary_table;
 
-pub async fn index(
+pub async fn sort(
     State(repo): State<Arc<dyn SalaryRepository>>,
     Query(params): Query<HashMap<String, String>>,
 ) -> Markup {
     let order = Order::from(params);
 
-    page::view(salary_table::view(repo, order).await)
+    salary_table::view(repo, order).await
 }

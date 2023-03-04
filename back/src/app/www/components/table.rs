@@ -8,16 +8,18 @@ pub struct Column<K> {
     key: K,
     label: String,
     sublabel: String,
-    link: String,
+    url: String,
+    ajax: String,
 }
 
 impl<K> Column<K> {
-    pub fn new(key: K, label: &str, sublabel: &str, link: &str) -> Self {
+    pub fn new(key: K, label: &str, sublabel: &str, url: &str, ajax: &str) -> Self {
         Self {
             key,
             label: String::from(label),
             sublabel: String::from(sublabel),
-            link: String::from(link),
+            url: String::from(url),
+            ajax: String::from(ajax),
         }
     }
 }
@@ -33,6 +35,7 @@ where
 {
     html! {
         table
+            id="salary-table"
             style="
                 border-spacing: 0;
                 width: 100%;"
@@ -63,7 +66,7 @@ where
                                 background_color=palette::SAND
                             ))
                             {
-                                a
+                                button
                                     style=(format!("
                                             height: 48px;
                                             width: 100%;
@@ -77,12 +80,13 @@ where
                                             white-space: nowrap;
                                             display: flex;
                                             flex-direction: column;
-                                            box-sizing: border-box;
-                                            color: {color};
-                                            text-decoration: none;",
+                                            color: {color};",
                                         color=palette::BLACK
                                     ))
-                                    href=(column.link)
+                                    hx-get=(column.ajax)
+                                    hx-push-url=(column.url)
+                                    hx-target="#salary-table"
+                                    hx-swap="outerHTML"
                                     {
                                         span
                                             style="

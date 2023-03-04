@@ -74,6 +74,11 @@ pub fn head() -> Markup {
             meta
                 property="og:url"
                 content="https://salaires.dev";
+
+            // script
+            script
+                src="https://unpkg.com/htmx.org@1.8.6"
+                {}
         }
     }
 }
