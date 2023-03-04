@@ -116,7 +116,7 @@ where
     }
 }
 
-fn body<T: Extract<K>, K>(items: &Vec<T>, columns: &Vec<Column<K>>) -> Markup
+fn body<T, K>(items: &Vec<T>, columns: &Vec<Column<K>>) -> Markup
 where
     K: Clone,
     T: Extract<K>,
