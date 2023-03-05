@@ -9,7 +9,7 @@ use super::super::components::input;
 
 use super::field::{Internals, Parsed};
 
-pub fn view(internals: Internals<Xp, Error>) -> Markup {
+pub fn view(internals: Internals<Option<Xp>, Error>) -> Markup {
     input::view(
         match internals.parsed {
             Parsed::Computed(Err(err)) => match err {

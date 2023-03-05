@@ -9,7 +9,7 @@ use super::super::components::dropdown::{self, Choice};
 
 use super::field::{Internals, Parsed};
 
-pub fn view(internals: Internals<Level, Error>) -> Markup {
+pub fn view(internals: Internals<Option<Level>, Error>) -> Markup {
     let choices = Level::all()
         .iter()
         .map(|level| {

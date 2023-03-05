@@ -9,7 +9,7 @@ use super::super::components::select;
 
 use super::field::{Internals, Parsed};
 
-pub fn view(internals: Internals<Title, Error>, titles: Vec<Title>) -> Markup {
+pub fn view(internals: Internals<Option<Title>, Error>, titles: Vec<Title>) -> Markup {
     select::view(
         match internals.parsed {
             Parsed::Computed(Err(err)) => match err {

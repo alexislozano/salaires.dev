@@ -5,7 +5,7 @@ use maud::Markup;
 
 use crate::{
     app::www::{
-        components::{banner, button, hcaptcha},
+        components::{banner, hcaptcha},
         fragments::{
             company_field, company_xp_field, compensation_field, email_field, field, level_field,
             location_field, title_field, total_xp_field,

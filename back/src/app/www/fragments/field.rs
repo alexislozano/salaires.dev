@@ -27,12 +27,12 @@ impl<T, E> Internals<T, E> {
 pub enum Field {
     Email(Internals<Email, email::Error>),
     Company(Internals<Company, company::Error>),
-    Title(Internals<Title, title::Error>),
-    Level(Internals<Level, level::Error>),
+    Title(Internals<Option<Title>, title::Error>),
+    Level(Internals<Option<Level>, level::Error>),
     Location(Internals<Location, location::Error>),
     Compensation(Internals<Compensation, compensation::Error>),
-    CompanyXp(Internals<Xp, xp::Error>),
-    TotalXp(Internals<Xp, xp::Error>),
+    CompanyXp(Internals<Option<Xp>, xp::Error>),
+    TotalXp(Internals<Option<Xp>, xp::Error>),
     Unknown,
 }
 
@@ -62,7 +62,11 @@ impl From<HashMap<String, String>> for Field {
             Some(title) => {
                 return Self::Title(Internals::new(
                     title,
-                    Parsed::Computed(Title::try_from(String::from(title))),
+                    Parsed::Computed(if title.is_empty() {
+                        Ok(None)
+                    } else {
+                        Title::try_from(String::from(title)).map(Some)
+                    }),
                 ))
             }
             None => {}
@@ -72,7 +76,11 @@ impl From<HashMap<String, String>> for Field {
             Some(level) => {
                 return Self::Level(Internals::new(
                     level,
-                    Parsed::Computed(Level::try_from(String::from(level))),
+                    Parsed::Computed(if level.is_empty() {
+                        Ok(None)
+                    } else {
+                        Level::try_from(String::from(level)).map(Some)
+                    }),
                 ))
             }
             None => {}
@@ -102,7 +110,11 @@ impl From<HashMap<String, String>> for Field {
             Some(xp) => {
                 return Self::CompanyXp(Internals::new(
                     xp,
-                    Parsed::Computed(Xp::try_from(String::from(xp))),
+                    Parsed::Computed(if xp.is_empty() {
+                        Ok(None)
+                    } else {
+                        Xp::try_from(String::from(xp)).map(Some)
+                    }),
                 ))
             }
             None => {}
@@ -112,7 +124,11 @@ impl From<HashMap<String, String>> for Field {
             Some(xp) => {
                 return Self::TotalXp(Internals::new(
                     xp,
-                    Parsed::Computed(Xp::try_from(String::from(xp))),
+                    Parsed::Computed(if xp.is_empty() {
+                        Ok(None)
+                    } else {
+                        Xp::try_from(String::from(xp)).map(Some)
+                    }),
                 ))
             }
             None => {}
