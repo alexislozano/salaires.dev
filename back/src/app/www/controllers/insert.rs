@@ -75,7 +75,7 @@ pub async fn insert(
 
     page::view(form::view(
         I18n::IAddMySalary.translate(),
-        "/salaries",
+        "/insert",
         elements,
     ))
 }
