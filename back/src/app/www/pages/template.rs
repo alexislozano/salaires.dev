@@ -100,10 +100,7 @@ pub fn body(main: Markup, notification: Option<&str>) -> Markup {
                     overflow: auto;
                     flex-grow: 1;"
                 {
-                    @match notification {
-                        Some(message) => (notification::view(message)),
-                        None => {}
-                    }
+                    (notification::view(notification))
                     (main)
                 }
             (script())

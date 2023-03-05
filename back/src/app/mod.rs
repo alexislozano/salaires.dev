@@ -8,7 +8,7 @@ use crate::infra::{
 };
 use axum::{
     http::HeaderValue,
-    routing::{get, post},
+    routing::{get, post, delete},
     Router,
 };
 use state::State;
@@ -47,6 +47,7 @@ pub async fn serve(
         .route("/insert", get(www::insert::get))
         .route("/insert", post(www::insert::post))
         .route("/validate", post(www::validate::post))
+        .route("/notification", delete(www::notification::delete))
         .route("/api/salaries", get(api::fetch_salaries))
         .route("/api/salaries", post(api::insert_salary))
         .route("/api/companies", get(api::fetch_companies))
