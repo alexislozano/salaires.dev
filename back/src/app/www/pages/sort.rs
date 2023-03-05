@@ -3,7 +3,11 @@ use std::{collections::HashMap, sync::Arc};
 use axum::extract::{Query, State};
 use maud::Markup;
 
-use crate::{domain::models::Order, infra::SalaryRepository};
+use crate::{
+    app::www::templates::_500,
+    domain::{models::Order, use_cases},
+    infra::SalaryRepository,
+};
 
 use super::super::fragments::salary_table;
 
@@ -13,5 +17,10 @@ pub async fn sort(
 ) -> Markup {
     let order = Order::from(params);
 
-    salary_table::view(repo, order).await
+    let salaries = match use_cases::fetch_salaries(repo, order.clone()).await {
+        Ok(salaries) => salaries,
+        Err(use_cases::fetch_salaries::Error::Unknown(str)) => return _500::view(str),
+    };
+
+    salary_table::view(salaries, order)
 }

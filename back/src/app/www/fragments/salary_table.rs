@@ -1,19 +1,10 @@
-use std::sync::Arc;
-
 use maud::Markup;
 
-use crate::{
-    domain::{
-        models::{salary::Key, Level, Order, Salary},
-        use_cases,
-    },
-    infra::SalaryRepository,
-};
+use crate::domain::models::{salary::Key, Level, Order, Salary};
 
 use super::super::{
     components::table::{self, Column, Extract},
     i18n::I18n,
-    templates::_500,
 };
 
 impl Extract<Key> for Salary {
@@ -53,12 +44,7 @@ impl Extract<Key> for Salary {
     }
 }
 
-pub async fn view(repo: Arc<dyn SalaryRepository>, order: Order<Key>) -> Markup {
-    let salaries = match use_cases::fetch_salaries(repo, order.clone()).await {
-        Ok(salaries) => salaries,
-        Err(use_cases::fetch_salaries::Error::Unknown(str)) => return _500::view(str),
-    };
-
+pub fn view(salaries: Vec<Salary>, order: Order<Key>) -> Markup {
     let columns = vec![
         build_column(Key::Company, order.clone()),
         build_column(Key::Title, order.clone()),
