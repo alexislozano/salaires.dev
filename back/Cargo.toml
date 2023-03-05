@@ -17,5 +17,4 @@ rand = "0.8.5"
 reqwest = { version = "0.11.14", default-features = false, features = ["json", "rustls-tls"] }
 serde = { version = "1.0.152", features = ["derive"] }
 tokio = { version = "1.25.0", features = ["full"] }
-tower-http = { version = "0.3.5", features = ["cors"] }
 uuid = { version = "1.3.0", features = ["serde", "v4"] }

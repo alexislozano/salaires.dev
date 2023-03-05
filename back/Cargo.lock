@@ -93,7 +93,6 @@ dependencies = [
  "reqwest",
  "serde",
  "tokio",
- "tower-http",
  "uuid",
 ]
 

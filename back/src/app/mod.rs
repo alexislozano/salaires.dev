@@ -8,13 +8,11 @@ use crate::infra::{
     TokenRepository, TokenSender,
 };
 use axum::{
-    http::HeaderValue,
     routing::{delete, get, post},
     Router,
 };
 use state::State;
 use std::{env, sync::Arc};
-use tower_http::cors::CorsLayer;
 
 pub async fn serve(
     salary_repo: Arc<dyn SalaryRepository>,
@@ -27,10 +25,6 @@ pub async fn serve(
 ) {
     let port = env::var("PORT").expect("PORT env var");
     let url = format!("0.0.0.0:{port}");
-    let origin = env::var("APP_URL")
-        .expect("APP_URL env var")
-        .parse::<HeaderValue>()
-        .expect("APP_URL should be an url");
     let maintenance = env::var("MAINTENANCE")
         .expect("MAINTENANCE env var")
         .parse::<bool>()
@@ -55,7 +49,6 @@ pub async fn serve(
             .route("/assets/hero.png", get(assets::hero))
             .fallback(www::maintenance::get)
             .with_state(state)
-            .layer(CorsLayer::permissive().allow_origin(origin))
     } else if no_insert {
         Router::new()
             .route("/", get(www::index::get))
@@ -69,7 +62,6 @@ pub async fn serve(
             .route("/assets/hero.png", get(assets::hero))
             .fallback(www::not_found::get)
             .with_state(state)
-            .layer(CorsLayer::permissive().allow_origin(origin))
     } else {
         Router::new()
             .route("/", get(www::index::get))
@@ -87,7 +79,6 @@ pub async fn serve(
             .route("/assets/hero.png", get(assets::hero))
             .fallback(www::not_found::get)
             .with_state(state)
-            .layer(CorsLayer::permissive().allow_origin(origin))
     };
 
     axum::Server::bind(&url.parse().unwrap())
