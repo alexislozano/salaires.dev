@@ -54,6 +54,7 @@ pub async fn serve(
         .route("/api/locations", get(api::fetch_locations))
         .route("/api/titles", get(api::fetch_titles))
         .route("/api/tokens", post(api::confirm_token))
+        .fallback(www::not_found::get)
         .with_state(state)
         .layer(CorsLayer::permissive().allow_origin(origin));
 
