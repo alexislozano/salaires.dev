@@ -11,18 +11,16 @@ use super::super::{
 };
 
 pub fn view(internals: Internals<Option<Level>, Error>) -> Markup {
-    let choices = Level::all()
-        .iter()
-        .map(|level| {
-            let key = String::from(level.clone());
-            let label = match level {
-                Level::Junior => I18n::Junior.translate(),
-                Level::Mid => I18n::Mid.translate(),
-                Level::Senior => I18n::Senior.translate(),
-            };
-            Choice::new(key.as_str(), label)
-        })
-        .collect::<Vec<Choice>>();
+    let mut choices = vec![Choice::new("", "-")];
+    for level in Level::all().iter() {
+        let key = String::from(level.clone());
+        let label = match level {
+            Level::Junior => I18n::Junior.translate(),
+            Level::Mid => I18n::Mid.translate(),
+            Level::Senior => I18n::Senior.translate(),
+        };
+        choices.push(Choice::new(key.as_str(), label))
+    }
 
     dropdown::view(
         match internals.parsed {
