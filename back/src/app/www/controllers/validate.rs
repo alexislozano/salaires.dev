@@ -13,7 +13,6 @@ use crate::{
         },
         i18n::I18n,
         models::{form::ValidatedForm, ParsedForm, UnparsedForm},
-        templates::_500,
     },
     domain::use_cases,
     infra::{CompanyRepository, LocationRepository, TitleRepository},
@@ -34,17 +33,17 @@ pub async fn post(
 
     let companies = match companies_result {
         Ok(companies) => companies,
-        Err(use_cases::fetch_companies::Error::Unknown(str)) => return _500::view(str),
+        Err(use_cases::fetch_companies::Error::Unknown(_)) => return html ! {},
     };
 
     let locations = match locations_result {
         Ok(locations) => locations,
-        Err(use_cases::fetch_locations::Error::Unknown(str)) => return _500::view(str),
+        Err(use_cases::fetch_locations::Error::Unknown(_)) => return html ! {},
     };
 
     let titles = match titles_result {
         Ok(titles) => titles,
-        Err(use_cases::fetch_titles::Error::Unknown(str)) => return _500::view(str),
+        Err(use_cases::fetch_titles::Error::Unknown(_)) => return html ! {},
     };
 
     let parsed_form = ParsedForm::from(unparsed_form);

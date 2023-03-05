@@ -3,7 +3,7 @@ mod controllers;
 mod fragments;
 mod i18n;
 mod models;
-mod templates;
+mod pages;
 
 use i18n::I18n;
 pub use controllers::index;

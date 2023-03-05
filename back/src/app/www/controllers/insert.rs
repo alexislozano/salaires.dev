@@ -6,20 +6,17 @@ use maud::{Markup, html};
 
 use crate::{
     app::www::{
-        components::{banner, hcaptcha, submit},
+        components::{banner, hcaptcha, submit, form},
         fragments::{
             company_field, company_xp_field, compensation_field, email_field, level_field,
             location_field, title_field, total_xp_field,
         },
         i18n::I18n,
-        models::{self, UnparsedForm, ParsedForm, form::ValidatedForm},
+        models::{self, UnparsedForm, ParsedForm, form::ValidatedForm}, pages,
     },
     domain::{use_cases, models::{Salary, Captcha}},
     infra::{CompanyRepository, LocationRepository, TitleRepository, CaptchaService, SalaryRepository, TokenRepository, TokenSender},
 };
-
-use super::super::components::form;
-use super::super::templates::{page, _500};
 
 pub async fn get(
     State(company_repo): State<Arc<dyn CompanyRepository>>,
@@ -37,17 +34,17 @@ pub async fn get(
 
     let companies = match companies_result {
         Ok(companies) => companies,
-        Err(use_cases::fetch_companies::Error::Unknown(str)) => return _500::view(str),
+        Err(use_cases::fetch_companies::Error::Unknown(_)) => return html ! {},
     };
 
     let locations = match locations_result {
         Ok(locations) => locations,
-        Err(use_cases::fetch_locations::Error::Unknown(str)) => return _500::view(str),
+        Err(use_cases::fetch_locations::Error::Unknown(_)) => return html ! {},
     };
 
     let titles = match titles_result {
         Ok(titles) => titles,
-        Err(use_cases::fetch_titles::Error::Unknown(str)) => return _500::view(str),
+        Err(use_cases::fetch_titles::Error::Unknown(_)) => return html ! {},
     };
 
     let elements = vec![
@@ -73,7 +70,7 @@ pub async fn get(
         submit::view(true, I18n::Send.translate()),
     ];
 
-    page::view(form::view(
+    pages::insert::view(form::view(
         I18n::IAddMySalary.translate(),
         "/insert",
         elements,

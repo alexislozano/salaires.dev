@@ -1,15 +1,13 @@
 use std::{collections::HashMap, sync::Arc};
 
 use axum::extract::{Query, State};
-use maud::Markup;
+use maud::{Markup, html};
 
 use crate::{
-    app::www::templates::_500,
+    app::www::pages,
     domain::{models::Order, use_cases},
     infra::SalaryRepository,
 };
-
-use super::super::{fragments::salary_table, templates::page};
 
 pub async fn get(
     State(repo): State<Arc<dyn SalaryRepository>>,
@@ -19,8 +17,8 @@ pub async fn get(
 
     let salaries = match use_cases::fetch_salaries(repo, order.clone()).await {
         Ok(salaries) => salaries,
-        Err(use_cases::fetch_salaries::Error::Unknown(str)) => return _500::view(str),
+        Err(use_cases::fetch_salaries::Error::Unknown(_)) => return html ! {},
     };
 
-    page::view(salary_table::view(salaries, order))
+    pages::index::view(salaries, order)
 }
