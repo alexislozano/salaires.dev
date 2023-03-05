@@ -49,7 +49,7 @@ pub fn head() -> Markup {
                 content="Partagez et comparez votre salaire anonymement";
             meta
                 property="twitter:image"
-                content="https://static.salaires.dev/hero.png";
+                content="https://salaires.dev/assets/hero.png";
             meta
                 property="twitter:image-alt"
                 content="Capture d'écran de salaires.dev";
@@ -66,10 +66,10 @@ pub fn head() -> Markup {
                 content="Partagez et comparez votre salaire anonymement";
             meta
                 property="og:image"
-                content="https://static.salaires.dev/hero.png";
+                content="https://salaires.dev/assets/hero.png";
             meta
                 property="og:image:secure_url"
-                content="https://static.salaires.dev/hero.png";
+                content="https://salaires.dev/assets/hero.png";
             meta
                 property="og:image:alt"
                 content="Capture d'écran de salaires.dev";
