@@ -32,20 +32,37 @@ pub async fn get(
             _ => return html! {},
         };
 
-    pages::insert::view(hcaptcha_key, companies, locations, titles)
+    pages::insert::view(
+        ParsedForm::init(),
+        hcaptcha_key,
+        companies,
+        locations,
+        titles,
+    )
 }
 
 pub async fn post(
+    State(company_repo): State<Arc<dyn CompanyRepository>>,
+    State(location_repo): State<Arc<dyn LocationRepository>>,
+    State(title_repo): State<Arc<dyn TitleRepository>>,
     State(captcha_service): State<Arc<dyn CaptchaService>>,
     State(salary_repo): State<Arc<dyn SalaryRepository>>,
     State(token_repo): State<Arc<dyn TokenRepository>>,
     State(token_sender): State<Arc<dyn TokenSender>>,
     Form(unparsed_form): Form<UnparsedForm>,
 ) -> Markup {
+    let (hcaptcha_key, companies, locations, titles) =
+        match fetch(company_repo, location_repo, title_repo).await {
+            Ok((hcaptcha_key, companies, locations, titles)) => {
+                (hcaptcha_key, companies, locations, titles)
+            }
+            _ => return html! {},
+        };
+
     let parsed_form = ParsedForm::from(unparsed_form);
-    let validated_form = match ValidatedForm::try_from(parsed_form) {
+    let validated_form = match ValidatedForm::try_from(parsed_form.clone()) {
         Ok(validated_form) => validated_form,
-        _ => return html! {},
+        _ => return pages::insert::view(parsed_form, hcaptcha_key, companies, locations, titles),
     };
 
     let salary = Salary::from(validated_form.clone());
@@ -61,8 +78,14 @@ pub async fn post(
     )
     .await
     {
-        Ok(()) => html! {},
-        _ => html! {},
+        Ok(()) => pages::insert::view(
+            ParsedForm::init(),
+            hcaptcha_key,
+            companies,
+            locations,
+            titles,
+        ),
+        _ => pages::insert::view(parsed_form, hcaptcha_key, companies, locations, titles),
     }
 }
 

@@ -19,10 +19,17 @@ pub struct Internals<T, E> {
 }
 
 impl<T, E> Internals<T, E> {
-    pub fn new(value: &str, parsed: Parsed<T, E>) -> Self {
+    fn init() -> Self {
+        Self {
+            value: String::from(""),
+            parsed: Parsed::Init,
+        }
+    }
+
+    fn computed(value: &str, result: Result<T, E>) -> Self {
         Self {
             value: String::from(value),
-            parsed,
+            parsed: Parsed::Computed(result),
         }
     }
 
@@ -61,7 +68,23 @@ pub struct ParsedForm {
     pub compensation: Internals<Compensation, compensation::Error>,
     pub company_xp: Internals<Option<Xp>, xp::Error>,
     pub total_xp: Internals<Option<Xp>, xp::Error>,
-    captcha: Result<Captcha, ()>,
+    pub captcha: Option<Captcha>,
+}
+
+impl ParsedForm {
+    pub fn init() -> Self {
+        Self {
+            email: Internals::init(),
+            company: Internals::init(),
+            title: Internals::init(),
+            level: Internals::init(),
+            location: Internals::init(),
+            compensation: Internals::init(),
+            company_xp: Internals::init(),
+            total_xp: Internals::init(),
+            captcha: None,
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -80,55 +103,52 @@ pub struct ValidatedForm {
 impl From<UnparsedForm> for ParsedForm {
     fn from(form: UnparsedForm) -> Self {
         Self {
-            email: Internals::new(
-                form.email.as_str(),
-                Parsed::Computed(Email::try_from(form.email.clone())),
-            ),
-            company: Internals::new(
+            email: Internals::computed(form.email.as_str(), Email::try_from(form.email.clone())),
+            company: Internals::computed(
                 form.company.as_str(),
-                Parsed::Computed(Company::try_from(form.company.clone())),
+                Company::try_from(form.company.clone()),
             ),
-            title: Internals::new(
+            title: Internals::computed(
                 form.title.as_str(),
-                Parsed::Computed(if form.title.is_empty() {
+                if form.title.is_empty() {
                     Ok(None)
                 } else {
                     Title::try_from(form.title.clone()).map(Some)
-                }),
+                },
             ),
-            level: Internals::new(
+            level: Internals::computed(
                 form.level.as_str(),
-                Parsed::Computed(if form.level.is_empty() {
+                if form.level.is_empty() {
                     Ok(None)
                 } else {
                     Level::try_from(form.level.clone()).map(Some)
-                }),
+                },
             ),
-            location: Internals::new(
+            location: Internals::computed(
                 form.location.as_str(),
-                Parsed::Computed(Location::try_from(form.location.clone())),
+                Location::try_from(form.location.clone()),
             ),
-            compensation: Internals::new(
+            compensation: Internals::computed(
                 form.compensation.as_str(),
-                Parsed::Computed(Compensation::try_from(form.compensation.clone())),
+                Compensation::try_from(form.compensation.clone()),
             ),
-            company_xp: Internals::new(
+            company_xp: Internals::computed(
                 form.company_xp.as_str(),
-                Parsed::Computed(if form.company_xp.is_empty() {
+                if form.company_xp.is_empty() {
                     Ok(None)
                 } else {
                     Xp::try_from(form.company_xp.clone()).map(Some)
-                }),
+                },
             ),
-            total_xp: Internals::new(
+            total_xp: Internals::computed(
                 form.total_xp.as_str(),
-                Parsed::Computed(if form.total_xp.is_empty() {
+                if form.total_xp.is_empty() {
                     Ok(None)
                 } else {
                     Xp::try_from(form.total_xp.clone()).map(Some)
-                }),
+                },
             ),
-            captcha: Captcha::try_from(form.captcha),
+            captcha: Captcha::try_from(form.captcha).ok(),
         }
     }
 }
@@ -146,7 +166,7 @@ impl TryFrom<ParsedForm> for ValidatedForm {
             compensation: form.compensation.extract()?,
             company_xp: form.company_xp.extract()?,
             total_xp: form.total_xp.extract()?,
-            captcha: form.captcha?,
+            captcha: form.captcha.ok_or(())?,
         })
     }
 }

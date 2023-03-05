@@ -8,7 +8,7 @@ use crate::{
             location_field, title_field, total_xp_field,
         },
         i18n::I18n,
-        models,
+        models::ParsedForm,
     },
     domain::models::{Company, Location, Title},
 };
@@ -16,6 +16,7 @@ use crate::{
 use super::template;
 
 pub fn view(
+    form: ParsedForm,
     hcaptcha_key: String,
     companies: Vec<Company>,
     locations: Vec<Location>,
@@ -23,23 +24,14 @@ pub fn view(
 ) -> Markup {
     let elements = vec![
         banner::view(I18n::EmailExplanation.translate()),
-        email_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
-        company_field::view(
-            models::form::Internals::new("", models::form::Parsed::Init),
-            companies,
-        ),
-        title_field::view(
-            models::form::Internals::new("", models::form::Parsed::Init),
-            titles,
-        ),
-        level_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
-        location_field::view(
-            models::form::Internals::new("", models::form::Parsed::Init),
-            locations,
-        ),
-        compensation_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
-        company_xp_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
-        total_xp_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
+        email_field::view(form.email),
+        company_field::view(form.company, companies),
+        title_field::view(form.title, titles),
+        level_field::view(form.level),
+        location_field::view(form.location, locations),
+        compensation_field::view(form.compensation),
+        company_xp_field::view(form.company_xp),
+        total_xp_field::view(form.total_xp),
         hcaptcha::view(hcaptcha_key.as_str()),
         submit::view(true, I18n::Send.translate()),
     ];
