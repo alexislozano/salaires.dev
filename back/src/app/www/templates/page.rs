@@ -74,11 +74,6 @@ pub fn head() -> Markup {
             meta
                 property="og:url"
                 content="https://salaires.dev";
-
-            // script
-            script
-                src="https://unpkg.com/htmx.org@1.8.6"
-                {}
         }
     }
 }
@@ -105,6 +100,7 @@ pub fn body(main: Markup) -> Markup {
                 {
                     (main)
                 }
+            (script())
         }
     }
 }
@@ -132,5 +128,18 @@ fn header() -> Markup {
                     }
                 (link::view(I18n::IAddMySalary.translate(), "/insert"))
             }
+    }
+}
+
+fn script() -> Markup {
+    html! {
+        script
+            src="https://unpkg.com/htmx.org@1.8.6"
+            {}
+        script
+            src="https://hcaptcha.com/1/api.js"
+            async
+            defer
+            {}
     }
 }

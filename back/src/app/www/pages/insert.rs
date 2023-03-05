@@ -1,11 +1,11 @@
-use std::sync::Arc;
+use std::{env, sync::Arc};
 
 use axum::extract::State;
 use maud::Markup;
 
 use crate::{
     app::www::{
-        components::banner,
+        components::{banner, button, hcaptcha},
         fragments::{
             company_field, company_xp_field, compensation_field, email_field, field, level_field,
             location_field, title_field, total_xp_field,
@@ -24,6 +24,8 @@ pub async fn insert(
     State(location_repo): State<Arc<dyn LocationRepository>>,
     State(title_repo): State<Arc<dyn TitleRepository>>,
 ) -> Markup {
+    let hcaptcha_key = env::var("HCAPTCHA_KEY").expect("HCAPTCHA_KEY env var");
+
     let companies = match use_cases::fetch_companies(company_repo).await {
         Ok(companies) => companies,
         Err(use_cases::fetch_companies::Error::Unknown(str)) => return _500::view(str),
@@ -49,6 +51,7 @@ pub async fn insert(
         compensation_field::view(field::Internals::new("", field::Parsed::Init)),
         company_xp_field::view(field::Internals::new("", field::Parsed::Init)),
         total_xp_field::view(field::Internals::new("", field::Parsed::Init)),
+        hcaptcha::view(hcaptcha_key.as_str()),
     ];
 
     page::view(form::view(I18n::IAddMySalary.translate(), elements))

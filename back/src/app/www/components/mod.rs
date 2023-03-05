@@ -2,6 +2,7 @@ pub mod banner;
 pub mod button;
 pub mod dropdown;
 pub mod form;
+pub mod hcaptcha;
 pub mod input;
 pub mod label;
 pub mod link;
