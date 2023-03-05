@@ -5,9 +5,10 @@ use crate::{
     domain::models::company::{Company, Error},
 };
 
-use super::super::components::select;
-
-use super::form::{Internals, Parsed};
+use super::super::{
+    components::select,
+    models::form::{Internals, Parsed},
+};
 
 pub fn view(internals: Internals<Company, Error>, companies: Vec<Company>) -> Markup {
     select::view(

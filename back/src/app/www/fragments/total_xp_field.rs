@@ -5,9 +5,10 @@ use crate::{
     domain::models::xp::{Error, Xp},
 };
 
-use super::super::components::input;
-
-use super::form::{Internals, Parsed};
+use super::super::{
+    components::input,
+    models::form::{Internals, Parsed},
+};
 
 pub fn view(internals: Internals<Option<Xp>, Error>) -> Markup {
     input::view(

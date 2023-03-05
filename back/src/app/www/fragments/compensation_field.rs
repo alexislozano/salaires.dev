@@ -5,9 +5,10 @@ use crate::{
     domain::models::compensation::{Compensation, Error},
 };
 
-use super::super::components::input;
-
-use super::form::{Internals, Parsed};
+use super::super::{
+    components::input,
+    models::form::{Internals, Parsed},
+};
 
 pub fn view(internals: Internals<Compensation, Error>) -> Markup {
     input::view(

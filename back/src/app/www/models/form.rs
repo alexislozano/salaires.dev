@@ -1,8 +1,8 @@
 use serde::Deserialize;
 
 use crate::domain::models::{
-    company, compensation, email, level, location, title, xp, Company, Compensation, Email, Level,
-    Location, Title, Xp, Captcha,
+    company, compensation, email, level, location, title, xp, Captcha, Company, Compensation,
+    Email, Level, Location, Title, Xp,
 };
 
 pub enum Parsed<T, E> {
@@ -26,7 +26,7 @@ impl<T, E> Internals<T, E> {
     fn is_valid(&self) -> bool {
         match &self.parsed {
             Parsed::Init => false,
-            Parsed::Computed(result) => result.is_ok()
+            Parsed::Computed(result) => result.is_ok(),
         }
     }
 }
@@ -40,7 +40,7 @@ pub struct ParsedForm {
     pub compensation: Internals<Compensation, compensation::Error>,
     pub company_xp: Internals<Option<Xp>, xp::Error>,
     pub total_xp: Internals<Option<Xp>, xp::Error>,
-    captcha: Result<Captcha, ()>
+    captcha: Result<Captcha, ()>,
 }
 
 impl ParsedForm {
@@ -59,7 +59,7 @@ impl ParsedForm {
 }
 
 #[derive(Debug, Deserialize, Clone)]
-pub struct Form {
+pub struct UnparsedForm {
     email: String,
     company: String,
     title: String,
@@ -72,8 +72,8 @@ pub struct Form {
     captcha: String,
 }
 
-impl From<Form> for ParsedForm {
-    fn from(form: Form) -> Self {
+impl From<UnparsedForm> for ParsedForm {
+    fn from(form: UnparsedForm) -> Self {
         Self {
             email: Internals::new(
                 form.email.as_str(),
@@ -123,7 +123,7 @@ impl From<Form> for ParsedForm {
                     Xp::try_from(form.total_xp.clone()).map(Some)
                 }),
             ),
-            captcha: Captcha::try_from(form.captcha)
+            captcha: Captcha::try_from(form.captcha),
         }
     }
 }

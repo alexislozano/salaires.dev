@@ -1,6 +1,7 @@
 mod components;
 mod fragments;
 mod i18n;
+mod models;
 mod pages;
 mod templates;
 

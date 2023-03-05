@@ -1,16 +1,19 @@
 use std::sync::Arc;
 
+use axum::extract::{Form, State};
 use futures::future;
-use axum::extract::{self, State};
-use maud::{Markup, html};
+use maud::{html, Markup};
 
 use crate::{
     app::www::{
+        components::submit,
         fragments::{
-            company_field, company_xp_field, compensation_field, email_field, form::{Form, ParsedForm},
-            level_field, location_field, title_field, total_xp_field,
+            company_field, company_xp_field, compensation_field, email_field, level_field,
+            location_field, title_field, total_xp_field,
         },
-        templates::_500, components::submit, i18n::I18n
+        i18n::I18n,
+        models::{ParsedForm, UnparsedForm},
+        templates::_500,
     },
     domain::use_cases,
     infra::{CompanyRepository, LocationRepository, TitleRepository},
@@ -20,13 +23,14 @@ pub async fn validate(
     State(company_repo): State<Arc<dyn CompanyRepository>>,
     State(location_repo): State<Arc<dyn LocationRepository>>,
     State(title_repo): State<Arc<dyn TitleRepository>>,
-    extract::Form(form): extract::Form<Form>,
+    Form(form): Form<UnparsedForm>,
 ) -> Markup {
     let (companies_result, locations_result, titles_result) = future::join3(
         use_cases::fetch_companies(company_repo),
         use_cases::fetch_locations(location_repo),
         use_cases::fetch_titles(title_repo),
-    ).await;
+    )
+    .await;
 
     let companies = match companies_result {
         Ok(companies) => companies,
@@ -44,7 +48,7 @@ pub async fn validate(
     };
 
     let parsed_form = ParsedForm::from(form);
-    let disabled = ! parsed_form.is_valid();
+    let disabled = !parsed_form.is_valid();
 
     html! {
         (email_field::view(parsed_form.email))

@@ -1,17 +1,18 @@
 use std::{env, sync::Arc};
 
-use futures::future;
 use axum::extract::State;
+use futures::future;
 use maud::Markup;
 
 use crate::{
     app::www::{
         components::{banner, hcaptcha, submit},
-        fragments::{self,
+        fragments::{
             company_field, company_xp_field, compensation_field, email_field, level_field,
             location_field, title_field, total_xp_field,
         },
         i18n::I18n,
+        models,
     },
     domain::use_cases,
     infra::{CompanyRepository, LocationRepository, TitleRepository},
@@ -31,7 +32,8 @@ pub async fn insert(
         use_cases::fetch_companies(company_repo),
         use_cases::fetch_locations(location_repo),
         use_cases::fetch_titles(title_repo),
-    ).await;
+    )
+    .await;
 
     let companies = match companies_result {
         Ok(companies) => companies,
@@ -50,14 +52,23 @@ pub async fn insert(
 
     let elements = vec![
         banner::view(I18n::EmailExplanation.translate()),
-        email_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init)),
-        company_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init), companies),
-        title_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init), titles),
-        level_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init)),
-        location_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init), locations),
-        compensation_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init)),
-        company_xp_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init)),
-        total_xp_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init)),
+        email_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
+        company_field::view(
+            models::form::Internals::new("", models::form::Parsed::Init),
+            companies,
+        ),
+        title_field::view(
+            models::form::Internals::new("", models::form::Parsed::Init),
+            titles,
+        ),
+        level_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
+        location_field::view(
+            models::form::Internals::new("", models::form::Parsed::Init),
+            locations,
+        ),
+        compensation_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
+        company_xp_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
+        total_xp_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
         hcaptcha::view(hcaptcha_key.as_str()),
         submit::view(true, I18n::Send.translate()),
     ];
