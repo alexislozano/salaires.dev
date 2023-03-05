@@ -7,6 +7,8 @@ mod pages;
 
 pub use controllers::index;
 pub use controllers::insert;
+pub use controllers::maintenance;
+pub use controllers::no_insert;
 pub use controllers::not_found;
 pub use controllers::notification;
 pub use controllers::sort;

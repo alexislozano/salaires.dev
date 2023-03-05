@@ -31,6 +31,14 @@ pub async fn serve(
         .expect("APP_URL env var")
         .parse::<HeaderValue>()
         .expect("APP_URL should be an url");
+    let maintenance = env::var("MAINTENANCE")
+        .expect("MAINTENANCE env var")
+        .parse::<bool>()
+        .expect("MAINTENANCE should be a bool");
+    let no_insert = env::var("NO_INSERT")
+        .expect("NO_INSERT env var")
+        .parse::<bool>()
+        .expect("NO_INSERT should be a bool");
 
     let state = State::new(
         salary_repo,
@@ -42,23 +50,45 @@ pub async fn serve(
         token_sender,
     );
 
-    let app = Router::new()
-        .route("/", get(www::index::get))
-        .route("/sort", get(www::sort::get))
-        .route("/insert", get(www::insert::get))
-        .route("/insert", post(www::insert::post))
-        .route("/validate", post(www::validate::post))
-        .route("/notification", delete(www::notification::delete))
-        .route("/api/salaries", get(api::fetch_salaries))
-        .route("/api/salaries", post(api::insert_salary))
-        .route("/api/companies", get(api::fetch_companies))
-        .route("/api/locations", get(api::fetch_locations))
-        .route("/api/titles", get(api::fetch_titles))
-        .route("/api/tokens", post(api::confirm_token))
-        .route("/assets/hero.png", get(assets::hero))
-        .fallback(www::not_found::get)
-        .with_state(state)
-        .layer(CorsLayer::permissive().allow_origin(origin));
+    let app = if maintenance {
+        Router::new()
+            .route("/assets/hero.png", get(assets::hero))
+            .fallback(www::maintenance::get)
+            .with_state(state)
+            .layer(CorsLayer::permissive().allow_origin(origin))
+    } else if no_insert {
+        Router::new()
+            .route("/", get(www::index::get))
+            .route("/sort", get(www::sort::get))
+            .route("/insert", get(www::no_insert::get))
+            .route("/notification", delete(www::notification::delete))
+            .route("/api/salaries", get(api::fetch_salaries))
+            .route("/api/companies", get(api::fetch_companies))
+            .route("/api/locations", get(api::fetch_locations))
+            .route("/api/titles", get(api::fetch_titles))
+            .route("/assets/hero.png", get(assets::hero))
+            .fallback(www::not_found::get)
+            .with_state(state)
+            .layer(CorsLayer::permissive().allow_origin(origin))
+    } else {
+        Router::new()
+            .route("/", get(www::index::get))
+            .route("/sort", get(www::sort::get))
+            .route("/insert", get(www::insert::get))
+            .route("/insert", post(www::insert::post))
+            .route("/validate", post(www::validate::post))
+            .route("/notification", delete(www::notification::delete))
+            .route("/api/salaries", get(api::fetch_salaries))
+            .route("/api/salaries", post(api::insert_salary))
+            .route("/api/companies", get(api::fetch_companies))
+            .route("/api/locations", get(api::fetch_locations))
+            .route("/api/titles", get(api::fetch_titles))
+            .route("/api/tokens", post(api::confirm_token))
+            .route("/assets/hero.png", get(assets::hero))
+            .fallback(www::not_found::get)
+            .with_state(state)
+            .layer(CorsLayer::permissive().allow_origin(origin))
+    };
 
     axum::Server::bind(&url.parse().unwrap())
         .serve(app.into_make_service())
