@@ -42,11 +42,11 @@ pub async fn serve(
     );
 
     let app = Router::new()
-        .route("/", get(www::index))
-        .route("/sort", get(www::sort))
-        .route("/insert", get(www::insert))
-        .route("/validate", post(www::validate))
-        .route("/insert", post(www::salaries))
+        .route("/", get(www::index::get))
+        .route("/sort", get(www::sort::get))
+        .route("/insert", get(www::insert::get))
+        .route("/insert", post(www::insert::post))
+        .route("/validate", post(www::validate::post))
         .route("/api/salaries", get(api::fetch_salaries))
         .route("/api/salaries", post(api::insert_salary))
         .route("/api/companies", get(api::fetch_companies))

@@ -11,7 +11,7 @@ use crate::{
 
 use super::super::fragments::salary_table;
 
-pub async fn sort(
+pub async fn get(
     State(repo): State<Arc<dyn SalaryRepository>>,
     Query(params): Query<HashMap<String, String>>,
 ) -> Markup {

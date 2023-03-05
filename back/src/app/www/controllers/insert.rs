@@ -1,8 +1,8 @@
 use std::{env, sync::Arc};
 
-use axum::extract::State;
+use axum::{extract::State, Form};
 use futures::future;
-use maud::Markup;
+use maud::{Markup, html};
 
 use crate::{
     app::www::{
@@ -12,16 +12,16 @@ use crate::{
             location_field, title_field, total_xp_field,
         },
         i18n::I18n,
-        models,
+        models::{self, UnparsedForm, ParsedForm, form::ValidatedForm},
     },
-    domain::use_cases,
-    infra::{CompanyRepository, LocationRepository, TitleRepository},
+    domain::{use_cases, models::{Salary, Captcha}},
+    infra::{CompanyRepository, LocationRepository, TitleRepository, CaptchaService, SalaryRepository, TokenRepository, TokenSender},
 };
 
 use super::super::components::form;
 use super::super::templates::{page, _500};
 
-pub async fn insert(
+pub async fn get(
     State(company_repo): State<Arc<dyn CompanyRepository>>,
     State(location_repo): State<Arc<dyn LocationRepository>>,
     State(title_repo): State<Arc<dyn TitleRepository>>,
@@ -78,4 +78,35 @@ pub async fn insert(
         "/insert",
         elements,
     ))
+}
+
+pub async fn post(
+    State(captcha_service): State<Arc<dyn CaptchaService>>,
+    State(salary_repo): State<Arc<dyn SalaryRepository>>,
+    State(token_repo): State<Arc<dyn TokenRepository>>,
+    State(token_sender): State<Arc<dyn TokenSender>>,
+    Form(unparsed_form): Form<UnparsedForm>,
+) -> Markup {
+    let parsed_form = ParsedForm::from(unparsed_form);
+    let validated_form = match ValidatedForm::try_from(parsed_form) {
+        Ok(validated_form) => validated_form,
+        _ => return html! {},
+    };
+
+    let salary = Salary::from(validated_form.clone());
+    let captcha = Captcha::from(validated_form);
+
+    match use_cases::insert_salary(
+        captcha_service,
+        salary_repo,
+        token_repo,
+        token_sender,
+        captcha,
+        salary,
+    )
+    .await
+    {
+        Ok(()) => html! {},
+        _ => html! {},
+    }
 }

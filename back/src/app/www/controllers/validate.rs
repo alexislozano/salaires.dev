@@ -19,7 +19,7 @@ use crate::{
     infra::{CompanyRepository, LocationRepository, TitleRepository},
 };
 
-pub async fn validate(
+pub async fn post(
     State(company_repo): State<Arc<dyn CompanyRepository>>,
     State(location_repo): State<Arc<dyn LocationRepository>>,
     State(title_repo): State<Arc<dyn TitleRepository>>,
