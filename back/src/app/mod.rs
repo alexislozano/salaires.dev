@@ -8,7 +8,7 @@ use crate::infra::{
 };
 use axum::{
     http::HeaderValue,
-    routing::{get, post, delete},
+    routing::{delete, get, post},
     Router,
 };
 use state::State;
