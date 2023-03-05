@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 
 use axum::extract::{Query, State};
-use maud::{Markup, html};
+use maud::{html, Markup};
 
 use crate::{
     app::www::pages,
@@ -17,7 +17,7 @@ pub async fn get(
 
     let salaries = match use_cases::fetch_salaries(repo, order.clone()).await {
         Ok(salaries) => salaries,
-        Err(use_cases::fetch_salaries::Error::Unknown(_)) => return html ! {},
+        Err(use_cases::fetch_salaries::Error::Unknown(_)) => return html! {},
     };
 
     pages::index::view(salaries, order)

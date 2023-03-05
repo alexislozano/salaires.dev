@@ -2,20 +2,21 @@ use std::{env, sync::Arc};
 
 use axum::{extract::State, Form};
 use futures::future;
-use maud::{Markup, html};
+use maud::{html, Markup};
 
 use crate::{
     app::www::{
-        components::{banner, hcaptcha, submit, form},
-        fragments::{
-            company_field, company_xp_field, compensation_field, email_field, level_field,
-            location_field, title_field, total_xp_field,
-        },
-        i18n::I18n,
-        models::{self, UnparsedForm, ParsedForm, form::ValidatedForm}, pages,
+        models::{form::ValidatedForm, ParsedForm, UnparsedForm},
+        pages,
     },
-    domain::{use_cases, models::{Salary, Captcha}},
-    infra::{CompanyRepository, LocationRepository, TitleRepository, CaptchaService, SalaryRepository, TokenRepository, TokenSender},
+    domain::{
+        models::{Captcha, Salary},
+        use_cases,
+    },
+    infra::{
+        CaptchaService, CompanyRepository, LocationRepository, SalaryRepository, TitleRepository,
+        TokenRepository, TokenSender,
+    },
 };
 
 pub async fn get(
@@ -34,47 +35,20 @@ pub async fn get(
 
     let companies = match companies_result {
         Ok(companies) => companies,
-        Err(use_cases::fetch_companies::Error::Unknown(_)) => return html ! {},
+        Err(use_cases::fetch_companies::Error::Unknown(_)) => return html! {},
     };
 
     let locations = match locations_result {
         Ok(locations) => locations,
-        Err(use_cases::fetch_locations::Error::Unknown(_)) => return html ! {},
+        Err(use_cases::fetch_locations::Error::Unknown(_)) => return html! {},
     };
 
     let titles = match titles_result {
         Ok(titles) => titles,
-        Err(use_cases::fetch_titles::Error::Unknown(_)) => return html ! {},
+        Err(use_cases::fetch_titles::Error::Unknown(_)) => return html! {},
     };
 
-    let elements = vec![
-        banner::view(I18n::EmailExplanation.translate()),
-        email_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
-        company_field::view(
-            models::form::Internals::new("", models::form::Parsed::Init),
-            companies,
-        ),
-        title_field::view(
-            models::form::Internals::new("", models::form::Parsed::Init),
-            titles,
-        ),
-        level_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
-        location_field::view(
-            models::form::Internals::new("", models::form::Parsed::Init),
-            locations,
-        ),
-        compensation_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
-        company_xp_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
-        total_xp_field::view(models::form::Internals::new("", models::form::Parsed::Init)),
-        hcaptcha::view(hcaptcha_key.as_str()),
-        submit::view(true, I18n::Send.translate()),
-    ];
-
-    pages::insert::view(form::view(
-        I18n::IAddMySalary.translate(),
-        "/insert",
-        elements,
-    ))
+    pages::insert::view(hcaptcha_key, companies, titles, locations)
 }
 
 pub async fn post(
