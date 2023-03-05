@@ -79,24 +79,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "back"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "axum",
- "chrono",
- "dotenv",
- "futures",
- "lettre",
- "maud",
- "rand",
- "reqwest",
- "serde",
- "tokio",
- "uuid",
-]
-
-[[package]]
 name = "base64"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -970,6 +952,24 @@ name = "ryu"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b4b9743ed687d4b4bcedf9ff5eaa7398495ae14e61cba0a295704edbc7decde"
+
+[[package]]
+name = "salaires_dev"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "chrono",
+ "dotenv",
+ "futures",
+ "lettre",
+ "maud",
+ "rand",
+ "reqwest",
+ "serde",
+ "tokio",
+ "uuid",
+]
 
 [[package]]
 name = "scopeguard"

@@ -6,12 +6,6 @@ Partagez votre salaire de développeur / développeuse avec la communauté.
 
 Les PRs sont les bienvenues !
 
-## Back
-
-```
-cd back
-```
-
 ### Lancer les tests
 
 ```
@@ -30,29 +24,9 @@ cargo run
 cargo build
 ```
 
-## Front
-
-```
-cd front
-```
-
-### Lancer en local
-
-```
-npm install
-npm run dev
-```
-
-### Créer un build
-
-```
-npm install
-npm run build
-```
-
 ## Supabase
 
-Par défaut, le back se branche sur une db en saas : supabase.
+Par défaut, salaires.dev se branche sur une db en saas : supabase.
 
 Pour créer les tables et vues dont salaires.dev a besoin, vous pouvez lancer les commandes suivantes dans l'éditeur SQL de supabase:
 
