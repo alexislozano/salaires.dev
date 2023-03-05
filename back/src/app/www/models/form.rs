@@ -1,15 +1,18 @@
+use chrono::Utc;
 use serde::Deserialize;
 
 use crate::domain::models::{
     company, compensation, email, level, location, title, xp, Captcha, Company, Compensation,
-    Email, Level, Location, Title, Xp,
+    Email, Id, Level, Location, Salary, Status, Title, Xp,
 };
 
+#[derive(Clone)]
 pub enum Parsed<T, E> {
     Init,
     Computed(Result<T, E>),
 }
 
+#[derive(Clone)]
 pub struct Internals<T, E> {
     pub value: String,
     pub parsed: Parsed<T, E>,
@@ -23,38 +26,14 @@ impl<T, E> Internals<T, E> {
         }
     }
 
-    fn is_valid(&self) -> bool {
+    fn extract(&self) -> Result<T, ()>
+    where
+        T: Clone,
+    {
         match &self.parsed {
-            Parsed::Init => false,
-            Parsed::Computed(result) => result.is_ok(),
+            Parsed::Computed(Ok(t)) => Ok(t.clone()),
+            _ => Err(()),
         }
-    }
-}
-
-pub struct ParsedForm {
-    pub email: Internals<Email, email::Error>,
-    pub company: Internals<Company, company::Error>,
-    pub title: Internals<Option<Title>, title::Error>,
-    pub level: Internals<Option<Level>, level::Error>,
-    pub location: Internals<Location, location::Error>,
-    pub compensation: Internals<Compensation, compensation::Error>,
-    pub company_xp: Internals<Option<Xp>, xp::Error>,
-    pub total_xp: Internals<Option<Xp>, xp::Error>,
-    captcha: Result<Captcha, ()>,
-}
-
-impl ParsedForm {
-    pub fn is_valid(&self) -> bool {
-        self.email.is_valid()
-            && self.company.is_valid()
-            && self.title.is_valid()
-            && self.title.is_valid()
-            && self.level.is_valid()
-            && self.location.is_valid()
-            && self.compensation.is_valid()
-            && self.company_xp.is_valid()
-            && self.total_xp.is_valid()
-            && self.captcha.is_ok()
     }
 }
 
@@ -70,6 +49,32 @@ pub struct UnparsedForm {
     total_xp: String,
     #[serde(rename = "h-captcha-response")]
     captcha: String,
+}
+
+#[derive(Clone)]
+pub struct ParsedForm {
+    pub email: Internals<Email, email::Error>,
+    pub company: Internals<Company, company::Error>,
+    pub title: Internals<Option<Title>, title::Error>,
+    pub level: Internals<Option<Level>, level::Error>,
+    pub location: Internals<Location, location::Error>,
+    pub compensation: Internals<Compensation, compensation::Error>,
+    pub company_xp: Internals<Option<Xp>, xp::Error>,
+    pub total_xp: Internals<Option<Xp>, xp::Error>,
+    captcha: Result<Captcha, ()>,
+}
+
+#[derive(Clone)]
+pub struct ValidatedForm {
+    email: Email,
+    company: Company,
+    title: Option<Title>,
+    level: Option<Level>,
+    location: Location,
+    compensation: Compensation,
+    company_xp: Option<Xp>,
+    total_xp: Option<Xp>,
+    captcha: Captcha,
 }
 
 impl From<UnparsedForm> for ParsedForm {
@@ -125,5 +130,47 @@ impl From<UnparsedForm> for ParsedForm {
             ),
             captcha: Captcha::try_from(form.captcha),
         }
+    }
+}
+
+impl TryFrom<ParsedForm> for ValidatedForm {
+    type Error = ();
+
+    fn try_from(form: ParsedForm) -> Result<Self, Self::Error> {
+        Ok(Self {
+            email: form.email.extract()?,
+            company: form.company.extract()?,
+            title: form.title.extract()?,
+            level: form.level.extract()?,
+            location: form.location.extract()?,
+            compensation: form.compensation.extract()?,
+            company_xp: form.company_xp.extract()?,
+            total_xp: form.total_xp.extract()?,
+            captcha: form.captcha?,
+        })
+    }
+}
+
+impl From<ValidatedForm> for Salary {
+    fn from(form: ValidatedForm) -> Self {
+        Self::new(
+            Id::generate(),
+            form.email,
+            form.company,
+            form.title,
+            form.location,
+            form.compensation,
+            Utc::now().date_naive().into(),
+            form.level,
+            form.company_xp,
+            form.total_xp,
+            Status::Waiting,
+        )
+    }
+}
+
+impl From<ValidatedForm> for Captcha {
+    fn from(form: ValidatedForm) -> Self {
+        form.captcha
     }
 }

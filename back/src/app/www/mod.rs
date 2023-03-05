@@ -8,5 +8,6 @@ mod templates;
 use i18n::I18n;
 pub use pages::index;
 pub use pages::insert;
+pub use pages::salaries;
 pub use pages::sort;
 pub use pages::validate;

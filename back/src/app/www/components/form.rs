@@ -1,6 +1,6 @@
 use maud::{html, Markup};
 
-pub fn view(title: &str, elements: Vec<Markup>) -> Markup {
+pub fn view(title: &str, post_url: &str, elements: Vec<Markup>) -> Markup {
     html! {
         form
             id="form"
@@ -12,6 +12,8 @@ pub fn view(title: &str, elements: Vec<Markup>) -> Markup {
                 gap: 16px;
                 padding: 32px;
                 margin: auto;"
+            method="post"
+            action=(post_url)
             {
                 h2
                     style="

@@ -28,7 +28,7 @@ impl Email {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Error {
     NotContainingAnAt,
     NotPro,

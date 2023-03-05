@@ -15,6 +15,7 @@ impl From<Xp> for String {
     }
 }
 
+#[derive(Clone)]
 pub enum Error {
     Negative,
     NotANumber,

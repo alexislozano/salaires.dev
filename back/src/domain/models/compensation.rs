@@ -22,6 +22,7 @@ impl From<Compensation> for String {
     }
 }
 
+#[derive(Clone)]
 pub enum Error {
     Negative,
     NotANumber,

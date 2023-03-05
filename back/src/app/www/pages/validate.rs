@@ -12,7 +12,7 @@ use crate::{
             location_field, title_field, total_xp_field,
         },
         i18n::I18n,
-        models::{ParsedForm, UnparsedForm},
+        models::{form::ValidatedForm, ParsedForm, UnparsedForm},
         templates::_500,
     },
     domain::use_cases,
@@ -23,7 +23,7 @@ pub async fn validate(
     State(company_repo): State<Arc<dyn CompanyRepository>>,
     State(location_repo): State<Arc<dyn LocationRepository>>,
     State(title_repo): State<Arc<dyn TitleRepository>>,
-    Form(form): Form<UnparsedForm>,
+    Form(unparsed_form): Form<UnparsedForm>,
 ) -> Markup {
     let (companies_result, locations_result, titles_result) = future::join3(
         use_cases::fetch_companies(company_repo),
@@ -47,8 +47,8 @@ pub async fn validate(
         Err(use_cases::fetch_titles::Error::Unknown(str)) => return _500::view(str),
     };
 
-    let parsed_form = ParsedForm::from(form);
-    let disabled = !parsed_form.is_valid();
+    let parsed_form = ParsedForm::from(unparsed_form);
+    let disabled = ValidatedForm::try_from(parsed_form.clone()).is_err();
 
     html! {
         (email_field::view(parsed_form.email))

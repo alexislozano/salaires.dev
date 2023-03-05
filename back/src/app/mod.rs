@@ -46,6 +46,7 @@ pub async fn serve(
         .route("/sort", get(www::sort))
         .route("/insert", get(www::insert))
         .route("/validate", post(www::validate))
+        .route("/salaries", post(www::salaries))
         .route("/api/salaries", get(api::fetch_salaries))
         .route("/api/salaries", post(api::insert_salary))
         .route("/api/companies", get(api::fetch_companies))

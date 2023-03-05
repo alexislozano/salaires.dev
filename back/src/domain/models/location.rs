@@ -18,6 +18,7 @@ impl From<Location> for String {
     }
 }
 
+#[derive(Clone)]
 pub enum Error {
     Empty,
 }

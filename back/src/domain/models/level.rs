@@ -22,6 +22,7 @@ impl From<Level> for String {
     }
 }
 
+#[derive(Clone)]
 pub enum Error {
     NotFound,
 }

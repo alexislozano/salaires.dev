@@ -18,7 +18,7 @@ impl From<Company> for String {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Error {
     Empty,
 }

@@ -73,5 +73,9 @@ pub async fn insert(
         submit::view(true, I18n::Send.translate()),
     ];
 
-    page::view(form::view(I18n::IAddMySalary.translate(), elements))
+    page::view(form::view(
+        I18n::IAddMySalary.translate(),
+        "/salaries",
+        elements,
+    ))
 }
