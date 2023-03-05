@@ -7,7 +7,7 @@ use crate::{
 
 use super::super::components::dropdown::{self, Choice};
 
-use super::field::{Internals, Parsed};
+use super::form::{Internals, Parsed};
 
 pub fn view(internals: Internals<Option<Level>, Error>) -> Markup {
     let choices = Level::all()

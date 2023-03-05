@@ -6,9 +6,9 @@ use maud::Markup;
 
 use crate::{
     app::www::{
-        components::{banner, button, hcaptcha},
-        fragments::{
-            company_field, company_xp_field, compensation_field, email_field, field, level_field,
+        components::{banner, hcaptcha, submit},
+        fragments::{self,
+            company_field, company_xp_field, compensation_field, email_field, level_field,
             location_field, title_field, total_xp_field,
         },
         i18n::I18n,
@@ -50,15 +50,16 @@ pub async fn insert(
 
     let elements = vec![
         banner::view(I18n::EmailExplanation.translate()),
-        email_field::view(field::Internals::new("", field::Parsed::Init)),
-        company_field::view(field::Internals::new("", field::Parsed::Init), companies),
-        title_field::view(field::Internals::new("", field::Parsed::Init), titles),
-        level_field::view(field::Internals::new("", field::Parsed::Init)),
-        location_field::view(field::Internals::new("", field::Parsed::Init), locations),
-        compensation_field::view(field::Internals::new("", field::Parsed::Init)),
-        company_xp_field::view(field::Internals::new("", field::Parsed::Init)),
-        total_xp_field::view(field::Internals::new("", field::Parsed::Init)),
+        email_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init)),
+        company_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init), companies),
+        title_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init), titles),
+        level_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init)),
+        location_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init), locations),
+        compensation_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init)),
+        company_xp_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init)),
+        total_xp_field::view(fragments::form::Internals::new("", fragments::form::Parsed::Init)),
         hcaptcha::view(hcaptcha_key.as_str()),
+        submit::view(true, I18n::Send.translate()),
     ];
 
     page::view(form::view(I18n::IAddMySalary.translate(), elements))

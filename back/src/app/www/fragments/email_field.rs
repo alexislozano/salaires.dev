@@ -7,7 +7,7 @@ use crate::{
 
 use super::super::components::input;
 
-use super::field::{Internals, Parsed};
+use super::form::{Internals, Parsed};
 
 pub fn view(internals: Internals<Email, Error>) -> Markup {
     input::view(

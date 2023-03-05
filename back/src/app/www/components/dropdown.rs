@@ -35,6 +35,7 @@ pub fn view(
                     gap: 4px;
                     width: 100%;"
             ))
+            hx-swap-oob="true"
             {
                 (label::view(required, label, sublabel))
                 select
@@ -51,8 +52,7 @@ pub fn view(
                         background_color=palette::WHITE
                     ))
                     name=(name)
-                    hx-get=(validation_url)
-                    hx-target=(format!("#{name}"))
+                    hx-post=(validation_url)
                     {
                         @for choice in choices {
                             option

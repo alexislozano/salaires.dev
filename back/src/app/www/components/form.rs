@@ -3,6 +3,7 @@ use maud::{html, Markup};
 pub fn view(title: &str, elements: Vec<Markup>) -> Markup {
     html! {
         form
+            id="form"
             style="
                 max-width: 500px;
                 height: fit-content;

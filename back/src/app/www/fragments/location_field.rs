@@ -7,7 +7,7 @@ use crate::{
 
 use super::super::components::select;
 
-use super::field::{Internals, Parsed};
+use super::form::{Internals, Parsed};
 
 pub fn view(internals: Internals<Location, Error>, locations: Vec<Location>) -> Markup {
     select::view(

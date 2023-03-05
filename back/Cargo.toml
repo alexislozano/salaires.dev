@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 async-trait = "0.1.64"
-axum = "0.6.6"
+axum = { version = "0.6.6", features = [ "form" ] }
 chrono = { version = "0.4.23", features = ["serde"] }
 dotenv = "0.15.0"
 futures = "0.3.26"

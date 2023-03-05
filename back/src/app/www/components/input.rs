@@ -20,6 +20,7 @@ pub fn view(
                 flex-direction: column;
                 gap: 4px;
                 width: 100%;"
+            hx-swap-oob="true"
             {
                 (label::view(required, label, sublabel))
                 input
@@ -37,8 +38,7 @@ pub fn view(
                     value=(value)
                     placeholder=(placeholder)
                     name=(name)
-                    hx-get=(validation_url)
-                    hx-target=(format!("#{name}"));
+                    hx-post=(validation_url);
                 span
                     style=(format!("
                             color: {color};",

@@ -21,6 +21,7 @@ pub fn view(
                     gap: 4px;
                     width: 100%;"
             ))
+            hx-swap-oob="true"
             {
                 (label::view(required, label, None))
                 input
@@ -40,8 +41,7 @@ pub fn view(
                     placeholder=(placeholder)
                     value=(value)
                     name=(name)
-                    hx-get=(validation_url)
-                    hx-target=(format!("#{name}"));
+                    hx-post=(validation_url);
                 span
                     style=(format!("
                             color: {color};",

@@ -3,7 +3,8 @@ use maud::{html, Markup};
 
 pub fn view(disabled: bool, label: &str) -> Markup {
     html! {
-        button
+        input
+            id="form-submit"
             style=(format!("
                     border: 2px solid {black};
                     border-radius: 4px;
@@ -22,11 +23,10 @@ pub fn view(disabled: bool, label: &str) -> Markup {
                 color=color(disabled),
                 cursor=cursor(disabled)
             ))
-            disabled=(disabled)
-            type="button"
-            {
-                (label)
-            }
+            disabled[disabled]
+            type="submit"
+            value=(label)
+            hx-swap-oob="true";
     }
 }
 
