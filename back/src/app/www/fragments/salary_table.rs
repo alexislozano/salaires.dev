@@ -96,7 +96,7 @@ fn build_column(key: Key, order: Order<Key>) -> Column<Key> {
         Key::Date => "",
     };
 
-    let url = if key == order.key {
+    let pushed_url = if key == order.key {
         format!(
             "?key={key}&direction={direction}",
             key = String::from(key.clone()),
@@ -106,7 +106,7 @@ fn build_column(key: Key, order: Order<Key>) -> Column<Key> {
         format!("?key={key}", key = String::from(key.clone()))
     };
 
-    let ajax = format!("/sort{url}");
+    let sort_url = format!("/sort{pushed_url}");
 
-    Column::new(key, label, sublabel, url.as_str(), ajax.as_str())
+    Column::new(key, label, sublabel, sort_url.as_str(), pushed_url.as_str())
 }

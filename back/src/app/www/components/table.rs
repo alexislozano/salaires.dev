@@ -8,18 +8,18 @@ pub struct Column<K> {
     key: K,
     label: String,
     sublabel: String,
-    url: String,
-    ajax: String,
+    sort_url: String,
+    pushed_url: String,
 }
 
 impl<K> Column<K> {
-    pub fn new(key: K, label: &str, sublabel: &str, url: &str, ajax: &str) -> Self {
+    pub fn new(key: K, label: &str, sublabel: &str, sort_url: &str, pushed_url: &str) -> Self {
         Self {
             key,
             label: String::from(label),
             sublabel: String::from(sublabel),
-            url: String::from(url),
-            ajax: String::from(ajax),
+            sort_url: String::from(sort_url),
+            pushed_url: String::from(pushed_url),
         }
     }
 }
@@ -35,7 +35,7 @@ where
 {
     html! {
         table
-            id="salary-table"
+            id="table"
             style="
                 border-spacing: 0;
                 width: 100%;"
@@ -87,9 +87,9 @@ where
                                             color: {color};",
                                         color=palette::BLACK
                                     ))
-                                    hx-get=(column.ajax)
-                                    hx-push-url=(column.url)
-                                    hx-target="#salary-table"
+                                    hx-get=(column.sort_url)
+                                    hx-push-url=(column.pushed_url)
+                                    hx-target="#table"
                                     hx-swap="outerHTML"
                                     {
                                         span
