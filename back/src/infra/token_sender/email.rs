@@ -12,6 +12,7 @@ pub struct EmailTokenSender {
     email: Email,
     password: String,
     app_url: String,
+    port: String,
 }
 
 impl EmailTokenSender {
@@ -24,6 +25,7 @@ impl EmailTokenSender {
                 .expect("SMTP_EMAIL should be an email address"),
             password: env::var("SMTP_PASSWORD").expect("SMTP_PASSWORD env var"),
             app_url: env::var("APP_URL").expect("APP_URL env var"),
+            port: env::var("PORT").expect("PORT env var"),
         }
     }
 }
@@ -39,8 +41,9 @@ impl TokenSender for EmailTokenSender {
 
         let body = match Body::new_with_encoding(
             format!(
-                "Confirmez votre salaire en cliquant sur ce lien:\n{}/?token={}",
+                "Confirmez votre salaire en cliquant sur ce lien:\n{}:{}/?token={}",
                 self.app_url,
+                self.port,
                 String::from(token)
             ),
             ContentTransferEncoding::Binary,
