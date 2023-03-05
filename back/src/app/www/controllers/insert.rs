@@ -10,7 +10,7 @@ use crate::{
         pages,
     },
     domain::{
-        models::{Captcha, Salary},
+        models::{Captcha, Company, Location, Salary, Title},
         use_cases,
     },
     infra::{
@@ -24,31 +24,15 @@ pub async fn get(
     State(location_repo): State<Arc<dyn LocationRepository>>,
     State(title_repo): State<Arc<dyn TitleRepository>>,
 ) -> Markup {
-    let hcaptcha_key = env::var("HCAPTCHA_KEY").expect("HCAPTCHA_KEY env var");
+    let (hcaptcha_key, companies, locations, titles) =
+        match fetch(company_repo, location_repo, title_repo).await {
+            Ok((hcaptcha_key, companies, locations, titles)) => {
+                (hcaptcha_key, companies, locations, titles)
+            }
+            _ => return html! {},
+        };
 
-    let (companies_result, locations_result, titles_result) = future::join3(
-        use_cases::fetch_companies(company_repo),
-        use_cases::fetch_locations(location_repo),
-        use_cases::fetch_titles(title_repo),
-    )
-    .await;
-
-    let companies = match companies_result {
-        Ok(companies) => companies,
-        Err(use_cases::fetch_companies::Error::Unknown(_)) => return html! {},
-    };
-
-    let locations = match locations_result {
-        Ok(locations) => locations,
-        Err(use_cases::fetch_locations::Error::Unknown(_)) => return html! {},
-    };
-
-    let titles = match titles_result {
-        Ok(titles) => titles,
-        Err(use_cases::fetch_titles::Error::Unknown(_)) => return html! {},
-    };
-
-    pages::insert::view(hcaptcha_key, companies, titles, locations)
+    pages::insert::view(hcaptcha_key, companies, locations, titles)
 }
 
 pub async fn post(
@@ -80,4 +64,36 @@ pub async fn post(
         Ok(()) => html! {},
         _ => html! {},
     }
+}
+
+async fn fetch(
+    company_repo: Arc<dyn CompanyRepository>,
+    location_repo: Arc<dyn LocationRepository>,
+    title_repo: Arc<dyn TitleRepository>,
+) -> Result<(String, Vec<Company>, Vec<Location>, Vec<Title>), ()> {
+    let hcaptcha_key = env::var("HCAPTCHA_KEY").expect("HCAPTCHA_KEY env var");
+
+    let (companies_result, locations_result, titles_result) = future::join3(
+        use_cases::fetch_companies(company_repo),
+        use_cases::fetch_locations(location_repo),
+        use_cases::fetch_titles(title_repo),
+    )
+    .await;
+
+    let companies = match companies_result {
+        Ok(companies) => companies,
+        Err(use_cases::fetch_companies::Error::Unknown(_)) => return Err(()),
+    };
+
+    let locations = match locations_result {
+        Ok(locations) => locations,
+        Err(use_cases::fetch_locations::Error::Unknown(_)) => return Err(()),
+    };
+
+    let titles = match titles_result {
+        Ok(titles) => titles,
+        Err(use_cases::fetch_titles::Error::Unknown(_)) => return Err(()),
+    };
+
+    Ok((hcaptcha_key, companies, locations, titles))
 }

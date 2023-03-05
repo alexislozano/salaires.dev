@@ -18,8 +18,8 @@ use super::template;
 pub fn view(
     hcaptcha_key: String,
     companies: Vec<Company>,
-    titles: Vec<Title>,
     locations: Vec<Location>,
+    titles: Vec<Title>,
 ) -> Markup {
     let elements = vec![
         banner::view(I18n::EmailExplanation.translate()),
