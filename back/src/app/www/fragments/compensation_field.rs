@@ -24,6 +24,7 @@ pub fn view(internals: Internals<Compensation, Error>) -> Markup {
         Some(I18n::CompensationHelp.translate()),
         "40000",
         true,
+        "/validate",
         internals.value.as_str(),
     )
 }

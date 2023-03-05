@@ -26,6 +26,7 @@ pub fn view(internals: Internals<Company, Error>, companies: Vec<Company>) -> Ma
             .collect::<Vec<String>>(),
         "Google",
         true,
+        "/validate",
         internals.value.as_str(),
     )
 }

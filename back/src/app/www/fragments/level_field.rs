@@ -35,6 +35,7 @@ pub fn view(internals: Internals<Option<Level>, Error>) -> Markup {
         None,
         choices,
         false,
+        "/validate",
         internals.value.as_str(),
     )
 }

@@ -25,6 +25,7 @@ pub fn view(internals: Internals<Option<Title>, Error>, titles: Vec<Title>) -> M
             .collect::<Vec<String>>(),
         I18n::TitlePlaceholder.translate(),
         false,
+        "/validate",
         internals.value.as_str(),
     )
 }

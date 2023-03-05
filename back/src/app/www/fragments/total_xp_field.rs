@@ -23,6 +23,7 @@ pub fn view(internals: Internals<Option<Xp>, Error>) -> Markup {
         Some(I18n::InYears.translate()),
         "10",
         false,
+        "/validate",
         internals.value.as_str(),
     )
 }

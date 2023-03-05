@@ -24,6 +24,7 @@ pub fn view(internals: Internals<Email, Error>) -> Markup {
         None,
         "moi@exemple.fr",
         true,
+        "/validate",
         internals.value.as_str(),
     )
 }

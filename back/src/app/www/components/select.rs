@@ -9,6 +9,7 @@ pub fn view(
     options: Vec<String>,
     placeholder: &str,
     required: bool,
+    validation_url: &str,
     value: &str,
 ) -> Markup {
     html! {
@@ -39,7 +40,7 @@ pub fn view(
                     placeholder=(placeholder)
                     value=(value)
                     name=(name)
-                    hx-get="/validate"
+                    hx-get=(validation_url)
                     hx-target=(format!("#{name}"));
                 span
                     style=(format!("

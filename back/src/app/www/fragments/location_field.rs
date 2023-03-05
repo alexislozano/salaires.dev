@@ -26,6 +26,7 @@ pub fn view(internals: Internals<Location, Error>, locations: Vec<Location>) -> 
             .collect::<Vec<String>>(),
         "Paris",
         true,
+        "/validate",
         internals.value.as_str(),
     )
 }

@@ -23,6 +23,7 @@ pub fn view(
     sublabel: Option<&str>,
     choices: Vec<Choice>,
     required: bool,
+    validation_url: &str,
     value: &str,
 ) -> Markup {
     html! {
@@ -50,7 +51,7 @@ pub fn view(
                         background_color=palette::WHITE
                     ))
                     name=(name)
-                    hx-get="/validate"
+                    hx-get=(validation_url)
                     hx-target=(format!("#{name}"))
                     {
                         @for choice in choices {

@@ -9,6 +9,7 @@ pub fn view(
     sublabel: Option<&str>,
     placeholder: &str,
     required: bool,
+    validation_url: &str,
     value: &str,
 ) -> Markup {
     html! {
@@ -36,7 +37,7 @@ pub fn view(
                     value=(value)
                     placeholder=(placeholder)
                     name=(name)
-                    hx-get="/validate"
+                    hx-get=(validation_url)
                     hx-target=(format!("#{name}"));
                 span
                     style=(format!("
