@@ -37,6 +37,7 @@ pub fn view(
             {
                 (label::view(required, label, sublabel))
                 select
+                    id=(format!("{name}-select"))
                     style=(format!("
                             border: 2px solid {border_color};
                             border-radius: 4px;
@@ -51,7 +52,6 @@ pub fn view(
                     name=(name)
                     hx-get="/validate"
                     hx-target=(format!("#{name}"))
-                    hx-trigger="blur"
                     {
                         @for choice in choices {
                             option
