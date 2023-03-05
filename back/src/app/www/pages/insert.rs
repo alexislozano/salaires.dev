@@ -1,11 +1,12 @@
 use std::{env, sync::Arc};
 
+use futures::future;
 use axum::extract::State;
 use maud::Markup;
 
 use crate::{
     app::www::{
-        components::{banner, hcaptcha},
+        components::{banner, button, hcaptcha},
         fragments::{
             company_field, company_xp_field, compensation_field, email_field, field, level_field,
             location_field, title_field, total_xp_field,
@@ -26,17 +27,23 @@ pub async fn insert(
 ) -> Markup {
     let hcaptcha_key = env::var("HCAPTCHA_KEY").expect("HCAPTCHA_KEY env var");
 
-    let companies = match use_cases::fetch_companies(company_repo).await {
+    let (companies_result, locations_result, titles_result) = future::join3(
+        use_cases::fetch_companies(company_repo),
+        use_cases::fetch_locations(location_repo),
+        use_cases::fetch_titles(title_repo),
+    ).await;
+
+    let companies = match companies_result {
         Ok(companies) => companies,
         Err(use_cases::fetch_companies::Error::Unknown(str)) => return _500::view(str),
     };
 
-    let locations = match use_cases::fetch_locations(location_repo).await {
+    let locations = match locations_result {
         Ok(locations) => locations,
         Err(use_cases::fetch_locations::Error::Unknown(str)) => return _500::view(str),
     };
 
-    let titles = match use_cases::fetch_titles(title_repo).await {
+    let titles = match titles_result {
         Ok(titles) => titles,
         Err(use_cases::fetch_titles::Error::Unknown(str)) => return _500::view(str),
     };

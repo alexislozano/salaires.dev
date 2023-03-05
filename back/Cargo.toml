@@ -10,6 +10,7 @@ async-trait = "0.1.64"
 axum = "0.6.6"
 chrono = { version = "0.4.23", features = ["serde"] }
 dotenv = "0.15.0"
+futures = "0.3.26"
 lettre = { version = "0.10.2", default-features = false, features = ["builder", "hostname", "pool", "smtp-transport", "tokio1-rustls-tls"] }
 maud = { git = "https://github.com/lambda-fairy/maud", features = ["axum"] }
 rand = "0.8.5"
