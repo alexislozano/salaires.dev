@@ -16,6 +16,7 @@ pub fn view(internals: Internals<Compensation, Error>) -> Markup {
                 Error::Negative => Some(I18n::ShouldBePositive.translate()),
                 Error::NotANumber => Some(I18n::ShouldBeANumber.translate()),
             },
+            Parsed::Init => Some(""),
             _ => None,
         },
         "compensation",

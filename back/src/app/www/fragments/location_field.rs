@@ -15,6 +15,7 @@ pub fn view(internals: Internals<Location, Error>, locations: Vec<Location>) -> 
             Parsed::Computed(Err(err)) => match err {
                 Error::Empty => Some(I18n::ShouldNotBeEmpty.translate()),
             },
+            Parsed::Init => Some(""),
             _ => None,
         },
         "location",

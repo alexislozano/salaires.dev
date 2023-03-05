@@ -16,6 +16,7 @@ pub fn view(internals: Internals<Email, Error>) -> Markup {
                 Error::NotPro => Some(I18n::EmailShouldBePro.translate()),
                 Error::NotContainingAnAt => Some(I18n::EmailShouldContainAnAt.translate()),
             },
+            Parsed::Init => Some(""),
             _ => None,
         },
         "email",

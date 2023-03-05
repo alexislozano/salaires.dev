@@ -15,6 +15,7 @@ pub fn view(internals: Internals<Company, Error>, companies: Vec<Company>) -> Ma
             Parsed::Computed(Err(err)) => match err {
                 Error::Empty => Some(I18n::ShouldNotBeEmpty.translate()),
             },
+            Parsed::Init => Some(""),
             _ => None,
         },
         "company",
