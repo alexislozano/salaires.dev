@@ -5,6 +5,7 @@ pub mod hcaptcha;
 pub mod input;
 pub mod label;
 pub mod link;
+pub mod notification;
 pub mod palette;
 pub mod select;
 pub mod submit;

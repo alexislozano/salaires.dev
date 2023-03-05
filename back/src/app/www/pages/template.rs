@@ -1,14 +1,16 @@
 use maud::{html, Markup, DOCTYPE};
 
+use crate::app::www::components::notification;
+
 use super::super::components::{link, palette};
 use super::super::I18n;
 
-pub fn view(main: Markup) -> Markup {
+pub fn view(main: Markup, notification: Option<&str>) -> Markup {
     html! {
         (DOCTYPE)
         html lang="fr" {
             (head())
-            (body(main))
+            (body(main, notification))
         }
     }
 }
@@ -78,7 +80,7 @@ pub fn head() -> Markup {
     }
 }
 
-pub fn body(main: Markup) -> Markup {
+pub fn body(main: Markup, notification: Option<&str>) -> Markup {
     html! {
         body
             style=(format!("
@@ -98,6 +100,10 @@ pub fn body(main: Markup) -> Markup {
                     overflow: auto;
                     flex-grow: 1;"
                 {
+                    @match notification {
+                        Some(message) => (notification::view(message)),
+                        None => {}
+                    }
                     (main)
                 }
             (script())

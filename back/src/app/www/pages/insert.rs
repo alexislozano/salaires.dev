@@ -21,6 +21,7 @@ pub fn view(
     companies: Vec<Company>,
     locations: Vec<Location>,
     titles: Vec<Title>,
+    notification: Option<&str>,
 ) -> Markup {
     let elements = vec![
         banner::view(I18n::EmailExplanation.translate()),
@@ -36,9 +37,8 @@ pub fn view(
         submit::view(true, I18n::Send.translate()),
     ];
 
-    template::view(form::view(
-        I18n::IAddMySalary.translate(),
-        "/insert",
-        elements,
-    ))
+    template::view(
+        form::view(I18n::IAddMySalary.translate(), "/insert", elements),
+        notification,
+    )
 }

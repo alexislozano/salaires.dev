@@ -6,6 +6,7 @@ use maud::{html, Markup};
 
 use crate::{
     app::www::{
+        i18n::I18n,
         models::{form::ValidatedForm, ParsedForm, UnparsedForm},
         pages,
     },
@@ -38,6 +39,7 @@ pub async fn get(
         companies,
         locations,
         titles,
+        None,
     )
 }
 
@@ -62,7 +64,16 @@ pub async fn post(
     let parsed_form = ParsedForm::from(unparsed_form);
     let validated_form = match ValidatedForm::try_from(parsed_form.clone()) {
         Ok(validated_form) => validated_form,
-        _ => return pages::insert::view(parsed_form, hcaptcha_key, companies, locations, titles),
+        _ => {
+            return pages::insert::view(
+                parsed_form,
+                hcaptcha_key,
+                companies,
+                locations,
+                titles,
+                Some(I18n::SalaryInsertingError.translate()),
+            )
+        }
     };
 
     let salary = Salary::from(validated_form.clone());
@@ -84,8 +95,16 @@ pub async fn post(
             companies,
             locations,
             titles,
+            Some(I18n::SalaryInserted.translate()),
         ),
-        _ => pages::insert::view(parsed_form, hcaptcha_key, companies, locations, titles),
+        _ => pages::insert::view(
+            parsed_form,
+            hcaptcha_key,
+            companies,
+            locations,
+            titles,
+            Some(I18n::SalaryInsertingError.translate()),
+        ),
     }
 }
 
