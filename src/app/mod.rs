@@ -44,40 +44,32 @@ pub async fn serve(
         token_sender,
     );
 
-    let app = if maintenance {
-        Router::new()
-            .route("/assets/hero.png", get(assets::hero))
-            .fallback(www::maintenance::get)
-            .with_state(state)
-    } else if no_insert {
-        Router::new()
-            .route("/", get(www::index::get))
-            .route("/sort", get(www::sort::get))
-            .route("/insert", get(www::no_insert::get))
-            .route("/notification", delete(www::notification::delete))
-            .route("/api/salaries", get(api::fetch_salaries))
-            .route("/api/companies", get(api::fetch_companies))
-            .route("/api/locations", get(api::fetch_locations))
-            .route("/api/titles", get(api::fetch_titles))
-            .route("/assets/hero.png", get(assets::hero))
-            .fallback(www::not_found::get)
-            .with_state(state)
+    let router = if maintenance {
+        Router::new().fallback(www::maintenance::get)
     } else {
-        Router::new()
+        let router = Router::new()
             .route("/", get(www::index::get))
             .route("/sort", get(www::sort::get))
-            .route("/insert", get(www::insert::get))
-            .route("/insert", post(www::insert::post))
-            .route("/validate", post(www::validate::post))
             .route("/notification", delete(www::notification::delete))
             .route("/api/salaries", get(api::fetch_salaries))
             .route("/api/companies", get(api::fetch_companies))
             .route("/api/locations", get(api::fetch_locations))
             .route("/api/titles", get(api::fetch_titles))
-            .route("/assets/hero.png", get(assets::hero))
-            .fallback(www::not_found::get)
-            .with_state(state)
+            .fallback(www::not_found::get);
+
+        if no_insert {
+            router.route("/insert", get(www::no_insert::get))
+        } else {
+            router
+                .route("/insert", get(www::insert::get))
+                .route("/insert", post(www::insert::post))
+                .route("/validate", post(www::validate::post))
+        }
     };
+
+    let app = router
+        .route("/assets/hero.png", get(assets::hero))
+        .with_state(state);
 
     axum::Server::bind(&url.parse().unwrap())
         .serve(app.into_make_service())
