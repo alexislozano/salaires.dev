@@ -41,6 +41,7 @@ pub fn view(
                     placeholder=(placeholder)
                     value=(value)
                     name=(name)
+                    autocomplete="off"
                     hx-post=(validation_url)
                     hx-swap="none";
                 span
