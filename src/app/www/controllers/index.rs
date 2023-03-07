@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 
 use axum::extract::{Query, State};
-use maud::{html, Markup};
+use maud::Markup;
 
 use crate::{
     app::www::{i18n::I18n, pages},
@@ -12,20 +12,19 @@ use crate::{
     infra::{SalaryRepository, TokenRepository},
 };
 
-enum TokenParam {
-    Ok(Token),
-    Err,
-    NotFound,
+enum TokenOrNotification {
+    Token(Token),
+    Notification(Option<&'static str>),
 }
 
-impl From<HashMap<String, String>> for TokenParam {
+impl From<HashMap<String, String>> for TokenOrNotification {
     fn from(hash: HashMap<String, String>) -> Self {
         match hash.get("token") {
             Some(t) => match Token::try_from(String::from(t)) {
-                Ok(t) => Self::Ok(t),
-                _ => Self::Err,
+                Ok(t) => Self::Token(t),
+                _ => Self::Notification(Some(I18n::TokenConfirmationError.translate())),
             },
-            _ => Self::NotFound,
+            _ => Self::Notification(None),
         }
     }
 }
@@ -37,22 +36,23 @@ pub async fn get(
 ) -> Markup {
     let order = Order::from(params.clone());
 
-    let notification = match TokenParam::from(params) {
-        TokenParam::Ok(token) => {
-            match use_cases::confirm_token(token_repo, salary_repo.clone(), token).await {
+    let salaries = match use_cases::fetch_salaries(salary_repo.clone(), order.clone()).await {
+        Ok(salaries) => salaries,
+        Err(use_cases::fetch_salaries::Error::Unknown(_)) => {
+            return pages::text_only::view(I18n::SalariesFetchingError.translate())
+        }
+    };
+
+    let notification = match TokenOrNotification::from(params) {
+        TokenOrNotification::Token(token) => {
+            match use_cases::confirm_token(token_repo, salary_repo, token).await {
                 Ok(()) => Some(I18n::TokenConfirmationSuccess.translate()),
                 Err(use_cases::confirm_token::Error::Unknown(_)) => {
                     Some(I18n::TokenConfirmationError.translate())
                 }
             }
         }
-        TokenParam::Err => Some(I18n::TokenConfirmationError.translate()),
-        TokenParam::NotFound => None,
-    };
-
-    let salaries = match use_cases::fetch_salaries(salary_repo, order.clone()).await {
-        Ok(salaries) => salaries,
-        Err(use_cases::fetch_salaries::Error::Unknown(_)) => return html! {},
+        TokenOrNotification::Notification(notification) => notification,
     };
 
     pages::index::view(salaries, order, notification)

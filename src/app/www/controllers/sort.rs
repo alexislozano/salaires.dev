@@ -4,6 +4,7 @@ use axum::extract::{Query, State};
 use maud::{html, Markup};
 
 use crate::{
+    app::www::{components::notification, I18n},
     domain::{models::Order, use_cases},
     infra::SalaryRepository,
 };
@@ -18,7 +19,9 @@ pub async fn get(
 
     let salaries = match use_cases::fetch_salaries(repo, order.clone()).await {
         Ok(salaries) => salaries,
-        Err(use_cases::fetch_salaries::Error::Unknown(_)) => return html! {},
+        Err(use_cases::fetch_salaries::Error::Unknown(_)) => {
+            return html! { (notification::view(Some(I18n::SortError.translate()))) }
+        }
     };
 
     salary_table::view(salaries, order)

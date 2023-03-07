@@ -41,7 +41,8 @@ pub fn view(
                     placeholder=(placeholder)
                     value=(value)
                     name=(name)
-                    hx-post=(validation_url);
+                    hx-post=(validation_url)
+                    hx-swap="none";
                 span
                     style=(format!("
                             color: {color};",

@@ -2,7 +2,7 @@ use std::{env, sync::Arc};
 
 use axum::{extract::State, Form};
 use futures::future;
-use maud::{html, Markup};
+use maud::Markup;
 
 use crate::{
     app::www::{
@@ -30,7 +30,7 @@ pub async fn get(
             Ok((hcaptcha_key, companies, locations, titles)) => {
                 (hcaptcha_key, companies, locations, titles)
             }
-            _ => return html! {},
+            _ => return pages::text_only::view(I18n::FormFetchingError.translate()),
         };
 
     pages::insert::view(
@@ -58,7 +58,7 @@ pub async fn post(
             Ok((hcaptcha_key, companies, locations, titles)) => {
                 (hcaptcha_key, companies, locations, titles)
             }
-            _ => return html! {},
+            _ => return pages::text_only::view(I18n::SalaryInsertingError.translate()),
         };
 
     let parsed_form = ParsedForm::from(unparsed_form);
@@ -114,7 +114,7 @@ async fn fetch(
     title_repo: Arc<dyn TitleRepository>,
 ) -> Result<(String, Vec<Company>, Vec<Location>, Vec<Title>), ()> {
     let hcaptcha_key = env::var("HCAPTCHA_KEY").expect("HCAPTCHA_KEY env var");
-
+    
     let (companies_result, locations_result, titles_result) = future::join3(
         use_cases::fetch_companies(company_repo),
         use_cases::fetch_locations(location_repo),

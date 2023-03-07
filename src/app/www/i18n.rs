@@ -31,6 +31,10 @@ pub enum I18n {
     Mid,
     Senior,
     LevelIsNotInTheProvidedChoices,
+    SalariesFetchingError,
+    FormFetchingError,
+    ValidationError,
+    SortError,
 }
 
 impl I18n {
@@ -67,7 +71,11 @@ impl I18n {
             Self::Junior => "Junior",
             Self::Mid => "Intermédiaire",
             Self::Senior => "Senior",
-            Self::LevelIsNotInTheProvidedChoices => "Le niveau n'est pas dans les choix proposés."
+            Self::LevelIsNotInTheProvidedChoices => "Le niveau n'est pas dans les choix proposés.",
+            Self::SalariesFetchingError => "Les salaires n'ont pas pu être chargés",
+            Self::FormFetchingError => "Le formulaire n'a pas pu être chargé",
+            Self::ValidationError => "Une erreur inconnue est survenue lors de la validation du formulaire",
+            Self::SortError => "Une erreur inconnue est survenue lors du tri des salaires"
         }
     }
 }

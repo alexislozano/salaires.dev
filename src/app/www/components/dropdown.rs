@@ -53,6 +53,7 @@ pub fn view(
                     ))
                     name=(name)
                     hx-post=(validation_url)
+                    hx-swap="none"
                     {
                         @for choice in choices {
                             option

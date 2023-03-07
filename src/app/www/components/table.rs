@@ -39,6 +39,7 @@ where
             style="
                 border-spacing: 0;
                 width: 100%;"
+            hx-swap-oob="true"
             {
                 (head(&columns, &order))
                 (body(&items, &columns))
@@ -88,9 +89,8 @@ where
                                         color=palette::BLACK
                                     ))
                                     hx-get=(column.sort_url)
+                                    hx-swap="none"
                                     hx-push-url=(column.pushed_url)
-                                    hx-target="#table"
-                                    hx-swap="outerHTML"
                                     {
                                         span
                                             style="
