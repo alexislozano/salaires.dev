@@ -35,13 +35,13 @@ pub fn view(notification: Option<&str>) -> Markup {
 fn display(notification: Option<&str>) -> &'static str {
     match notification {
         Some(_) => "block",
-        None => "none"
+        None => "none",
     }
 }
 
 fn trigger(notification: Option<&str>) -> &'static str {
     match notification {
         Some(_) => "load delay:2s",
-        None => "none"
+        None => "none",
     }
 }

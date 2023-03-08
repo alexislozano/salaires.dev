@@ -114,7 +114,7 @@ async fn fetch(
     title_repo: Arc<dyn TitleRepository>,
 ) -> Result<(String, Vec<Company>, Vec<Location>, Vec<Title>), ()> {
     let hcaptcha_key = env::var("HCAPTCHA_KEY").expect("HCAPTCHA_KEY env var");
-    
+
     let (companies_result, locations_result, titles_result) = future::join3(
         use_cases::fetch_companies(company_repo),
         use_cases::fetch_locations(location_repo),

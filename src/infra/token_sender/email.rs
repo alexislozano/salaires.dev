@@ -11,7 +11,7 @@ pub struct EmailTokenSender {
     host: String,
     email: Email,
     password: String,
-    app_url: String
+    app_url: String,
 }
 
 impl EmailTokenSender {
@@ -23,7 +23,7 @@ impl EmailTokenSender {
                 .try_into()
                 .expect("SMTP_EMAIL should be an email address"),
             password: env::var("SMTP_PASSWORD").expect("SMTP_PASSWORD env var"),
-            app_url: env::var("APP_URL").expect("APP_URL env var")
+            app_url: env::var("APP_URL").expect("APP_URL env var"),
         }
     }
 }
