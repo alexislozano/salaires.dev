@@ -55,8 +55,8 @@ impl SalaryRepository for SupabaseSalaryRepository {
                 "{}salaries?select=*&status=eq.{}&order={}.{}",
                 self.url,
                 String::from(Status::Published),
-                String::from(order.key),
-                String::from(order.direction)
+                String::from(order.clone().key),
+                String::from(order.clone().direction)
             ))
             .headers(self.headers())
             .send()
@@ -79,6 +79,8 @@ impl SalaryRepository for SupabaseSalaryRepository {
                 _ => return Err(FetchAllError::Unknown("could not convert to domain")),
             }
         }
+
+        salaries.sort_by(|a, b| Salary::compare(&a, &b, &order));
 
         Ok(salaries)
     }
