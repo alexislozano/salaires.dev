@@ -2,17 +2,17 @@ use axum::http::HeaderMap;
 
 pub struct HXTriggerName(String);
 
-impl TryFrom<HeaderMap> for HXTriggerName {
-    type Error = ();
-
-    fn try_from(headers: HeaderMap) -> Result<Self, Self::Error> {
-        match headers.get("hx-trigger-name") {
+impl From<HeaderMap> for HXTriggerName {
+    fn from(headers: HeaderMap) -> Self {
+        let str = match headers.get("hx-trigger-name") {
             Some(value) => match value.to_str() {
-                Ok(v) => Ok(Self(String::from(v))),
-                Err(_) => Err(()),
+                Ok(v) => v,
+                Err(_) => "",
             },
-            _ => Err(()),
-        }
+            _ => "",
+        };
+
+        Self(String::from(str))
     }
 }
 

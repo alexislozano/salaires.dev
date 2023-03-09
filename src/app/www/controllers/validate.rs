@@ -27,10 +27,7 @@ pub async fn post(
     State(title_repo): State<Arc<dyn TitleRepository>>,
     Form(unparsed_form): Form<UnparsedForm>,
 ) -> Markup {
-    let hx_trigger_name = match HXTriggerName::try_from(headers) {
-        Ok(hx_trigger_name) => hx_trigger_name,
-        _ => return error(),
-    };
+    let hx_trigger_name = HXTriggerName::from(headers);
 
     let parsed_form = ParsedForm::from(unparsed_form);
     let disabled = ValidatedForm::try_from(parsed_form.clone()).is_err();
