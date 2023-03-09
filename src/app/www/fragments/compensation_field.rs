@@ -21,6 +21,7 @@ pub fn view(internals: Internals<Compensation, Error>) -> Markup {
             _ => None,
         },
         "compensation",
+        "numeric",
         I18n::Compensation.translate(),
         Some(I18n::CompensationHelp.translate()),
         "40000",

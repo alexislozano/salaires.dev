@@ -21,6 +21,7 @@ pub fn view(internals: Internals<Email, Error>) -> Markup {
             _ => None,
         },
         "email",
+        "email",
         I18n::Email.translate(),
         None,
         "moi@exemple.fr",

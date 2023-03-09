@@ -5,6 +5,7 @@ use super::{label, palette};
 pub fn view(
     error: Option<&str>,
     name: &str,
+    inputmode: &str,
     label: &str,
     sublabel: Option<&str>,
     placeholder: &str,
@@ -34,7 +35,8 @@ pub fn view(
                             font-weight: bold;",
                         border_color=border_color(error)
                     ))
-                    type="text"
+                    inputmode=(inputmode)
+                    required[required]
                     value=(value)
                     placeholder=(placeholder)
                     name=(name)

@@ -20,6 +20,7 @@ pub fn view(internals: Internals<Option<Xp>, Error>) -> Markup {
             _ => None,
         },
         "total_xp",
+        "numeric",
         I18n::TotalXp.translate(),
         Some(I18n::InYears.translate()),
         "10",
