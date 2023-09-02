@@ -1,4 +1,4 @@
-use super::{Company, Compensation, Date, Email, Id, Level, Location, Status, Title, Xp};
+use super::{Company, CompanyType, Compensation, Date, Email, Id, Level, Location, Status, Title, Xp};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Salary {
@@ -12,6 +12,7 @@ pub struct Salary {
     pub level: Option<Level>,
     pub company_xp: Option<Xp>,
     pub total_xp: Option<Xp>,
+    pub company_type : Option<CompanyType>,
     pub status: Status,
 }
 
@@ -29,6 +30,7 @@ impl Salary {
             level: None,
             company_xp: None,
             total_xp: None,
+            company_type: None,
             status: Status::Waiting,
         }
     }
@@ -44,6 +46,7 @@ impl Salary {
         level: Option<Level>,
         company_xp: Option<Xp>,
         total_xp: Option<Xp>,
+        company_type: Option<CompanyType>,
         status: Status,
     ) -> Self {
         Self {
@@ -57,6 +60,7 @@ impl Salary {
             level,
             company_xp,
             total_xp,
+            company_type,
             status,
         }
     }

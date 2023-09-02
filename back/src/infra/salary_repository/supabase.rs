@@ -108,6 +108,7 @@ pub struct SupabaseSalary {
     level: Option<String>,
     company_xp: Option<i32>,
     total_xp: Option<i32>,
+    company_type: Option<String>,
     status: String,
 }
 
@@ -125,6 +126,7 @@ impl From<Salary> for SupabaseSalary {
             company_xp: salary.company_xp.map(|company_xp| company_xp.into()),
             total_xp: salary.total_xp.map(|total_xp| total_xp.into()),
             status: salary.status.into(),
+            company_type: salary.company_type.map(|company_type| company_type.into()),
         }
     }
 }
@@ -156,6 +158,11 @@ impl TryFrom<SupabaseSalary> for Salary {
                 None
             },
             if let Some(raw) = salary.total_xp {
+                Some(raw.try_into()?)
+            } else {
+                None
+            },
+            if let Some(raw) = salary.company_type {
                 Some(raw.try_into()?)
             } else {
                 None

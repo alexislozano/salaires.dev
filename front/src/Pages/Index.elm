@@ -10,6 +10,7 @@ import Html.Styled.Events as Events
 import Http
 import I18n
 import Models.Company as Company
+import Models.CompanyType as CompanyType
 import Models.Compensation as Compensation
 import Models.Date as Date
 import Models.Level as Level
@@ -155,6 +156,9 @@ head { sort } =
             [ Table.Company
                 |> Table.header sort
                 |> header Table.Company
+            , Table.CompanyType
+                |> Table.header sort
+                |> header Table.CompanyType
             , Table.Title
                 |> Table.header sort
                 |> header Table.Title
@@ -244,6 +248,11 @@ row index salary =
         [ Salary.toFields salary
             |> .company
             |> Company.toString
+            |> cell
+        , Salary.toFields salary
+            |> .companyType
+            |> Maybe.map CompanyType.toString
+            |> Maybe.withDefault ""
             |> cell
         , Salary.toFields salary
             |> .title

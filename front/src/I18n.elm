@@ -41,6 +41,7 @@ type Key
     | Mid
     | Senior
     | LevelIsNotInTheProvidedChoices
+    | CompanyType
 
 
 translate : Lang -> Key -> String
@@ -152,3 +153,6 @@ translate lang key =
 
                 LevelIsNotInTheProvidedChoices ->
                     "Le niveau n'est pas dans les choix proposés."
+
+                CompanyType ->
+                    "Type d'entreprise"

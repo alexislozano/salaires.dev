@@ -7,6 +7,7 @@ import Json.Decode.Pipeline exposing (required)
 import Json.Encode exposing (Value, null, object)
 import Models.Captcha as Captcha exposing (Captcha)
 import Models.Company as Company exposing (Company)
+import Models.CompanyType as CompanyType exposing (CompanyType)
 import Models.Compensation as Compensation exposing (Compensation)
 import Models.Date as Date exposing (Date)
 import Models.Email as Email exposing (Email)
@@ -46,6 +47,7 @@ post flags msg body =
 type alias Body =
     { email : Email
     , company : Company
+    , companyType : Maybe CompanyType
     , location : Location
     , compensation : Compensation
     , level : Maybe Level
@@ -61,6 +63,7 @@ encode body =
     object
         [ ( "email", Email.encode body.email )
         , ( "company", Company.encode body.company )
+        , ( "company_type", body.companyType |> Maybe.map CompanyType.encode |> Maybe.withDefault null )
         , ( "title", body.title |> Maybe.map Title.encode |> Maybe.withDefault null )
         , ( "location", Location.encode body.location )
         , ( "compensation", Compensation.encode body.compensation )
@@ -73,6 +76,7 @@ encode body =
 
 type alias Response =
     { company : Company
+    , companyType : Maybe CompanyType
     , title : Maybe Title
     , location : Location
     , compensation : Compensation
@@ -92,6 +96,7 @@ decoder : Decoder Salary
 decoder =
     succeed Response
         |> required "company" Company.decoder
+        |> required "company_type" (maybe CompanyType.decoder)
         |> required "title" (maybe Title.decoder)
         |> required "location" Location.decoder
         |> required "compensation" Compensation.decoder

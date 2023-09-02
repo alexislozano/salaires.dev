@@ -19,6 +19,7 @@ pub struct Request {
     company_xp: Option<i32>,
     total_xp: Option<i32>,
     captcha: String,
+    company_type: Option<String>,
 }
 
 impl TryFrom<Request> for Salary {
@@ -48,6 +49,11 @@ impl TryFrom<Request> for Salary {
                 None
             },
             if let Some(raw) = request.total_xp {
+                Some(raw.try_into()?)
+            } else {
+                None
+            },
+            if let Some(raw) = request.company_type {
                 Some(raw.try_into()?)
             } else {
                 None

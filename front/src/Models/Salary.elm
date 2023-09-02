@@ -1,6 +1,7 @@
 module Models.Salary exposing (..)
 
 import Models.Company exposing (Company)
+import Models.CompanyType exposing (CompanyType)
 import Models.Compensation exposing (Compensation)
 import Models.Date exposing (Date)
 import Models.Level exposing (Level)
@@ -25,6 +26,7 @@ type alias Fields =
     , level : Maybe Level
     , companyXp : Maybe Xp
     , totalXp : Maybe Xp
+    , companyType : Maybe CompanyType
     }
 
 

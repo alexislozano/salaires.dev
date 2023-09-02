@@ -2,6 +2,7 @@ module Design.Table exposing (..)
 
 import I18n
 import Models.Company
+import Models.CompanyType
 import Models.Compensation
 import Models.Date
 import Models.Level
@@ -21,6 +22,7 @@ type Column
     | TotalXp
     | Compensation
     | Date
+    | CompanyType
 
 
 type Direction
@@ -65,6 +67,9 @@ title column =
         Date ->
             I18n.translate I18n.French I18n.Date
 
+        CompanyType ->
+            I18n.translate I18n.French I18n.CompanyType
+
 
 subtitle : Column -> String
 subtitle column =
@@ -91,6 +96,9 @@ subtitle column =
             I18n.translate I18n.French I18n.CompensationHelp
 
         Date ->
+            ""
+
+        CompanyType ->
             ""
 
 
@@ -150,6 +158,9 @@ sort { column, direction } salaries =
 
                 Date ->
                     \s1 s2 -> Models.Date.compare s1.date s2.date
+
+                CompanyType ->
+                    \s1 s2 -> Utils.compareMaybe Models.CompanyType.compare s1.companyType s2.companyType
     in
     salaries
         |> List.map Salary.toFields
@@ -199,6 +210,9 @@ equal c1 c2 =
             True
 
         ( Date, Date ) ->
+            True
+
+        ( CompanyType, CompanyType ) ->
             True
 
         _ ->

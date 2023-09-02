@@ -18,6 +18,7 @@ pub struct Response {
     level: Option<String>,
     company_xp: Option<i32>,
     total_xp: Option<i32>,
+    company_type: Option<String>
 }
 
 impl From<Salary> for Response {
@@ -31,6 +32,7 @@ impl From<Salary> for Response {
             level: salary.level.map(|level| level.into()),
             company_xp: salary.company_xp.map(|company_xp| company_xp.into()),
             total_xp: salary.total_xp.map(|total_xp| total_xp.into()),
+            company_type: salary.company_type.map(|company_type| company_type.into()),
         }
     }
 }

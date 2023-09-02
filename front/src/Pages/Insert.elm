@@ -13,6 +13,7 @@ import Http
 import I18n
 import Models.Captcha as Captcha exposing (Captcha)
 import Models.Company as Company exposing (Company)
+import Models.CompanyType as CompanyType exposing (CompanyType)
 import Models.Compensation as Compensation exposing (Compensation)
 import Models.Email as Email exposing (Email)
 import Models.Level as Level exposing (Level)
@@ -39,6 +40,7 @@ type alias Model =
 type alias Form =
     { email : { value : String, parsed : Result String Email }
     , company : { value : String, parsed : Result String Company }
+    , companyType : { value : String, parsed : Result String (Maybe CompanyType) }
     , title : { value : String, parsed : Result String (Maybe Title) }
     , location : { value : String, parsed : Result String Location }
     , compensation : { value : String, parsed : Result String Compensation }
@@ -57,11 +59,12 @@ body form =
                 ( Ok level, Ok companyXp ) ->
                     case ( form.totalXp.parsed, form.title.parsed, form.captcha ) of
                         ( Ok totalXp, Ok title, Just captcha ) ->
-                            case form.email.parsed of
-                                Ok email ->
+                            case ( form.email.parsed, form.companyType.parsed ) of
+                                ( Ok email, Ok companyType ) ->
                                     Just
                                         { email = email
                                         , company = company
+                                        , companyType = companyType
                                         , title = title
                                         , location = location
                                         , compensation = compensation
@@ -92,6 +95,7 @@ type Status
 type Field
     = Email
     | Company
+    | CompanyType
     | Location
     | Compensation
     | CompanyXp
@@ -125,6 +129,7 @@ init flags =
     ( { form =
             { email = { value = "", parsed = Err " " }
             , company = { value = "", parsed = Err " " }
+            , companyType = { value = "", parsed = Ok Nothing }
             , title = { value = "", parsed = Ok Nothing }
             , location = { value = "", parsed = Err " " }
             , compensation = { value = "", parsed = Err " " }
@@ -216,6 +221,19 @@ update flags msg model =
                                 | company =
                                     { value = value
                                     , parsed = Company.tryFromString value
+                                    }
+                            }
+
+                        CompanyType ->
+                            { form
+                                | companyType =
+                                    { value = value
+                                    , parsed =
+                                        if String.isEmpty value then
+                                            Ok Nothing
+
+                                        else
+                                            CompanyType.tryFromString value |> Result.map Just
                                     }
                             }
 
@@ -327,6 +345,27 @@ view { hCaptchaKey } { form, status, companies, locations, titles } =
             , placeholder = "Google"
             , required = True
             , value = form.company.value
+            }
+        , let
+            options =
+                { key = "", label = "-" }
+                    :: (CompanyType.all
+                            |> List.map
+                                (\companyType ->
+                                    { key = CompanyType.toString companyType
+                                    , label = CompanyType.toString companyType
+                                    }
+                                )
+                       )
+          in
+          Dropdown.view
+            { error = error form.companyType.parsed
+            , label = I18n.translate I18n.French I18n.CompanyType
+            , sublabel = Nothing
+            , onChange = OnFieldChange CompanyType
+            , options = options
+            , required = False
+            , value = form.companyType.value
             }
         , Select.view
             { error = error form.title.parsed
