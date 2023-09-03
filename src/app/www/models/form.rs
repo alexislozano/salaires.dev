@@ -2,8 +2,8 @@ use chrono::Utc;
 use serde::Deserialize;
 
 use crate::domain::models::{
-    company, compensation, email, level, location, title, xp, Captcha, Company, Compensation,
-    Email, Id, Level, Location, Salary, Status, Title, Xp,
+    company, compensation, email, level, location, title, xp, company_type, Captcha, Company, Compensation,
+    Email, Id, Level, Location, Salary, Status, Title, Xp, CompanyType
 };
 
 #[derive(Clone)]
@@ -54,6 +54,7 @@ pub struct UnparsedForm {
     level: String,
     company_xp: String,
     total_xp: String,
+    company_type: String,
     #[serde(rename = "h-captcha-response")]
     captcha: String,
 }
@@ -68,6 +69,7 @@ pub struct ParsedForm {
     pub compensation: Internals<Compensation, compensation::Error>,
     pub company_xp: Internals<Option<Xp>, xp::Error>,
     pub total_xp: Internals<Option<Xp>, xp::Error>,
+    pub company_type: Internals<Option<CompanyType>, company_type::Error>,
     pub captcha: Option<Captcha>,
 }
 
@@ -82,6 +84,7 @@ impl ParsedForm {
             compensation: Internals::init(),
             company_xp: Internals::init(),
             total_xp: Internals::init(),
+            company_type: Internals::init(),
             captcha: None,
         }
     }
@@ -97,6 +100,7 @@ pub struct ValidatedForm {
     compensation: Compensation,
     company_xp: Option<Xp>,
     total_xp: Option<Xp>,
+    company_type: Option<CompanyType>,
     captcha: Captcha,
 }
 
@@ -148,6 +152,14 @@ impl From<UnparsedForm> for ParsedForm {
                     Xp::try_from(form.total_xp.clone()).map(Some)
                 },
             ),
+            company_type: Internals::computed(
+                form.company_type.as_str(),
+                if form.company_type.is_empty() {
+                    Ok(None)
+                } else {
+                    CompanyType::try_from(form.company_type.clone()).map(Some)
+                },
+            ),
             captcha: Captcha::try_from(form.captcha).ok(),
         }
     }
@@ -166,6 +178,7 @@ impl TryFrom<ParsedForm> for ValidatedForm {
             compensation: form.compensation.extract()?,
             company_xp: form.company_xp.extract()?,
             total_xp: form.total_xp.extract()?,
+            company_type: form.company_type.extract()?,
             captcha: form.captcha.ok_or(())?,
         })
     }
@@ -184,6 +197,7 @@ impl From<ValidatedForm> for Salary {
             form.level,
             form.company_xp,
             form.total_xp,
+            form.company_type,
             Status::Waiting,
         )
     }

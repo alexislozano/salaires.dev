@@ -39,6 +39,11 @@ impl Extract<Key> for Salary {
                     })
                 })
                 .unwrap_or(String::from("")),
+            Key::CompanyType => self
+                .company_type
+                .clone()
+                .map(|x| String::from(x))
+                .unwrap_or(String::from("")),
             Key::Date => self.date.clone().into(),
         }
     }
@@ -47,6 +52,7 @@ impl Extract<Key> for Salary {
 pub fn view(salaries: Vec<Salary>, order: Order<Key>) -> Markup {
     let columns = vec![
         build_column(Key::Company, order.clone()),
+        build_column(Key::CompanyType, order.clone()),
         build_column(Key::Title, order.clone()),
         build_column(Key::Location, order.clone()),
         build_column(Key::Compensation, order.clone()),
@@ -69,6 +75,7 @@ fn build_column(key: Key, order: Order<Key>) -> Column<Key> {
         Key::TotalXp => I18n::TotalXp.translate(),
         Key::Level => I18n::Level.translate(),
         Key::Date => I18n::Date.translate(),
+        Key::CompanyType => I18n::CompanyType.translate(),
     };
 
     let sublabel = match key {
@@ -80,6 +87,7 @@ fn build_column(key: Key, order: Order<Key>) -> Column<Key> {
         Key::TotalXp => I18n::InYears.translate(),
         Key::Level => "",
         Key::Date => "",
+        Key::CompanyType => "",
     };
 
     let pushed_url = if key == order.key {

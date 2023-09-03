@@ -35,6 +35,8 @@ pub enum I18n {
     FormFetchingError,
     ValidationError,
     SortError,
+    CompanyType,
+    CompanyTypeIsNotInTheProvidedChoices,
 }
 
 impl I18n {
@@ -75,7 +77,9 @@ impl I18n {
             Self::SalariesFetchingError => "Les salaires n'ont pas pu être chargés",
             Self::FormFetchingError => "Le formulaire n'a pas pu être chargé",
             Self::ValidationError => "Une erreur inconnue est survenue lors de la validation du formulaire",
-            Self::SortError => "Une erreur inconnue est survenue lors du tri des salaires"
+            Self::SortError => "Une erreur inconnue est survenue lors du tri des salaires",
+            Self::CompanyType => "Type d'entreprise",
+            Self::CompanyTypeIsNotInTheProvidedChoices => "Le type d'entreprise n'est pas dans les choix proposés."
         }
     }
 }

@@ -7,3 +7,4 @@ pub mod location_field;
 pub mod salary_table;
 pub mod title_field;
 pub mod total_xp_field;
+pub mod company_type_field;

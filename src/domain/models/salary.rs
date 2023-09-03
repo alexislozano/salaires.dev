@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 
 use super::{
-    Company, Compensation, Date, Direction, Email, Id, Level, Location, Order, Status, Title, Xp,
+    Company, Compensation, Date, Direction, Email, Id, Level, Location, Order, Status, Title, Xp, CompanyType,
 };
 
 #[derive(Clone, Debug, PartialEq)]
@@ -16,6 +16,7 @@ pub struct Salary {
     pub level: Option<Level>,
     pub company_xp: Option<Xp>,
     pub total_xp: Option<Xp>,
+    pub company_type: Option<CompanyType>,
     pub status: Status,
 }
 
@@ -33,6 +34,7 @@ impl Salary {
             level: None,
             company_xp: None,
             total_xp: None,
+            company_type: None,
             status: Status::Waiting,
         }
     }
@@ -48,6 +50,7 @@ impl Salary {
         level: Option<Level>,
         company_xp: Option<Xp>,
         total_xp: Option<Xp>,
+        company_type: Option<CompanyType>,
         status: Status,
     ) -> Self {
         Self {
@@ -61,6 +64,7 @@ impl Salary {
             level,
             company_xp,
             total_xp,
+            company_type,
             status,
         }
     }
@@ -79,6 +83,7 @@ impl Salary {
             Key::TotalXp => a.total_xp.cmp(&b.total_xp),
             Key::Level => a.level.cmp(&b.level),
             Key::Date => a.date.cmp(&b.date),
+            Key::CompanyType => a.company_type.cmp(&b.company_type),
         };
         match order.direction {
             Direction::Asc => ordering,
@@ -97,6 +102,7 @@ pub enum Key {
     TotalXp,
     Level,
     Date,
+    CompanyType,
 }
 
 impl Default for Key {
@@ -116,6 +122,7 @@ impl From<String> for Key {
             "total_xp" => Self::TotalXp,
             "level" => Self::Level,
             "date" => Self::Date,
+            "company_type" => Self::CompanyType,
             _ => Self::default(),
         }
     }
@@ -132,6 +139,7 @@ impl From<Key> for String {
             Key::TotalXp => "total_xp",
             Key::Level => "level",
             Key::Date => "date",
+            Key::CompanyType => "company_type",
         }
         .into()
     }

@@ -5,7 +5,7 @@ use crate::{
         components::{banner, form, hcaptcha, submit},
         fragments::{
             company_field, company_xp_field, compensation_field, email_field, level_field,
-            location_field, title_field, total_xp_field,
+            location_field, title_field, total_xp_field, company_type_field,
         },
         i18n::I18n,
         models::ParsedForm,
@@ -27,6 +27,7 @@ pub fn view(
         banner::view(I18n::EmailExplanation.translate()),
         email_field::view(form.email),
         company_field::view(form.company, companies),
+        company_type_field::view(form.company_type),
         title_field::view(form.title, titles),
         level_field::view(form.level),
         location_field::view(form.location, locations),

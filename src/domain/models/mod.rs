@@ -12,9 +12,10 @@ mod status;
 pub mod title;
 mod token;
 pub mod xp;
+pub mod company_type;
 
 pub use self::{
     captcha::Captcha, company::Company, compensation::Compensation, date::Date, email::Email,
     id::Id, level::Level, location::Location, order::Direction, order::Order, salary::Salary,
-    status::Status, title::Title, token::Token, xp::Xp,
+    status::Status, title::Title, token::Token, xp::Xp, company_type::CompanyType,
 };
