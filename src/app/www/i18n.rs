@@ -35,6 +35,13 @@ pub enum I18n {
     FormFetchingError,
     ValidationError,
     SortError,
+    CompensationVsTotalXpByCityTitle,
+    CompensationVsTotalXpByCitySubTitle,
+    CompensationVsTotalXpByCompanyTitle,
+    CompensationVsTotalXpByCompanySubTitle,
+    GraphFilters,
+    MinDataPointsFilter,
+    DoFilter,
 }
 
 impl I18n {
@@ -75,7 +82,14 @@ impl I18n {
             Self::SalariesFetchingError => "Les salaires n'ont pas pu être chargés",
             Self::FormFetchingError => "Le formulaire n'a pas pu être chargé",
             Self::ValidationError => "Une erreur inconnue est survenue lors de la validation du formulaire",
-            Self::SortError => "Une erreur inconnue est survenue lors du tri des salaires"
+            Self::SortError => "Une erreur inconnue est survenue lors du tri des salaires",
+            Self::CompensationVsTotalXpByCityTitle => "Compensation annuelle en fonction de l'expérience totale, par ville.",
+            Self::CompensationVsTotalXpByCitySubTitle => "Cliquez sur le nom d'une ville pour cacher/afficher les données correspondantes.",
+            Self::CompensationVsTotalXpByCompanyTitle => "Compensation annuelle en fonction de l'expérience totale, par entreprise.",
+            Self::CompensationVsTotalXpByCompanySubTitle => "Cliquez sur le nom d'une entreprise pour cacher/afficher les données correspondantes.",
+            Self::GraphFilters => "Filtres",
+            Self::MinDataPointsFilter => "Nombre minimum de données",
+            Self::DoFilter => "Filtrer",
         }
     }
 }

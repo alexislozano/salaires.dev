@@ -36,7 +36,8 @@ pub async fn get(
 ) -> Markup {
     let order = Order::from(params.clone());
 
-    let salaries = match use_cases::fetch_salaries(salary_repo.clone(), order.clone()).await {
+    let salaries = match use_cases::fetch_sorted_salaries(salary_repo.clone(), order.clone()).await
+    {
         Ok(salaries) => salaries,
         Err(use_cases::fetch_salaries::Error::Unknown(_)) => {
             return pages::text_only::view(I18n::SalariesFetchingError.translate())

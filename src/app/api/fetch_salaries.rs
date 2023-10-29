@@ -50,7 +50,7 @@ pub async fn fetch_salaries(
 ) -> Result<Json<Vec<Response>>, Error> {
     let order = Order::from(params);
 
-    match use_cases::fetch_salaries(repo, order).await {
+    match use_cases::fetch_sorted_salaries(repo, order).await {
         Ok(salaries) => Ok(salaries
             .into_iter()
             .map(|salary| salary.into())

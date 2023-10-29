@@ -50,6 +50,7 @@ pub async fn serve(
         let router = Router::new()
             .route("/", get(www::index::get))
             .route("/sort", get(www::sort::get))
+            .route("/graphs/", get(www::graphs::get))
             .route("/notification", delete(www::notification::delete))
             .route("/api/salaries", get(api::fetch_salaries))
             .route("/api/companies", get(api::fetch_companies))
