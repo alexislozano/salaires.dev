@@ -5,6 +5,7 @@ mod i18n;
 mod models;
 mod pages;
 
+pub use controllers::graphs;
 pub use controllers::index;
 pub use controllers::insert;
 pub use controllers::maintenance;

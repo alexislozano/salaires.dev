@@ -128,6 +128,7 @@ fn header() -> Markup {
                     {
                         (link::view("salaires.dev", "/"))
                         (link::view("Github", "https://github.com/alexislozano/salaires.dev"))
+                        (link::view("Graphes", "/graphs/?min_size=5"))
                     }
                 (link::view(I18n::IAddMySalary.translate(), "/insert"))
             }

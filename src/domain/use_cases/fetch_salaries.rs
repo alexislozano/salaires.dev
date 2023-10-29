@@ -6,11 +6,18 @@ pub enum Error {
     Unknown(&'static str),
 }
 
-pub async fn fetch_salaries(
+pub async fn fetch_salaries(repo: Arc<dyn SalaryRepository>) -> Result<Vec<Salary>, Error> {
+    match repo.fetch_all().await {
+        Ok(salaries) => Ok(salaries),
+        Err(FetchAllError::Unknown(str)) => Err(Error::Unknown(str)),
+    }
+}
+
+pub async fn fetch_sorted_salaries(
     repo: Arc<dyn SalaryRepository>,
     order: Order<Key>,
 ) -> Result<Vec<Salary>, Error> {
-    match repo.fetch_all(order).await {
+    match repo.fetch_all_sorted(order).await {
         Ok(salaries) => Ok(salaries),
         Err(FetchAllError::Unknown(str)) => Err(Error::Unknown(str)),
     }
@@ -26,7 +33,7 @@ mod tests {
     async fn it_should_return_an_unknown_error_when_an_unexpected_error_happens() {
         let repo = Arc::new(InMemorySalaryRepository::new().with_error());
 
-        let res = fetch_salaries(repo, Order::default()).await;
+        let res = fetch_sorted_salaries(repo, Order::default()).await;
 
         match res {
             Err(Error::Unknown(_)) => {}
@@ -40,7 +47,7 @@ mod tests {
         let repo = Arc::new(InMemorySalaryRepository::new());
         repo.insert(salary.clone()).await.ok();
 
-        let res = fetch_salaries(repo, Order::default()).await;
+        let res = fetch_sorted_salaries(repo, Order::default()).await;
 
         match res {
             Ok(salaries) => {
@@ -61,7 +68,7 @@ mod tests {
         repo.insert(salary2.clone()).await.ok();
         let order = Order::new(Key::Company, Direction::Asc);
 
-        let res = fetch_salaries(repo, order).await;
+        let res = fetch_sorted_salaries(repo, order).await;
 
         match res {
             Ok(salaries) => {

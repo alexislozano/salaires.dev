@@ -1,5 +1,5 @@
 use super::{ConfirmError, FetchAllError, InsertError, SalaryRepository};
-use crate::domain::models::{salary::Key, Id, Order, Salary, Status};
+use crate::domain::models::{Id, Salary, Status};
 use async_trait::async_trait;
 use axum::http::HeaderMap;
 use chrono::NaiveDate;
@@ -48,15 +48,16 @@ impl SalaryRepository for SupabaseSalaryRepository {
         }
     }
 
-    async fn fetch_all(&self, order: Order<Key>) -> Result<Vec<Salary>, FetchAllError> {
+    async fn fetch_all(&self) -> Result<Vec<Salary>, FetchAllError> {
         let client = reqwest::Client::new();
         let res = match client
             .get(format!(
-                "{}salaries?select=*&status=eq.{}&order={}.{}",
+                "{}salaries?select=*&status=eq.{}",
+                // "{}salaries?select=*&status=eq.{}&order={}.{}",
                 self.url,
                 String::from(Status::Published),
-                String::from(order.clone().key),
-                String::from(order.clone().direction)
+                // String::from(order.clone().key),
+                // String::from(order.clone().direction)
             ))
             .headers(self.headers())
             .send()
@@ -79,8 +80,6 @@ impl SalaryRepository for SupabaseSalaryRepository {
                 _ => return Err(FetchAllError::Unknown("could not convert to domain")),
             }
         }
-
-        salaries.sort_by(|a, b| Salary::compare(&a, &b, &order));
 
         Ok(salaries)
     }

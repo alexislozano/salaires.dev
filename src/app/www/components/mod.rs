@@ -1,6 +1,7 @@
 pub mod banner;
 pub mod dropdown;
 pub mod form;
+pub mod graph;
 pub mod hcaptcha;
 pub mod input;
 pub mod label;
