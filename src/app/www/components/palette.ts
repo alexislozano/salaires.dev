@@ -1,0 +1,10 @@
+export const YELLOW = "rgb(255, 220, 0)";
+export const BLACK = "rgb(0, 0, 0)";
+export const GREY = "rgb(150, 150, 150)";
+export const RED = "rgb(255, 0, 0)";
+export const WHITE = "rgb(255, 255, 255)";
+export const PEACH = "rgb(255, 203, 164)";
+export const LIGHT_SAND = "rgb(255, 250, 246)";
+export const SAND = "rgb(245, 240, 236)";
+export const DARK_BLUE = "rgb(5, 81, 96)";
+export const LIGHT_BLUE = "rgb(207, 244, 252)";

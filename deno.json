@@ -1,0 +1,16 @@
+{
+    "tasks": {
+        "dev": "deno run --watch main.ts"
+    },
+    "imports": {
+        "@domain": "./src/domain/index.ts",
+        "@infra": "./src/infra/index.ts",
+        "@utils": "./src/utils/index.ts",
+        "react": "https://esm.sh/react@18.2.0",
+        "uuid": "https://deno.land/std@0.206.0/uuid/mod.ts"
+    },
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "https://esm.sh/hono@3.9.0/jsx"
+    }
+}
