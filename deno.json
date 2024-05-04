@@ -1,0 +1,28 @@
+{
+    "tasks": {
+        "run": "deno run --allow-env --allow-net --allow-read --watch src/main.ts",
+        "check": "deno check src/main.ts"
+    },
+    "imports": {
+        "@app": "./src/app/mod.ts",
+        "@domain": "./src/domain/mod.ts",
+        "@infra": "./src/infra/mod.ts",
+        "@utils": "./src/utils/mod.ts",
+
+        "asserts": "https://deno.land/std@0.221.0/assert/mod.ts",
+        "datetime": "https://deno.land/std@0.221.0/datetime/mod.ts",
+        "dotenv": "https://deno.land/std@0.221.0/dotenv/mod.ts",
+        "uuid": "https://deno.land/std@0.221.0/uuid/mod.ts",
+
+        "hono": "https://deno.land/x/hono@v4.2.2/mod.ts",
+        "hono/helper": "https://deno.land/x/hono@v4.2.2/helper.ts",
+        "hono/middleware": "https://deno.land/x/hono@v4.2.2/middleware.ts",
+        "hono/jsx": "https://deno.land/x/hono@v4.2.2/jsx/index.ts",
+        "smtp": "https://deno.land/x/smtp@v0.7.0/mod.ts",
+        "zod": "https://deno.land/x/zod@v3.22.4/mod.ts"
+    },
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "https://esm.sh/hono@4.2.2/jsx"
+    }
+}

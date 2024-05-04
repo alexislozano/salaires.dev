@@ -1,0 +1,205 @@
+import { SalaryRepository } from "./mod.ts";
+import { Email, Key, Order } from "@domain";
+import { Title } from "@domain";
+import { Location } from "@domain";
+import { Company, Xp } from "@domain";
+import { Id, Salary, Status, SalaryDate, Compensation, Level } from "@domain";
+import { Env, Maybe, Result } from "@utils";
+import { z } from "zod";
+
+export class SupabaseSalaryRepository implements SalaryRepository {
+    private url: string;
+    private key: string;
+
+    private constructor(url: string, key: string) {
+        this.url = url;
+        this.key = key;
+    }
+
+    private headers(): Record<string, string> {
+        return {
+            apiKey: this.key,
+            Authorization: `Bearer ${this.key}`,
+            "Content-Type": "application/json",
+        };
+    }
+
+    static new() {
+        return new SupabaseSalaryRepository(
+            Env.get("SUPABASE_URL"),
+            Env.get("SUPABASE_KEY")
+        );
+    }
+
+    async confirm(id: Id): Promise<Result<void, string>> {
+        const response = await fetch(`${this.url}salaries?id=eq.${Id.toString(id)}`, {
+            method: "PATCH",
+            headers: this.headers(),
+            body: JSON.stringify(SupabaseStatus.fromStatus("confirmed"))
+        });
+        if (! response.ok) { return Result.err("SupabaseSalaryRepository: could not send request"); }
+        return Result.ok(undefined);
+    }
+
+    async fetchAll(order: Order<Key>): Promise<Result<Salary[], string>> {
+        const supabaseOrder = SupabaseOrder.fromOrder(order);
+        const response = await fetch(`${this.url}salaries?select=*&status=eq.${Status.toString("published")}&order=${supabaseOrder.key}.${supabaseOrder.direction}`, {
+            method: "GET",
+            headers: this.headers()
+        });
+        if (! response.ok) { return Result.err("SupabaseSalaryRepository: could not send request"); }
+        
+        const supabaseSalaries = z
+            .array(supabaseSalarySchema)
+            .safeParse(await response.json());
+        if (! supabaseSalaries.success) { return Result.err("SupabaseSalaryRepository: could not parse json"); }
+
+        const salaries: Salary[] = [];
+        for (const supabaseSalary of supabaseSalaries.data) {
+            const salary = SupabaseSalary.tryToSalary(supabaseSalary);
+            if (Result.isErr(salary)) { return Result.err("SupabaseSalaryRepository: could not convert to domain"); }
+            salaries.push(Result.unwrap(salary));
+        }
+
+        return Result.ok(salaries.toSorted((a, b) => Salary.compare(a, b, order)));
+    }
+
+    async insert(salary: Salary): Promise<Result<void, string>> {
+        const response = await fetch(`${this.url}salaries`, {
+            method: "POST",
+            headers: this.headers(),
+            body: JSON.stringify(SupabaseSalary.fromSalary(salary))
+        });
+        if (! response.ok) { return Result.err("SupabaseSalaryRepository: could not send request"); }
+        return Result.ok(undefined);
+    }
+}
+
+const supabaseSalarySchema = z.object({
+    id: z.string(),
+    email: z.string(),
+    company: z.string(),
+    title: z.string().nullable(),
+    location: z.string(),
+    compensation: z.number(),
+    date: z.string(),
+    level: z.string().nullable(),
+    company_xp: z.number().nullable(),
+    total_xp: z.number().nullable(),
+    status: z.string(),
+});
+type SupabaseSalary = z.infer<typeof supabaseSalarySchema>;
+
+const SupabaseSalary = {
+    fromSalary(salary: Salary): SupabaseSalary {
+        return {
+            id: Id.toString(salary.id),
+            email: Email.toString(salary.email),
+            company: Company.toString(salary.company),
+            title: Maybe.toNullable(Maybe.map(salary.title, Title.toString)),
+            location: Location.toString(salary.location),
+            compensation: Compensation.toNumber(salary.compensation),
+            date: SalaryDate.toString(salary.date),
+            level: Maybe.toNullable(Maybe.map(salary.level, Level.toString)),
+            company_xp: Maybe.toNullable(Maybe.map(salary.companyXp, Xp.toNumber)),
+            total_xp: Maybe.toNullable(Maybe.map(salary.totalXp, Xp.toNumber)),
+            status: Status.toString(salary.status),
+        };
+    },
+    tryToSalary(salary: SupabaseSalary): Result<Salary, void> {
+        const id = Id.tryFromString(salary.id);
+        if (Result.isErr(id)) { return Result.err(undefined); }
+
+        const email = Email.tryFromString(salary.email);
+        if (Result.isErr(email)) { return Result.err(undefined); }
+
+        const company = Company.tryFromString(salary.company);
+        if (Result.isErr(company)) { return Result.err(undefined); }
+
+        const title = tryFromNullable(salary.title, Title.tryFromString);
+        if (Result.isErr(title)) { return Result.err(undefined); }
+
+        const location = Location.tryFromString(salary.location);
+        if (Result.isErr(location)) { return Result.err(undefined); }
+
+        const compensation = Compensation.tryFromNumber(salary.compensation);
+        if (Result.isErr(compensation)) { return Result.err(undefined); }
+
+        const date = SalaryDate.tryFromString(salary.date);
+        if (Result.isErr(date)) { return Result.err(undefined); }
+
+        const level = tryFromNullable(salary.level, Level.tryFromString);
+        if (Result.isErr(level)) { return Result.err(undefined); }
+
+        const companyXp = tryFromNullable(salary.company_xp, Xp.tryFromNumber);
+        if (Result.isErr(companyXp)) { return Result.err(undefined); }
+
+        const totalXp = tryFromNullable(salary.total_xp, Xp.tryFromNumber);
+        if (Result.isErr(totalXp)) { return Result.err(undefined); }
+
+        const status = Status.tryFromString(salary.status);
+        if (Result.isErr(status)) { return Result.err(undefined); }
+
+        return Result.ok({
+            _type: "salary",
+            id: Result.unwrap(id),
+            email: Result.unwrap(email),
+            company: Result.unwrap(company),
+            title: Result.unwrap(title),
+            location: Result.unwrap(location),
+            compensation: Result.unwrap(compensation),
+            level: Result.unwrap(level),
+            companyXp: Result.unwrap(companyXp),
+            totalXp: Result.unwrap(totalXp),
+            status: Result.unwrap(status),
+            date: Result.unwrap(date),
+        });
+
+        function tryFromNullable<T, U, E>(
+            field: T | null,
+            f: (_: T) => Result<U, E>
+        ): Result<Maybe<U>, E> {
+            return Maybe.match(Maybe.fromNullable(field), {
+                onSome: (field) => Result.map(f(field), Maybe.some),
+                onNone: () => Result.ok(Maybe.none())
+            });
+        }
+    }
+};
+
+type SupabaseStatus = {
+    status: string;
+};
+
+const SupabaseStatus = {
+    fromStatus(status: Status): SupabaseStatus {
+        return { status: Status.toString(status) };
+    }
+};
+
+type SupabaseOrder = {
+    key: keyof SupabaseSalary;
+    direction: "asc" | "desc";
+}
+
+const SupabaseOrder = {
+    fromOrder(order: Order<Key>): SupabaseOrder {
+        return {
+            key: fromKey(order.key),
+            direction: order.direction,
+        };
+
+        function fromKey(key: Key): keyof SupabaseSalary {
+            switch (key) {
+                case "company": return "company";
+                case "title": return "title";
+                case "location": return "location";
+                case "compensation": return "compensation";
+                case "date": return "date";
+                case "level": return "level";
+                case "companyXp": return "company_xp";
+                case "totalXp": return "total_xp";
+            }
+        }
+    }
+}
