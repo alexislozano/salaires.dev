@@ -9,19 +9,13 @@ Les PRs sont les bienvenues !
 ### Lancer les tests
 
 ```
-cargo test
+deno test
 ```
 
 ### Lancer en local
 
 ```
-cargo run
-```
-
-### Créer un build
-
-```
-cargo build
+deno task run
 ```
 
 ## Supabase
