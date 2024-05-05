@@ -1,37 +1,22 @@
-import { Env, Result } from "@utils";
+import { Result } from "@utils";
+import { SupabaseRepository } from "../utils/mod.ts";
 import { LocationRepository } from "./mod.ts";
 import { Location, LocationError } from "@domain";
 import { z } from "zod";
 
 export class SupabaseLocationRepository implements LocationRepository {
-    private url: string;
-    private key: string;
+    private repo: SupabaseRepository;
 
-    private constructor(url: string, key: string) {
-        this.url = url;
-        this.key = key;
+    private constructor(repo: SupabaseRepository) {
+        this.repo = repo;
     }
 
-    private headers(): Record<string, string> {
-        return {
-            apiKey: this.key,
-            Authorization: `Bearer ${this.key}`,
-            "Content-Type": "application/json",
-        };
-    }
-
-    static new() {
-        return new SupabaseLocationRepository(
-            Env.get("SUPABASE_URL"),
-            Env.get("SUPABASE_KEY")
-        );
+    static new(repo: SupabaseRepository) {
+        return new SupabaseLocationRepository(repo);
     }
 
     async fetchAll(): Promise<Result<Location[], string>> {
-        const response = await fetch(`${this.url}locations?select=*&order=location`, {
-            method: "GET",
-            headers: this.headers()
-        });
+        const response = await this.repo.fetch("locations?select=*&order=location");
         if (! response.ok) { return Result.err("could not send request"); }
         
         const supabaseLocations = z

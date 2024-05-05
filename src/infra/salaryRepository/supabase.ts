@@ -4,49 +4,30 @@ import { Title } from "@domain";
 import { Location } from "@domain";
 import { Company, Xp } from "@domain";
 import { Id, Salary, Status, SalaryDate, Compensation, Level } from "@domain";
-import { Env, Maybe, Result } from "@utils";
+import { Maybe, Result } from "@utils";
+import { SupabaseRepository } from "../utils/mod.ts";
 import { z } from "zod";
 
 export class SupabaseSalaryRepository implements SalaryRepository {
-    private url: string;
-    private key: string;
+    private repo: SupabaseRepository;
 
-    private constructor(url: string, key: string) {
-        this.url = url;
-        this.key = key;
+    private constructor(repo: SupabaseRepository) {
+        this.repo = repo;
     }
 
-    private headers(): Record<string, string> {
-        return {
-            apiKey: this.key,
-            Authorization: `Bearer ${this.key}`,
-            "Content-Type": "application/json",
-        };
-    }
-
-    static new() {
-        return new SupabaseSalaryRepository(
-            Env.get("SUPABASE_URL"),
-            Env.get("SUPABASE_KEY")
-        );
+    static new(repo: SupabaseRepository) {
+        return new SupabaseSalaryRepository(repo);
     }
 
     async confirm(id: Id): Promise<Result<void, string>> {
-        const response = await fetch(`${this.url}salaries?id=eq.${Id.toString(id)}`, {
-            method: "PATCH",
-            headers: this.headers(),
-            body: JSON.stringify(SupabaseStatus.fromStatus("confirmed"))
-        });
+        const response = await this.repo.patch(`salaries?id=eq.${Id.toString(id)}`, SupabaseStatus.fromStatus("confirmed"));
         if (! response.ok) { return Result.err("SupabaseSalaryRepository: could not send request"); }
         return Result.ok(undefined);
     }
 
     async fetchAll(order: Order<Key>): Promise<Result<Salary[], string>> {
         const supabaseOrder = SupabaseOrder.fromOrder(order);
-        const response = await fetch(`${this.url}salaries?select=*&status=eq.${Status.toString("published")}&order=${supabaseOrder.key}.${supabaseOrder.direction}`, {
-            method: "GET",
-            headers: this.headers()
-        });
+        const response = await this.repo.fetch(`salaries?select=*&status=eq.${Status.toString("published")}&order=${supabaseOrder.key}.${supabaseOrder.direction}`);
         if (! response.ok) { return Result.err("SupabaseSalaryRepository: could not send request"); }
         
         const supabaseSalaries = z
@@ -65,11 +46,7 @@ export class SupabaseSalaryRepository implements SalaryRepository {
     }
 
     async insert(salary: Salary): Promise<Result<void, string>> {
-        const response = await fetch(`${this.url}salaries`, {
-            method: "POST",
-            headers: this.headers(),
-            body: JSON.stringify(SupabaseSalary.fromSalary(salary))
-        });
+        const response = await this.repo.post("salaries", SupabaseSalary.fromSalary(salary));
         if (! response.ok) { return Result.err("SupabaseSalaryRepository: could not send request"); }
         return Result.ok(undefined);
     }

@@ -5,3 +5,4 @@ export * from "./titleRepository/mod.ts";
 export * from "./tokenRepository/mod.ts";
 export * from "./tokenSender/mod.ts";
 export * from "./salaryRepository/mod.ts";
+export * from "./utils/mod.ts";

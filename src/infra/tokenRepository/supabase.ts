@@ -1,37 +1,22 @@
 import { z } from "zod";
-import { Env, Result } from "@utils";
+import { SupabaseRepository } from "../utils/mod.ts";
+import { Result } from "@utils";
 import { TokenRepository } from "./mod.ts";
 import { Id, Token } from "@domain";
 
 export class SupabaseTokenRepository implements TokenRepository {
-    private url: string;
-    private key: string;
+    private repo: SupabaseRepository;
 
-    private constructor(url: string, key: string) {
-        this.url = url;
-        this.key = key;
+    private constructor(repo: SupabaseRepository) {
+        this.repo = repo;
     }
 
-    private headers(): Record<string, string> {
-        return {
-            apiKey: this.key,
-            Authorization: `Bearer ${this.key}`,
-            "Content-Type": "application/json",
-        };
-    }
-
-    static new() {
-        return new SupabaseTokenRepository(
-            Env.get("SUPABASE_URL"),
-            Env.get("SUPABASE_KEY")
-        );
+    static new(repo: SupabaseRepository) {
+        return new SupabaseTokenRepository(repo);
     }
 
     async delete(token: Token): Promise<Result<Id, string>> {
-        const fetchResponse = await fetch(`${this.url}tokens?token=eq.${Token.toString(token)}`, {
-            method: "GET",
-            headers: this.headers()
-        });
+        const fetchResponse = await this.repo.fetch(`tokens?token=eq.${Token.toString(token)}`);
         if (! fetchResponse.ok) { return Result.err("could not send request"); }
 
         const supabaseTokens = z
@@ -45,20 +30,13 @@ export class SupabaseTokenRepository implements TokenRepository {
         const salaryId = Id.tryFromString(supabaseToken.salary_id);
         if (Result.isErr(salaryId)) { return Result.err("could not convert to domain"); }
         
-        const deleteResponse = await fetch(`${this.url}tokens?token=eq.${Token.toString(token)}`, {
-            method: "DELETE",
-            headers: this.headers()
-        });
+        const deleteResponse = await this.repo.delete(`tokens?token=eq.${Token.toString(token)}`);
         if (! deleteResponse.ok) { return Result.err("could not send request"); }
         return salaryId;
     }
 
     async insert(salaryId: Id, token: Token): Promise<Result<void, string>> {
-        const response = await fetch(`${this.url}tokens`, {
-            method: "POST",
-            headers: this.headers(),
-            body: JSON.stringify(SupabaseToken.fromSalaryIdAndToken(salaryId, token))
-        });
+        const response = await this.repo.post("tokens", SupabaseToken.fromSalaryIdAndToken(salaryId, token));
         if (! response.ok) { return Result.err("could not send request"); }
         return Result.ok(undefined);
     }

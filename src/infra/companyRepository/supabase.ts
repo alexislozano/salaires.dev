@@ -1,37 +1,22 @@
-import { Env, Result } from "@utils";
+import { Result } from "@utils";
+import { SupabaseRepository } from "../utils/mod.ts";
 import { CompanyRepository } from "./mod.ts";
 import { Company, CompanyError } from "@domain";
 import { z } from "zod";
 
 export class SupabaseCompanyRepository implements CompanyRepository {
-    private url: string;
-    private key: string;
+    private repo: SupabaseRepository;
 
-    private constructor(url: string, key: string) {
-        this.url = url;
-        this.key = key;
+    private constructor(repo: SupabaseRepository) {
+        this.repo = repo;
     }
 
-    private headers(): Record<string, string> {
-        return {
-            apiKey: this.key,
-            Authorization: `Bearer ${this.key}`,
-            "Content-Type": "application/json",
-        };
-    }
-
-    static new() {
-        return new SupabaseCompanyRepository(
-            Env.get("SUPABASE_URL"),
-            Env.get("SUPABASE_KEY")
-        );
+    static new(repo: SupabaseRepository) {
+        return new SupabaseCompanyRepository(repo);
     }
 
     async fetchAll(): Promise<Result<Company[], string>> {
-        const response = await fetch(`${this.url}companies?select=*&order=company`, {
-            method: "GET",
-            headers: this.headers()
-        });
+        const response = await this.repo.fetch("companies?select=*&order=company");
         if (! response.ok) { return Result.err("could not send request"); }
         
         const supabaseCompanies = z

@@ -1,37 +1,22 @@
-import { Env, Result } from "@utils";
+import { Result } from "@utils";
+import { SupabaseRepository } from "../utils/mod.ts";
 import { TitleRepository } from "./mod.ts";
 import { Title, TitleError } from "@domain";
 import { z } from "zod";
 
 export class SupabaseTitleRepository implements TitleRepository {
-    private url: string;
-    private key: string;
+    private repo: SupabaseRepository;
 
-    private constructor(url: string, key: string) {
-        this.url = url;
-        this.key = key;
+    private constructor(repo: SupabaseRepository) {
+        this.repo = repo;
     }
 
-    private headers(): Record<string, string> {
-        return {
-            apiKey: this.key,
-            Authorization: `Bearer ${this.key}`,
-            "Content-Type": "application/json",
-        };
-    }
-
-    static new() {
-        return new SupabaseTitleRepository(
-            Env.get("SUPABASE_URL"),
-            Env.get("SUPABASE_KEY")
-        );
+    static new(repo: SupabaseRepository) {
+        return new SupabaseTitleRepository(repo);
     }
 
     async fetchAll(): Promise<Result<Title[], string>> {
-        const response = await fetch(`${this.url}titles?select=*&order=title`, {
-            method: "GET",
-            headers: this.headers()
-        });
+        const response = await this.repo.fetch("titles?select=*&order=title");
         if (! response.ok) { return Result.err("could not send request"); }
         
         const supabaseTitles = z
