@@ -25,7 +25,7 @@ export class InMemoryTokenRepository implements TokenRepository {
         }
 
         const index = this.tokens
-            .findIndex(t => t.token.raw !== token.raw);
+            .findIndex(t => t.token.raw === token.raw);
 
         if (index == -1) {
             return Promise.resolve(Result.err("token not found"));
@@ -41,7 +41,7 @@ export class InMemoryTokenRepository implements TokenRepository {
             return Promise.resolve(Result.err("error flag is on"));
         }
 
-        this.tokens.push({ id: id, token });
+        this.tokens.push({ id, token });
 
         return Promise.resolve(Result.ok(undefined));
     }

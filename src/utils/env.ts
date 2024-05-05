@@ -12,6 +12,7 @@ const ENV_KEYS = [
     "SMTP_HOST",
     "SMTP_EMAIL",
     "SMTP_PASSWORD",
+    "ADMIN_EMAIL",
 ] as const;
 
 type EnvKey = typeof ENV_KEYS[number];

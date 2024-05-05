@@ -25,7 +25,7 @@ export class InMemorySalaryRepository implements SalaryRepository {
         }
 
         const index = this.salaries
-            .findIndex(s => s.id.raw !== id.raw);
+            .findIndex(s => s.id.raw === id.raw);
 
         if (index == -1) {
             return Promise.resolve(Result.err("salary not found"));

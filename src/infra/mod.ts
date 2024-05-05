@@ -1,3 +1,4 @@
+export * from "./adminNotifier/mod.ts";
 export * from "./captchaService/mod.ts";
 export * from "./companyRepository/mod.ts"
 export * from "./locationRepository/mod.ts";

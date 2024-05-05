@@ -1,6 +1,6 @@
 import { Context, Hono } from "hono";
 import { serveStatic } from "hono/middleware";
-import { CompanyRepository, LocationRepository, SalaryRepository, TitleRepository, TokenRepository, CaptchaService, TokenSender } from "@infra";
+import { AdminNotifier, CompanyRepository, LocationRepository, SalaryRepository, TitleRepository, TokenRepository, CaptchaService, TokenSender } from "@infra";
 import { Env } from "@utils";
 import * as home from "./www/controllers/home.ts";
 import * as sort from "./www/controllers/sort.ts";
@@ -19,14 +19,15 @@ export function serve(
     titleRepo: TitleRepository,
     captchaService: CaptchaService,
     tokenRepo: TokenRepository,
-    tokenSender: TokenSender
+    tokenSender: TokenSender,
+    adminNotifier: AdminNotifier
 ) {
     const app = new Hono();
 
     if (Env.get("MAINTENANCE") === "true") {
         app.all("*", (c: Context) => maintenance.get(c));
     } else {
-        app.get("/", (c: Context) => home.get(c, salaryRepo, tokenRepo));
+        app.get("/", (c: Context) => home.get(c, salaryRepo, tokenRepo, adminNotifier));
         app.get("/sort", (c: Context) => sort.get(c, salaryRepo));
         app.delete("/notification", (c: Context) => notification.del(c));
         app.get("/api/salaries", (c: Context) => api.fetchSalaries(c, salaryRepo));

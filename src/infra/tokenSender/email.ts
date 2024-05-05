@@ -4,7 +4,7 @@ import { Env, Result } from "@utils";
 import { EmailSender } from "../utils/mod.ts";
 
 export class EmailTokenSender implements TokenSender {
-    private sender: EmailSender
+    private sender: EmailSender;
     private appUrl: string;
 
     private constructor(sender: EmailSender) {
