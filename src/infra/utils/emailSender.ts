@@ -8,7 +8,7 @@ export class EmailSender {
     private password: string;
 
     private constructor() {
-        const email = Email.tryFromString(Env.get("SMTP_EMAIL"));
+        const email = Email.tryFromString(Env.get("SMTP_EMAIL"), { admin: true });
         if (Result.isErr(email)) { throw new Error("SMTP_EMAIL should be an email address"); }
 
         this.host = Env.get("SMTP_HOST");
@@ -47,7 +47,8 @@ export class EmailSender {
                 html: body
             });
             return Result.ok(undefined);
-        } catch {
+        } catch (e: unknown) {
+            console.log(e);
             return Result.err("could not send email");
         } finally {
             await client.close();

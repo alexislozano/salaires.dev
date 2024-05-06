@@ -36,9 +36,10 @@ export const Email = {
     toString(email: Email): string {
         return email.raw;
     },
-    tryFromString(email: string): Result<Email, EmailError> {
+    tryFromString(email: string, { admin = false } = {}): Result<Email, EmailError> {
         const raw = email.trim();
         if (! raw.includes("@")) { return Result.err("not_an_email"); }
+        if (admin) { return Result.ok({ _type: "email", raw }); }
         if (FORBIDDEN_DOMAINS.some(domain => raw.includes(domain))) { return Result.err("not_a_pro_email"); }
         return Result.ok({ _type: "email", raw });
     }

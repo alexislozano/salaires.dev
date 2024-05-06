@@ -8,7 +8,7 @@ export class EmailAdminNotifier implements AdminNotifier {
     private adminEmail: Email;
 
     private constructor(sender: EmailSender) {
-        const adminEmail = Email.tryFromString(Env.get("ADMIN_EMAIL"));
+        const adminEmail = Email.tryFromString(Env.get("ADMIN_EMAIL"), { admin: true });
         if (Result.isErr(adminEmail)) { throw new Error("ADMIN_EMAIL should be an email address"); }
 
         this.sender = sender;
