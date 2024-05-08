@@ -14,6 +14,10 @@ type Props = {
 };
 
 export function Dropdown(props: Props) {
+    const choices = [
+        ...props.required ? [] : [{ key: "", label: "-" }],
+        ...props.choices
+    ];
     return (
         <label
             id={props.name}
@@ -45,7 +49,7 @@ export function Dropdown(props: Props) {
                 hx-post={props.validationUrl}
                 hx-swap="none"
             >
-                { props.choices.map(choice =>
+                { choices.map(choice =>
                     <option
                         value={choice.key}
                         selected={choice.key === props.value}
