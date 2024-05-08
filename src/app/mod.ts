@@ -31,9 +31,6 @@ export function serve(
         app.get("/sort", (c: Context) => sort.get(c, salaryRepo));
         app.delete("/notification", (c: Context) => notification.del(c));
         app.get("/api/salaries", (c: Context) => api.fetchSalaries(c, salaryRepo));
-        app.get("/api/companies", (c: Context) => api.fetchCompanies(c, companyRepo));
-        app.get("/api/locations", (c: Context) => api.fetchLocations(c, locationRepo));
-        app.get("/api/titles", (c: Context) => api.fetchTitles(c, titleRepo));
         app.use('/assets/hero.png', serveStatic({ path: "./assets/hero.png" }))
 
         if (Env.get("NO_INSERT") === "true") {

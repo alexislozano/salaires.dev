@@ -90,6 +90,7 @@ function Header() {
                 gap: "8px"
             }}>
                 <Link label="salaires.dev" url="/" />
+                <Link label="API" url="/api/salaries" />
                 <Link label="Github" url="https://github.com/alexislozano/salaires.dev" />
             </div>
             <Link label={I18n.translate("i_add_my_salary")} url="/insert" />
