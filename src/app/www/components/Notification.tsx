@@ -43,7 +43,7 @@ function display(notification: Maybe<string>) {
 
 function trigger(notification: Maybe<string>) {
     return Maybe.match(notification, {
-        onSome: () => "load delay:2s",
+        onSome: () => "load delay:5s",
         onNone: () => "none"
     });
 }

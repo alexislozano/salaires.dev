@@ -59,7 +59,7 @@ export const I18n = {
             case "send": return "Envoyer";
             case "this_page_does_not_exist": return "Cette page n'existe pas";
             case "insert_is_down_for_now": return "Il n'est plus possible d'ajouter des salaires pour le moment.";
-            case "salary_inserted": return "Le salaire a été ajouté, un email de confirmation a été envoyé";
+            case "salary_inserted": return "Le salaire a été enregistré, cliquez sur le lien qui a été envoyé à l'adresse email renseignée pour le confirmer";
             case "salary_inserting_error": return "Le salaire n'a pas pu être ajouté";
             case "in_years": return "en années";
             case "compensation_help": return "fixe + variable en € / an";
@@ -70,7 +70,7 @@ export const I18n = {
             case "email_should_be_pro": return "L'adresse email doit être professionnelle";
             case "token_confirmation_success": return "Le salaire a bien été confirmé, il sera publié prochainement";
             case "token_confirmation_error": return "Le salaire n'a pas pu être confirmé";
-            case "email_explanation": return "L'adresse email et l'entreprise renseignées doivent correspondre. Sans cela, le salaire ne sera pas publié.";
+            case "email_explanation": return "L'adresse email et l'entreprise renseignées doivent correspondre. De plus, vous devez avoir accès à l'adresse email renseignée pour cliquer sur le lien de confirmation qui y sera envoyé. Sans cela, le salaire ne sera pas publié.";
             case "junior": return "Junior";
             case "mid": return "Mid";
             case "senior": return "Senior";
