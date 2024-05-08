@@ -22,9 +22,7 @@ export function Label(props: Props) {
                 { ! props.required &&
                     <span style={{
                         color: GREY
-                    }}>
-                        - { I18n.translate("optional") }
-                    </span> 
+                    }}> - { I18n.translate("optional") }</span> 
                 }
             </span>
             { Maybe.isSome(props.subLabel) && 
