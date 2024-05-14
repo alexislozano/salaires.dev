@@ -35,7 +35,7 @@ export const SalaryDate = {
     toDate(date: SalaryDate): Date {
         return date.raw;
     },
-    toString(date: SalaryDate): string {
-        return datetime.format(date.raw, "yyyy-MM-dd");
+    toString(date: SalaryDate, format: string): string {
+        return datetime.format(date.raw, format);
     }
 }

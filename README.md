@@ -33,7 +33,7 @@ create table salaries (
     location varchar not null,
     company varchar not null,
     title varchar,
-    date date not null default now(),
+    date timestamp not null default now(),
     compensation numeric not null,
     level varchar,
     company_xp int8,

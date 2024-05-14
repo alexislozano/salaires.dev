@@ -62,7 +62,7 @@ function extract(salary: Salary, key: Key): string {
         });
         case "location": return Location.toString(salary.location);
         case "compensation": return Compensation.toString(salary.compensation);
-        case "date": return SalaryDate.toString(salary.date);
+        case "date": return SalaryDate.toString(salary.date, "yyyy-MM-dd");
         case "level": return Maybe.match(salary.level, {
             onSome: (level) => { switch (level) {
                 case "junior": return I18n.translate("junior");

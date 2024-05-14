@@ -18,7 +18,7 @@ export type Salary = {
     title: Maybe<Title>;
     location: Location;
     compensation: Compensation;
-    date: SalaryDate,
+    date: SalaryDate;
     level: Maybe<Level>;
     companyXp: Maybe<Xp>;
     totalXp: Maybe<Xp>;

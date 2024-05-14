@@ -76,7 +76,7 @@ const SupabaseSalary = {
             title: Maybe.toNullable(Maybe.map(salary.title, Title.toString)),
             location: Location.toString(salary.location),
             compensation: Compensation.toNumber(salary.compensation),
-            date: SalaryDate.toString(salary.date),
+            date: SalaryDate.toString(salary.date, "yyyy-MM-ddTHH:mm:ss"),
             level: Maybe.toNullable(Maybe.map(salary.level, Level.toString)),
             company_xp: Maybe.toNullable(Maybe.map(salary.companyXp, Xp.toNumber)),
             total_xp: Maybe.toNullable(Maybe.map(salary.totalXp, Xp.toNumber)),
