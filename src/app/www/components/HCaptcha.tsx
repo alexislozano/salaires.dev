@@ -23,7 +23,7 @@ export function HCaptcha(props: Props) {
             {html`
                 <script>
                     function onSuccess() {
-                        htmx.trigger(\"h-captcha", "success")
+                        htmx.trigger(".h-captcha", "success")
                     }
                 </script>
             `}
