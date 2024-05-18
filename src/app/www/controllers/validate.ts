@@ -5,7 +5,7 @@ import { ParsedForm, ValidatedForm, formSchema } from "../models/mod.ts";
 import { Maybe, Result } from "@utils";
 import { Notification, Submit } from "../components/mod.ts";
 import { I18n } from "../i18n.ts";
-import { CompanyField, CompanyXpField, CompensationField, EmailField, LevelField, LocationField, TitleField, TotalXpField } from "../fragments/mod.ts";
+import { CompanyField, CompanyXpField, CompensationField, EmailField, LevelField, LocationField, RemoteField, TitleField, TotalXpField } from "../fragments/mod.ts";
 import { fetchCompanies, fetchLocations, fetchTitles } from "@domain";
 
 export async function post(
@@ -59,6 +59,10 @@ async function generateField(
         case "compensation": return CompensationField({ internals: parsedForm.compensation });
         case "companyXp": return CompanyXpField({ internals: parsedForm.companyXp });
         case "totalXp": return TotalXpField({ internals: parsedForm.totalXp });
+        case "remoteVariant":
+        case "remoteDayCount":
+        case "remoteBase":
+        case "remoteLocation": return RemoteField({ internals: parsedForm.remote });
         default: return "";
     }
 }

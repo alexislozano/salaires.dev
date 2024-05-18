@@ -5,7 +5,7 @@ import { Select } from "../components/mod.ts";
 import { I18n } from "../i18n.ts";
 
 type Props = {
-    internals: Internals<Company, CompanyError>;
+    internals: Internals<string, Company, CompanyError>;
     companies: Company[];
 };
 

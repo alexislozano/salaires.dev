@@ -5,7 +5,7 @@ import { Input } from "../components/mod.ts";
 import { I18n } from "../i18n.ts";
 
 type Props = {
-    internals: Internals<Compensation, CompensationError>
+    internals: Internals<string, Compensation, CompensationError>
 };
 
 export function CompensationField(props: Props) {

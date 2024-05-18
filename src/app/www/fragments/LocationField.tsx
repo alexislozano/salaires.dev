@@ -5,7 +5,7 @@ import { Select } from "../components/mod.ts";
 import { I18n } from "../i18n.ts";
 
 type Props = {
-    internals: Internals<Location, LocationError>;
+    internals: Internals<string, Location, LocationError>;
     locations: Location[];
 };
 

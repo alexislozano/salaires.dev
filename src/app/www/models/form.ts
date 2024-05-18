@@ -1,31 +1,31 @@
 import { z } from "zod";
 import { Maybe, Result } from "@utils";
-import { Captcha, Company, CompanyError, Compensation, CompensationError, Email, EmailError, Id, Level, LevelError, Location, LocationError, Salary, SalaryDate, Title, TitleError, Xp, XpError } from "@domain";
+import { Captcha, Company, CompanyError, Compensation, CompensationError, Email, EmailError, Id, Level, LevelError, Location, LocationError, Remote, RemoteError, Salary, SalaryDate, Title, TitleError, Xp, XpError } from "@domain";
 
 export type Parsed<T, E> =
     | { _type: "init" }
     | { _type: "computed", result: Result<T, E> }
     ;
 
-export type Internals<T, E> = {
-    value: string;
+export type Internals<V, T, E> = {
+    value: V;
     parsed: Parsed<T, E>;
 };
 
 export const Internals = {
-    init<T, E>(): Internals<T, E> {
+    init<V, T, E>(value: V): Internals<V, T, E> {
         return {
-            value: "",
+            value,
             parsed: { _type: "init" }
         };
     },
-    computed<T, E>(value: string, result: Result<T, E>): Internals<T, E> {
+    computed<V, T, E>(value: V, result: Result<T, E>): Internals<V, T, E> {
         return {
             value,
             parsed: { _type: "computed", result }
         };
     },
-    extract<T, E>(internals: Internals<T, E>): Result<T, ""> {
+    extract<V, T, E>(internals: Internals<V, T, E>): Result<T, ""> {
         if (internals.parsed._type === "init") { return Result.err(""); }
         if (Result.isErr(internals.parsed.result)) { return Result.err(""); }
         return internals.parsed.result;
@@ -41,19 +41,24 @@ export const formSchema = z.object({
     level: z.string(),
     companyXp: z.string(),
     totalXp: z.string(),
+    remoteVariant: z.string(),
+    remoteDayCount: z.optional(z.string()),
+    remoteBase: z.optional(z.string()),
+    remoteLocation: z.optional(z.string()),
     "h-captcha-response": z.string(),
 });
 
 export type ParsedForm = {
     _type: "parsed_form",
-    email: Internals<Email, EmailError>,
-    company: Internals<Company, CompanyError>,
-    title: Internals<Maybe<Title>, TitleError>,
-    level: Internals<Maybe<Level>, LevelError>,
-    location: Internals<Location, LocationError>,
-    compensation: Internals<Compensation, CompensationError>,
-    companyXp: Internals<Maybe<Xp>, XpError>,
-    totalXp: Internals<Maybe<Xp>, XpError>,
+    email: Internals<string, Email, EmailError>,
+    company: Internals<string, Company, CompanyError>,
+    title: Internals<string, Maybe<Title>, TitleError>,
+    level: Internals<string, Maybe<Level>, LevelError>,
+    location: Internals<string, Location, LocationError>,
+    compensation: Internals<string, Compensation, CompensationError>,
+    companyXp: Internals<string, Maybe<Xp>, XpError>,
+    totalXp: Internals<string, Maybe<Xp>, XpError>,
+    remote: Internals<{ variant: string, dayCount: string, base: string, location: string }, Maybe<Remote>, RemoteError>,
     captcha: Maybe<Captcha>,
 };
 
@@ -61,18 +66,25 @@ export const ParsedForm = {
     init(): ParsedForm {
         return {
             _type: "parsed_form",
-            email: Internals.init(),
-            company: Internals.init(),
-            title: Internals.init(),
-            level: Internals.init(),
-            location: Internals.init(),
-            compensation: Internals.init(),
-            companyXp: Internals.init(),
-            totalXp: Internals.init(),
+            email: Internals.init(""),
+            company: Internals.init(""),
+            title: Internals.init(""),
+            level: Internals.init(""),
+            location: Internals.init(""),
+            compensation: Internals.init(""),
+            companyXp: Internals.init(""),
+            totalXp: Internals.init(""),
+            remote: Internals.init({ variant: "", dayCount: "", base: "", location: "" }),
             captcha: Maybe.none()
         };
     },
     fromUnparsedForm(form: z.infer<typeof formSchema>): ParsedForm {
+        const remoteForm = {
+            variant: form.remoteVariant,
+            dayCount: form.remoteDayCount ?? "",
+            base: form.remoteBase ?? "",
+            location: form.remoteLocation ?? ""
+        };
         return {
             _type: "parsed_form",
             email: Internals.computed(form.email, Email.tryFromString(form.email)),
@@ -95,6 +107,10 @@ export const ParsedForm = {
                 ? Result.ok(Maybe.none())
                 : Result.map(Xp.tryFromString(form.totalXp), Maybe.some)
             ),
+            remote: Internals.computed(remoteForm, form.remoteVariant.length === 0
+                ? Result.ok(Maybe.none())
+                : Result.map(Remote.tryFromForm(remoteForm), Maybe.some)
+            ),
             captcha: Result.match(Captcha.tryFromString(form["h-captcha-response"]), {
                 onOk: (captcha) => Maybe.some(captcha),
                 onErr: () => Maybe.none()
@@ -113,6 +129,7 @@ export type ValidatedForm = {
     compensation: Compensation,
     companyXp: Maybe<Xp>,
     totalXp: Maybe<Xp>,
+    remote: Maybe<Remote>,
     captcha: Captcha,
 };
 
@@ -126,6 +143,7 @@ export const ValidatedForm = {
         const compensation = Internals.extract(form.compensation);
         const companyXp = Internals.extract(form.companyXp);
         const totalXp = Internals.extract(form.totalXp);
+        const remote = Internals.extract(form.remote);
         const captcha = form.captcha;
 
         if (
@@ -137,6 +155,7 @@ export const ValidatedForm = {
             || Result.isErr(compensation)
             || Result.isErr(companyXp)
             || Result.isErr(totalXp)
+            || Result.isErr(remote)
             || Maybe.isNone(captcha)
         ) { return Result.err(""); }
 
@@ -150,6 +169,7 @@ export const ValidatedForm = {
             compensation: Result.unwrap(compensation),
             companyXp: Result.unwrap(companyXp),
             totalXp: Result.unwrap(totalXp),
+            remote: Result.unwrap(remote),
             captcha: Maybe.unwrap(captcha)
         });
     },
@@ -165,6 +185,7 @@ export const ValidatedForm = {
             level: form.level,
             companyXp: form.companyXp,
             totalXp: form.totalXp,
+            remote: form.remote,
             status: "waiting"
         };
     },

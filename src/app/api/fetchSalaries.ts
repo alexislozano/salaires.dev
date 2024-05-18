@@ -20,6 +20,7 @@ export async function fetchSalaries(
             level: Maybe.toNullable(Maybe.map(salary.level, lib.Level.toString)),
             company_xp: Maybe.toNullable(Maybe.map(salary.companyXp, lib.Xp.toNumber)),
             total_xp: Maybe.toNullable(Maybe.map(salary.totalXp, lib.Xp.toNumber)),
+            remote: Maybe.toNullable(salary.remote)
         }))),
         onErr: () => c.json([], 500)
     });

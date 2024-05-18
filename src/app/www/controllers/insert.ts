@@ -35,7 +35,6 @@ export async function post(
 ) {
     const dataResult = await fetch(companyRepo, locationRepo, titleRepo);
     if (Result.isErr(dataResult)) {
-        console.log(Result.unwrapErr(dataResult));
         return c.html(TextOnly({
             text: I18n.translate("salary_inserting_error")
         }));
@@ -46,7 +45,6 @@ export async function post(
     const parsedForm = ParsedForm.fromUnparsedForm(unparsedForm);
     const validatedFormResult = ValidatedForm.tryFromParsedForm(parsedForm);
     if (Result.isErr(validatedFormResult)) {
-        console.log(Result.unwrapErr(validatedFormResult));
         return c.html(Insert({
             form: parsedForm,
             notification: Maybe.some(I18n.translate("salary_inserting_error")),
@@ -64,8 +62,7 @@ export async function post(
             notification: Maybe.some(I18n.translate("salary_inserted")),
             ...data
         }),
-        onErr: (error) => {
-            console.log(error);
+        onErr: () => {
             return Insert({
                 form: parsedForm,
                 notification: Maybe.some(I18n.translate("salary_inserting_error")),

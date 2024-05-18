@@ -5,7 +5,7 @@ import { Dropdown } from "../components/mod.ts";
 import { I18n } from "../i18n.ts";
 
 type Props = {
-    internals: Internals<Maybe<Level>, LevelError>;
+    internals: Internals<string, Maybe<Level>, LevelError>;
 };
 
 export function LevelField(props: Props) {

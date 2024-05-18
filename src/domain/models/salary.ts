@@ -7,6 +7,7 @@ import { Id } from "./id.ts";
 import { Level } from "./level.ts";
 import { Location } from "./location.ts";
 import { Status } from "./status.ts";
+import { Remote } from "./remote.ts";
 import { Title } from "./title.ts";
 import { Xp } from "./xp.ts";
 import { Order } from "@domain";
@@ -22,6 +23,7 @@ export type Salary = {
     level: Maybe<Level>;
     companyXp: Maybe<Xp>;
     totalXp: Maybe<Xp>;
+    remote: Maybe<Remote>;
     status: Status;
 };
 
@@ -36,6 +38,7 @@ export const Salary = {
             case "level": return Maybe.compare(a.level, b.level, order.direction, Level.compare);
             case "companyXp": return Maybe.compare(a.companyXp, b.companyXp, order.direction, Xp.compare);
             case "totalXp": return Maybe.compare(a.totalXp, b.totalXp, order.direction, Xp.compare);
+            case "remote": return Maybe.compare(a.remote, b.remote, order.direction, Remote.compare);
             default: throw new UnreachableCaseError(order.key);
         };
     },
@@ -54,6 +57,7 @@ export const Salary = {
             level: Maybe.none(),
             companyXp: Maybe.none(),
             totalXp: Maybe.none(),
+            remote: Maybe.none(),
             status: Status.generate()
         };
     },
@@ -75,6 +79,7 @@ export const Key = {
             case "level": return "level";
             case "companyXp": return "companyXp";
             case "totalXp": return "totalXp";
+            case "remote": return "remote";
             default: return Key.default();
         }
     }

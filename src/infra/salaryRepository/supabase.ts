@@ -1,5 +1,5 @@
 import { SalaryRepository } from "./mod.ts";
-import { Email, Key, Order } from "@domain";
+import { Email, Key, Order, Remote } from "@domain";
 import { Title } from "@domain";
 import { Location } from "@domain";
 import { Company, Xp } from "@domain";
@@ -63,6 +63,10 @@ const supabaseSalarySchema = z.object({
     level: z.string().nullable(),
     company_xp: z.number().nullable(),
     total_xp: z.number().nullable(),
+    remote_variant: z.string().nullable(),
+    remote_day_count: z.number().nullable(),
+    remote_base: z.string().nullable(),
+    remote_location: z.string().nullable(),
     status: z.string(),
 });
 type SupabaseSalary = z.infer<typeof supabaseSalarySchema>;
@@ -81,7 +85,29 @@ const SupabaseSalary = {
             company_xp: Maybe.toNullable(Maybe.map(salary.companyXp, Xp.toNumber)),
             total_xp: Maybe.toNullable(Maybe.map(salary.totalXp, Xp.toNumber)),
             status: Status.toString(salary.status),
+            ...buildRemoteFields(salary.remote)
         };
+
+        function buildRemoteFields(maybeRemote: Maybe<Remote>): {
+            remote_variant: string | null,
+            remote_day_count: number | null,
+            remote_base: string | null,
+            remote_location: string | null
+        } {
+            if (Maybe.isNone(maybeRemote)) { return {
+                remote_variant: null,
+                remote_day_count: null,
+                remote_base: null,
+                remote_location: null
+            }; }
+            const rawRemote = Remote.toRaw(Maybe.unwrap(maybeRemote));
+            return {
+                remote_variant: rawRemote.variant,
+                remote_day_count: Maybe.toNullable(rawRemote.dayCount),
+                remote_base: Maybe.toNullable(rawRemote.base),
+                remote_location: Maybe.toNullable(rawRemote.location),
+            };
+        }
     },
     tryToSalary(salary: SupabaseSalary): Result<Salary, void> {
         const id = Id.tryFromString(salary.id);
@@ -114,6 +140,21 @@ const SupabaseSalary = {
         const totalXp = tryFromNullable(salary.total_xp, Xp.tryFromNumber);
         if (Result.isErr(totalXp)) { return Result.err(undefined); }
 
+        const remoteVariant = Maybe.fromNullable(salary.remote_variant);
+        const remoteDayCount = Maybe.fromNullable(salary.remote_day_count);
+        const remoteBase = Maybe.fromNullable(salary.remote_base);
+        const remoteLocation = Maybe.fromNullable(salary.remote_location);
+        const remote: Result<Maybe<Remote>, unknown> = Maybe.match(remoteVariant, {
+            onSome: (variant) => Result.map(Remote.tryFromRaw({
+                variant,
+                dayCount: remoteDayCount,
+                base: remoteBase,
+                location: remoteLocation
+            }), Maybe.some),
+            onNone: () => Result.ok(Maybe.none())
+        });
+        if (Result.isErr(remote)) { return Result.err(undefined); }
+
         const status = Status.tryFromString(salary.status);
         if (Result.isErr(status)) { return Result.err(undefined); }
 
@@ -128,6 +169,7 @@ const SupabaseSalary = {
             level: Result.unwrap(level),
             companyXp: Result.unwrap(companyXp),
             totalXp: Result.unwrap(totalXp),
+            remote: Result.unwrap(remote),
             status: Result.unwrap(status),
             date: Result.unwrap(date),
         });
@@ -176,6 +218,7 @@ const SupabaseOrder = {
                 case "level": return "level";
                 case "companyXp": return "company_xp";
                 case "totalXp": return "total_xp";
+                case "remote": return "remote_variant";
             }
         }
     }

@@ -5,7 +5,7 @@ import { Input } from "../components/mod.ts";
 import { I18n } from "../i18n.ts";
 
 type Props = {
-    internals: Internals<Email, EmailError>
+    internals: Internals<string, Email, EmailError>
 };
 
 export function EmailField(props: Props) {

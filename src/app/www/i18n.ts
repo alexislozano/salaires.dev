@@ -38,6 +38,29 @@ export type I18n =
     | "form_fetching_error"
     | "validation_error"
     | "sort_error"
+    | "remote_terms"
+    | "no_remote"
+    | "full_remote"
+    | "partial_remote"
+    | "undefined"
+    | "week"
+    | "month"
+    | "remote_day_count"
+    | "remote_base"
+    | "remote_location"
+    | "days_per"
+    | "remote_variant_is_not_in_the_provided_choices"
+    | "remote_day_count_should_be_positive"
+    | "remote_day_count_should_be_a_number"
+    | "remote_day_count_should_be_an_integer"
+    | "remote_base_should_be_a_week_or_a_month"
+    | "remote_day_count_should_be_between_1_and_7"
+    | "remote_day_count_should_be_between_1_and_31"
+    | "remote_location_should_be_remote_or_office"
+    | "in"
+    | "remote"
+    | "office"
+    ;
 
 export const I18n = {
     translate(i18n: I18n): string {
@@ -79,6 +102,28 @@ export const I18n = {
             case "form_fetching_error": return "Le formulaire n'a pas pu être chargé";
             case "validation_error": return "Une erreur inconnue est survenue lors de la validation du formulaire";
             case "sort_error": return "Une erreur inconnue est survenue lors du tri des salaires";
+            case "remote_terms": return "Modalités de télétravail";
+            case "no_remote": return "Pas de télétravail";
+            case "full_remote": return "Télétravail complet";
+            case "partial_remote": return "Télétravail partiel";
+            case "undefined": return "Non renseigné";
+            case "week": return "semaine";
+            case "month": return "mois";
+            case "remote_day_count": return "Nombre de jours";
+            case "remote_base": return "Base de temps de décompte des jours";
+            case "remote_location": return "Lieu de décompte des jours"
+            case "days_per": return "jour(s) par";
+            case "remote_variant_is_not_in_the_provided_choices": return "La variante de télétravail n'est pas dans les choix proposés";
+            case "remote_day_count_should_be_positive": return "Le nombre de jours doit être positif";
+            case "remote_day_count_should_be_a_number": return "Le nombre de jours doit être un nombre";
+            case "remote_day_count_should_be_an_integer": return "Le nombre de jours doit être entier";
+            case "remote_base_should_be_a_week_or_a_month": return "Le base de décompte des jours doit être la semaine ou le mois";
+            case "remote_day_count_should_be_between_1_and_7": return "Le nombre de jours doit être compris entre 1 et 7";
+            case "remote_day_count_should_be_between_1_and_31": return "Le nombre de jours doit être compris entre 1 et 31";
+            case "remote_location_should_be_remote_or_office": return "Le lieu de décompte des jours doit être présentiel ou télétravail";
+            case "in": return "en";
+            case "remote": return "télétravail";
+            case "office": return "présentiel";
             default: throw new UnreachableCaseError(i18n);
         }
     }

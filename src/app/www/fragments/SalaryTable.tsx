@@ -1,4 +1,4 @@
-import { Company, Compensation, Direction, Key, Location, Order, Salary, SalaryDate, Title, Xp } from "@domain";
+import { Company, Compensation, Direction, Key, Level, Location, Order, Remote, RemoteBase, RemoteLocation, Salary, SalaryDate, Title, Xp } from "@domain";
 import { Maybe } from "@utils";
 import { UnreachableCaseError } from "@utils";
 import { Column, Table } from "../components/mod.ts";
@@ -18,6 +18,7 @@ export function SalaryTable(props: Props) {
         buildColumn("companyXp", props.order),
         buildColumn("totalXp", props.order),
         buildColumn("level", props.order),
+        buildColumn("remote", props.order),
         buildColumn("date", props.order),
     ];
     const extractableSalaries = props.salaries.map(salary => ({
@@ -49,6 +50,7 @@ function buildLabels(key: Key): { label: string, subLabel: string } {
         case "level": return { label: I18n.translate("level"), subLabel: "" };
         case "companyXp": return { label: I18n.translate("company_xp"), subLabel: I18n.translate("in_years") };
         case "totalXp": return { label: I18n.translate("total_xp"), subLabel: I18n.translate("in_years") };
+        case "remote": return { label: I18n.translate("remote_terms"), subLabel: "" };
         default: throw new UnreachableCaseError(key);
     }
 }
@@ -64,12 +66,7 @@ function extract(salary: Salary, key: Key): string {
         case "compensation": return Compensation.toString(salary.compensation);
         case "date": return SalaryDate.toString(salary.date, "yyyy-MM-dd");
         case "level": return Maybe.match(salary.level, {
-            onSome: (level) => { switch (level) {
-                case "junior": return I18n.translate("junior");
-                case "mid": return I18n.translate("mid");
-                case "senior": return I18n.translate("senior");
-                default: throw new UnreachableCaseError(level);
-            } },
+            onSome: (level) => extractLevel(level),
             onNone: () => ""
         });
         case "companyXp": return Maybe.match(salary.companyXp, {
@@ -80,5 +77,45 @@ function extract(salary: Salary, key: Key): string {
             onSome: (totalXp) => Xp.toString(totalXp),
             onNone: () => ""
         });
+        case "remote": return Maybe.match(salary.remote, {
+            onSome: (remote) => extractRemote(remote),
+            onNone: () => ""
+        });
+        default: throw new UnreachableCaseError(key);
     };
+}
+
+function extractLevel(level: Level): string {
+    switch (level) {
+        case "junior": return I18n.translate("junior");
+        case "mid": return I18n.translate("mid");
+        case "senior": return I18n.translate("senior");
+        default: throw new UnreachableCaseError(level);
+    }
+}
+
+function extractRemote(remote: Remote): string {
+    const variant = remote.variant;
+    switch (variant) {
+        case "none": return I18n.translate("no_remote");
+        case "full": return I18n.translate("full_remote");
+        case "partial": return `${ remote.dayCount } ${ I18n.translate("days_per") } ${ extractBase(remote.base) } ${ I18n.translate("in") } ${ extractLocation(remote.location) }`
+        default: throw new UnreachableCaseError(variant);
+    }
+
+    function extractBase(base: RemoteBase): string {
+        switch (base) {
+            case "week": return I18n.translate("week");
+            case "month": return I18n.translate("month");
+            default: throw new UnreachableCaseError(base);
+        }
+    }
+
+    function extractLocation(location: RemoteLocation): string {
+        switch (location) {
+            case "office": return I18n.translate("office");
+            case "remote": return I18n.translate("remote");
+            default: throw new UnreachableCaseError(location);
+        }
+    }
 }

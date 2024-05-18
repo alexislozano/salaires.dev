@@ -7,6 +7,7 @@ export * from "./id.ts";
 export * from "./level.ts";
 export * from "./location.ts";
 export * from "./order.ts";
+export * from "./remote.ts";
 export * from "./salary.ts";
 export * from "./status.ts";
 export * from "./title.ts";

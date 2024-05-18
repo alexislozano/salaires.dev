@@ -47,8 +47,7 @@ export class EmailSender {
                 html: body
             });
             return Result.ok(undefined);
-        } catch (e: unknown) {
-            console.log(e);
+        } catch (_) {
             return Result.err("could not send email");
         } finally {
             await client.close();

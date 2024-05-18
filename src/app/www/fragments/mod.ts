@@ -4,6 +4,7 @@ export * from "./CompensationField.tsx";
 export * from "./EmailField.tsx";
 export * from "./LevelField.tsx";
 export * from "./LocationField.tsx";
+export * from "./RemoteField.tsx";
 export * from "./SalaryTable.tsx";
 export * from "./TitleField.tsx";
 export * from "./TotalXpField.tsx";

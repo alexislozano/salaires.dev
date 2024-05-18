@@ -1,5 +1,5 @@
 import { Maybe } from "@utils";
-import { BLACK, GREY, RED } from "./palette.ts";
+import { BLACK, RED } from "./palette.ts";
 import { Label } from "./Label.tsx";
 
 type Props = {

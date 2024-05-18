@@ -1,7 +1,7 @@
 import { Company, Location, Title } from "@domain";
 import { ParsedForm } from "../models/mod.ts";
 import { Banner, Form, HCaptcha, Submit } from "../components/mod.ts";
-import { CompanyField, CompanyXpField, CompensationField, EmailField, LevelField, LocationField, TitleField, TotalXpField } from "../fragments/mod.ts";
+import { CompanyField, CompanyXpField, CompensationField, EmailField, LevelField, LocationField, RemoteField, TitleField, TotalXpField } from "../fragments/mod.ts";
 import { Template } from "./Template.tsx";
 import { Maybe } from "@utils";
 import { I18n } from "../i18n.ts";
@@ -31,6 +31,7 @@ export function Insert(props: Props) {
                 <CompensationField internals={props.form.compensation} />
                 <CompanyXpField internals={props.form.companyXp} />
                 <TotalXpField internals={props.form.totalXp} />
+                <RemoteField internals={props.form.remote} />
                 <HCaptcha hCaptchaKey={props.hCaptchaKey} validationUrl="/validate" />
                 <Submit disabled label={I18n.translate("send")} />
             </Form>
