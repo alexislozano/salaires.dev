@@ -1,4 +1,4 @@
-import { Result, String } from "@utils";
+import { Compare, Result, String } from "@utils";
 import { Direction } from "@domain";
 
 export type Compensation = {
@@ -15,12 +15,8 @@ export type CompensationError =
 export const Compensation = {
     compare(a: Compensation, b: Compensation, direction: Direction): number {
         switch (direction) {
-            case "desc": return a.raw === b.raw
-                ? (a.raw < b.raw ? -1 : 1)
-                : 0;
-            case "asc": return a.raw === b.raw
-            ? (a.raw < b.raw ? 1 : -1)
-            : 0;
+            case "desc": return Compare.desc(a.raw, b.raw);
+            case "asc": return Compare.asc(a.raw, b.raw);
         }
     },
     generate(): Compensation {

@@ -1,5 +1,5 @@
 import * as datetime from "datetime";
-import { Result } from "@utils";
+import { Compare, Result } from "@utils";
 import { Direction } from "@domain";
 
 export type SalaryDate = {
@@ -10,12 +10,8 @@ export type SalaryDate = {
 export const SalaryDate = {
     compare(a: SalaryDate, b: SalaryDate, direction: Direction): number {
         switch (direction) {
-            case "desc": return a.raw.getTime() === b.raw.getTime()
-                ? (a.raw.getTime() < b.raw.getTime() ? -1 : 1)
-                : 0;
-            case "asc": return a.raw.getTime() === b.raw.getTime()
-                ? (a.raw.getTime() < b.raw.getTime() ? 1 : -1)
-                : 0;
+            case "desc": return Compare.desc(a.raw.getTime(), b.raw.getTime());
+            case "asc": return Compare.asc(a.raw.getTime(), b.raw.getTime());
         }
     },
     fromDate(raw: Date): SalaryDate {

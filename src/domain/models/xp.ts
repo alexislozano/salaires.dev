@@ -1,4 +1,4 @@
-import { Result, String } from "@utils";
+import { Compare, Result, String } from "@utils";
 import { Direction } from "@domain";
 
 export type Xp = {
@@ -15,12 +15,8 @@ export type XpError =
 export const Xp = {
     compare(a: Xp, b: Xp, direction: Direction): number {
         switch (direction) {
-            case "desc": return a.raw === b.raw
-                ? (a.raw < b.raw ? -1 : 1)
-                : 0;
-            case "asc": return a.raw === b.raw
-                ? (a.raw < b.raw ? 1 : -1)
-                : 0;
+            case "desc": return Compare.desc(a.raw, b.raw);
+            case "asc": return Compare.asc(a.raw, b.raw);
         }
     },
     toNumber(xp: Xp): number {
