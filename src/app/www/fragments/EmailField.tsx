@@ -25,7 +25,7 @@ export function EmailField(props: Props) {
 }
 
 function error(parsed: Parsed<Email, EmailError>): Maybe<string> {
-    if (parsed._type === "init") { return Maybe.some(""); }
+    if (parsed._type === "init") { return Maybe.none(); }
     return Result.match(parsed.result, {
         onOk: () => Maybe.none(),
         onErr: (err) => { switch (err) {

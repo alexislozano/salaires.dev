@@ -25,7 +25,7 @@ export function CompensationField(props: Props) {
 }
 
 function error(parsed: Parsed<Compensation, CompensationError>): Maybe<string> {
-    if (parsed._type === "init") { return Maybe.some(""); }
+    if (parsed._type === "init") { return Maybe.none(); }
     return Result.match(parsed.result, {
         onOk: () => Maybe.none(),
         onErr: (err) => { switch (err) {
