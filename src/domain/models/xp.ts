@@ -1,4 +1,4 @@
-import { Result } from "@utils";
+import { Result, String } from "@utils";
 import { Direction } from "@domain";
 
 export type Xp = {
@@ -35,9 +35,8 @@ export const Xp = {
         return Result.ok({ _type: "xp", raw });
     },
     tryFromString(xp: string): Result<Xp, XpError> {
-        const raw = xp.trim();
-        const number = Number(raw);
-        if (Number.isNaN(number)) { return Result.err("not_a_number"); }
-        return Xp.tryFromNumber(number);
+        const result = String.tryToNumber(xp);
+        if (Result.isErr(result)) { return result; }
+        return Xp.tryFromNumber(Result.unwrap(result));
     }
 };

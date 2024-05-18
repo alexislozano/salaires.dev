@@ -1,4 +1,4 @@
-import { Result } from "@utils";
+import { Result, String } from "@utils";
 import { Direction } from "@domain";
 
 export type Compensation = {
@@ -41,9 +41,8 @@ export const Compensation = {
         return Result.ok({ _type: "compensation", raw });
     },
     tryFromString(compensation: string): Result<Compensation, CompensationError> {
-        const raw = compensation.trim();
-        const number = Number(raw);
-        if (Number.isNaN(number)) { return Result.err("not_a_number"); }
-        return Compensation.tryFromNumber(number);
+        const result = String.tryToNumber(compensation);
+        if (Result.isErr(result)) { return result; }
+        return Compensation.tryFromNumber(Result.unwrap(result));
     }
 };
