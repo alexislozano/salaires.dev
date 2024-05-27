@@ -29,6 +29,7 @@ export function RemoteField(props: Props) {
                 subLabel={Maybe.none()}
             />
             <select
+                id="remoteVariant-select"
                 style={{
                     border: `2px solid ${borderColor(error)}`,
                     borderRadius: "4px",
@@ -74,6 +75,7 @@ export function RemoteField(props: Props) {
                     gap: "8px"
                 }}>
                     <input
+                        id="remoteDayCount-input"
                         style={{
                             width: "32px",
                             border: `2px solid ${borderColor(error)}`,
@@ -93,6 +95,7 @@ export function RemoteField(props: Props) {
                     />
                     <span>{ I18n.translate("days_per") }</span>
                     <select
+                        id="remoteBase-select"
                         style={{
                             border: `2px solid ${borderColor(error)}`,
                             borderRadius: "4px",
@@ -122,6 +125,7 @@ export function RemoteField(props: Props) {
                     </select>
                     <span>{ I18n.translate("in") }</span>
                     <select
+                        id="remoteLocation-select"
                         style={{
                             border: `2px solid ${borderColor(error)}`,
                             borderRadius: "4px",
