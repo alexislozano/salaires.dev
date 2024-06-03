@@ -1,5 +1,6 @@
 export * from "./Banner.tsx";
 export * from "./Dropdown.tsx";
+export * from "./Error.tsx";
 export * from "./Form.tsx";
 export * from "./HCaptcha.tsx";
 export * from "./Input.tsx";
@@ -7,5 +8,6 @@ export * from "./Label.tsx";
 export * from "./Link.tsx";
 export * from "./Notification.tsx";
 export * from "./Select.tsx";
+export * from "./Style.tsx";
 export * from "./Submit.tsx";
 export * from "./Table.tsx";

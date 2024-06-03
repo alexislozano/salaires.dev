@@ -1,8 +1,9 @@
 import { Maybe, Result, UnreachableCaseError } from "@utils";
 import { Remote, RemoteError } from "@domain";
 import { Internals, Parsed } from "../models/mod.ts";
+import { Error } from "../components/mod.ts";
 import { Label } from "../components/mod.ts";
-import { BLACK, RED, WHITE } from "../components/palette.ts";
+import { Style } from "../components/mod.ts";
 import { I18n } from "../i18n.ts";
 
 type Props = {
@@ -14,14 +15,12 @@ export function RemoteField(props: Props) {
     const error = buildError(props.internals.parsed);
     return (
         <label
-            id="remote"
             style={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "4px",
                 width: "100%"
             }}
-            hx-swap-oob="true"
         >
             <Label
                 required={false}
@@ -30,15 +29,6 @@ export function RemoteField(props: Props) {
             />
             <select
                 id="remoteVariant-select"
-                style={{
-                    border: `2px solid ${borderColor(error)}`,
-                    borderRadius: "4px",
-                    fontFamily: "inherit",
-                    fontSize: "inherit",
-                    padding: "12px",
-                    fontWeight: "bold",
-                    backgroundColor: WHITE
-                }}
                 name="remoteVariant"
                 hx-post={validationUrl}
                 hx-swap="none"
@@ -68,100 +58,93 @@ export function RemoteField(props: Props) {
                     { I18n.translate("partial_remote") }
                 </option>
             </select>
-            { props.internals.value.variant === "partial" &&
-                <div style={{
+            <div
+                id="remotePartial"
+                style={{
                     display: "flex",
                     alignItems: "baseline", 
                     gap: "8px"
-                }}>
-                    <input
-                        id="remoteDayCount-input"
-                        style={{
-                            width: "32px",
-                            border: `2px solid ${borderColor(error)}`,
-                            borderRadius: "4px",
-                            fontFamily: "inherit",
-                            fontSize: "inherit",
-                            padding: "12px",
-                            fontWeight: "bold"
-                        }}
-                        name="remoteDayCount"
-                        input-mode="numeric"
-                        value={props.internals.value.dayCount}
-                        aria-label={I18n.translate("remote_day_count")}
-                        placeholder="3"
-                        hx-post={validationUrl}
-                        hx-swap="none"
-                    />
-                    <span>{ I18n.translate("days_per") }</span>
-                    <select
-                        id="remoteBase-select"
-                        style={{
-                            border: `2px solid ${borderColor(error)}`,
-                            borderRadius: "4px",
-                            fontFamily: "inherit",
-                            fontSize: "inherit",
-                            padding: "12px",
-                            fontWeight: "bold",
-                            backgroundColor: WHITE
-                        }}
-                        name="remoteBase"
-                        aria-label={I18n.translate("remote_base")}
-                        hx-post={validationUrl}
-                        hx-swap="none"
-                    >
-                        <option
-                            value="week"
-                            selected={props.internals.value.base === "week"}
+                }}
+                hx-swap-oob="true"
+            >
+                { props.internals.value.variant === "partial" &&
+                    <>
+                        <input
+                            id="remoteDayCount-input"
+                            name="remoteDayCount"
+                            input-mode="numeric"
+                            value={props.internals.value.dayCount}
+                            aria-label={I18n.translate("remote_day_count")}
+                            placeholder="3"
+                            hx-post={validationUrl}
+                            hx-swap="none"
+                        />
+                        <span>{ I18n.translate("days_per") }</span>
+                        <select
+                            id="remoteBase-select"
+                            name="remoteBase"
+                            aria-label={I18n.translate("remote_base")}
+                            hx-post={validationUrl}
+                            hx-swap="none"
                         >
-                            { I18n.translate("week") }
-                        </option>
-                        <option
-                            value="month"
-                            selected={props.internals.value.base === "month"}
+                            <option
+                                value="week"
+                                selected={props.internals.value.base === "week"}
+                            >
+                                { I18n.translate("week") }
+                            </option>
+                            <option
+                                value="month"
+                                selected={props.internals.value.base === "month"}
+                            >
+                                { I18n.translate("month") }
+                            </option>
+                        </select>
+                        <span>{ I18n.translate("in") }</span>
+                        <select
+                            id="remoteLocation-select"
+                            name="remoteLocation"
+                            aria-label={I18n.translate("remote_location")}
+                            hx-post={validationUrl}
+                            hx-swap="none"
                         >
-                            { I18n.translate("month") }
-                        </option>
-                    </select>
-                    <span>{ I18n.translate("in") }</span>
-                    <select
-                        id="remoteLocation-select"
-                        style={{
-                            border: `2px solid ${borderColor(error)}`,
-                            borderRadius: "4px",
-                            fontFamily: "inherit",
-                            fontSize: "inherit",
-                            padding: "12px",
-                            fontWeight: "bold",
-                            backgroundColor: WHITE
-                        }}
-                        name="remoteLocation"
-                        aria-label={I18n.translate("remote_location")}
-                        hx-post={validationUrl}
-                        hx-swap="none"
-                    >
-                        <option
-                            value="remote"
-                            selected={props.internals.value.location === "remote"}
-                        >
-                            { I18n.translate("remote") }
-                        </option>
-                        <option
-                            value="office"
-                            selected={props.internals.value.location === "office"}
-                        >
-                            { I18n.translate("office") }
-                        </option>
-                    </select>
-                </div>
-            }
-            { Maybe.isSome(error) &&
-                <span style={{
-                    color: RED
-                }}>
-                    { Maybe.unwrap(error) }
-                </span>
-            }
+                            <option
+                                value="remote"
+                                selected={props.internals.value.location === "remote"}
+                            >
+                                { I18n.translate("remote") }
+                            </option>
+                            <option
+                                value="office"
+                                selected={props.internals.value.location === "office"}
+                            >
+                                { I18n.translate("office") }
+                            </option>
+                        </select>
+                    </>
+                }
+            </div>
+            <Error
+                error={error}
+                name="remote"
+            />
+            <Style
+                error={error}
+                id="remoteVariant-select"
+            />
+            <Style
+                error={error}
+                id="remoteDayCount-input"
+                additionalStyle={[["width", "32px"]]}
+            />
+            <Style
+                error={error}
+                id="remoteBase-select"
+            />
+            <Style
+                error={error}
+                id="remoteLocation-select"
+            />
         </label>
     );
 }
@@ -181,12 +164,5 @@ function buildError(parsed: Parsed<Maybe<Remote>, RemoteError>): Maybe<string> {
             case "remote_location_is_not_remote_or_office": return Maybe.some(I18n.translate("remote_location_should_be_remote_or_office"));
             default: throw new UnreachableCaseError(err);
         } }
-    });
-}
-
-function borderColor(error: Maybe<string>): string {
-    return Maybe.match(error, {
-        onSome: () => RED,
-        onNone: () => BLACK
     });
 }
