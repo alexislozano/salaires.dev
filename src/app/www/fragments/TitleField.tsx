@@ -17,7 +17,7 @@ export function TitleField(props: Props) {
             label={I18n.translate("title")}
             options={props.titles.map(Title.toString)}
             placeholder="Software Engineer"
-            required
+            required={false}
             validationUrl="/validate"
             value={props.internals.value}
         />
