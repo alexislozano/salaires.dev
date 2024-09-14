@@ -1,4 +1,4 @@
-import { assert } from "asserts";
+import { assert } from "assert";
 import { InMemorySalaryRepository, InMemoryTokenRepository, StubAdminNotifier } from "@infra";
 import { confirmToken } from "./confirmToken.ts";
 import { Result } from "@utils";

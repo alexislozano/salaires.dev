@@ -1,4 +1,4 @@
-import { assert } from "asserts";
+import { assert } from "assert";
 import { InMemorySalaryRepository, InMemoryTokenRepository, StubCaptchaService, StubTokenSender } from "@infra";
 import { insertSalary } from "./insertSalary.ts";
 import { Result } from "@utils";

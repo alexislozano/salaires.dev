@@ -1,4 +1,4 @@
-import { assert, assertEquals } from "asserts";
+import { assert, assertEquals } from "assert";
 import { InMemoryTitleRepository } from "@infra";
 import { fetchTitles } from "./fetchTitles.ts";
 import { Result } from "@utils";

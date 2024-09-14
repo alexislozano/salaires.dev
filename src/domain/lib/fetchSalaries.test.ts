@@ -1,4 +1,4 @@
-import { assert, assertEquals } from "asserts";
+import { assert, assertEquals } from "assert";
 import { InMemorySalaryRepository } from "@infra";
 import { Result } from "@utils";
 import { Direction, Key, Salary } from "@domain";

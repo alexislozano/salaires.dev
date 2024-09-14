@@ -9,7 +9,7 @@
         "@infra": "./src/infra/mod.ts",
         "@utils": "./src/utils/mod.ts",
 
-        "asserts": "https://deno.land/std@0.221.0/assert/mod.ts",
+        "assert": "https://deno.land/std@0.221.0/assert/mod.ts",
         "datetime": "https://deno.land/std@0.221.0/datetime/mod.ts",
         "dotenv": "https://deno.land/std@0.221.0/dotenv/mod.ts",
         "uuid": "https://deno.land/std@0.221.0/uuid/mod.ts",
