@@ -16,7 +16,7 @@
 
         "hono": "jsr:@hono/hono@^4.6.1",
         "smtp": "https://deno.land/x/smtp@v0.7.0/mod.ts",
-        "zod": "https://deno.land/x/zod@v3.22.4/mod.ts"
+        "zod": "https://deno.land/x/zod@v3.23.8/mod.ts"
     },
     "compilerOptions": {
         "jsx": "precompile",
