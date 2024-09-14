@@ -1,5 +1,57 @@
 {
   "version": "3",
+  "packages": {
+    "specifiers": {
+      "jsr:@hono/hono@^4.6.1": "jsr:@hono/hono@4.6.1",
+      "jsr:@std/assert@^1.0.5": "jsr:@std/assert@1.0.5",
+      "jsr:@std/bytes@^1.0.2": "jsr:@std/bytes@1.0.2",
+      "jsr:@std/crypto@^1.0.3": "jsr:@std/crypto@1.0.3",
+      "jsr:@std/datetime@^0.225.2": "jsr:@std/datetime@0.225.2",
+      "jsr:@std/dotenv@^0.225.2": "jsr:@std/dotenv@0.225.2",
+      "jsr:@std/internal@^1.0.3": "jsr:@std/internal@1.0.3",
+      "jsr:@std/uuid@^1.0.4": "jsr:@std/uuid@1.0.4",
+      "npm:create-hono": "npm:create-hono@0.13.1"
+    },
+    "jsr": {
+      "@hono/hono@4.6.1": {
+        "integrity": "993704e3a2fa8e965c2fa46c57fc038bd277e781a982d3bf0fb278f6671b195f"
+      },
+      "@std/assert@1.0.5": {
+        "integrity": "e37da8e4033490ce613eec4ac1d78dba1faf5b02a3f6c573a28f15365b9b440f",
+        "dependencies": [
+          "jsr:@std/internal@^1.0.3"
+        ]
+      },
+      "@std/bytes@1.0.2": {
+        "integrity": "fbdee322bbd8c599a6af186a1603b3355e59a5fb1baa139f8f4c3c9a1b3e3d57"
+      },
+      "@std/crypto@1.0.3": {
+        "integrity": "a2a32f51ddef632d299e3879cd027c630dcd4d1d9a5285d6e6788072f4e51e7f"
+      },
+      "@std/datetime@0.225.2": {
+        "integrity": "45f0100554a912cd65f48089ef0a33aa1eb6ea21f08090840b539ab582827eaa"
+      },
+      "@std/dotenv@0.225.2": {
+        "integrity": "e2025dce4de6c7bca21dece8baddd4262b09d5187217e231b033e088e0c4dd23"
+      },
+      "@std/internal@1.0.3": {
+        "integrity": "208e9b94a3d5649bd880e9ca38b885ab7651ab5b5303a56ed25de4755fb7b11e"
+      },
+      "@std/uuid@1.0.4": {
+        "integrity": "f4233149cc8b4753cc3763fd83a7c4101699491f55c7be78dc7b30281946d7a0",
+        "dependencies": [
+          "jsr:@std/bytes@^1.0.2",
+          "jsr:@std/crypto@^1.0.3"
+        ]
+      }
+    },
+    "npm": {
+      "create-hono@0.13.1": {
+        "integrity": "sha512-KsvxqH7j5VNsJXvVRC/jaw3jkFcEp8ckQ9L87YUihbr46Nq7lg0vee/Hgk4x1BEsabAVX4oKkHii3xZSFJntiQ==",
+        "dependencies": {}
+      }
+    }
+  },
   "remote": {
     "https://deno.land/std@0.221.0/assert/_constants.ts": "a271e8ef5a573f1df8e822a6eb9d09df064ad66a4390f21b3e31f820a38e0975",
     "https://deno.land/std@0.221.0/assert/_diff.ts": "4bf42969aa8b1a33aaf23eb8e478b011bfaa31b82d85d2ff4b5c4662d8780d2b",
@@ -193,5 +245,14 @@
     "https://esm.sh/v135/hono@4.2.2/denonext/jsx/jsx-dev-runtime.js": "92d035ce4f1b01e0f290d34e57d00c5d217ce4fc09db278436978314d39da20c",
     "https://esm.sh/v135/hono@4.2.2/denonext/jsx/jsx-runtime.js": "447ef2e11e22fe69811f435194f681f660cc2b1520917d3c3f8f16d5fff226fd",
     "https://esm.sh/v135/hono@4.2.2/denonext/utils/html.js": "d11c0976aa12db6edd54ef96fd2a8cf836e0eb5f8195b63ac7884c9d5646f8f9"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@hono/hono@^4.6.1",
+      "jsr:@std/assert@^1.0.5",
+      "jsr:@std/datetime@^0.225.2",
+      "jsr:@std/dotenv@^0.225.2",
+      "jsr:@std/uuid@^1.0.4"
+    ]
   }
 }

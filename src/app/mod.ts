@@ -1,5 +1,5 @@
 import { Context, Hono } from "hono";
-import { serveStatic } from "hono/middleware";
+import { serveStatic } from "hono/deno";
 import { AdminNotifier, CompanyRepository, LocationRepository, SalaryRepository, TitleRepository, TokenRepository, CaptchaService, TokenSender } from "@infra";
 import { Env } from "@utils";
 import * as home from "./www/controllers/home.ts";

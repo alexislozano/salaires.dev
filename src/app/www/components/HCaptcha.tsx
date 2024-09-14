@@ -1,4 +1,4 @@
-import { html } from "hono/helper";
+import { html } from "hono/html";
 
 type Props = {
     hCaptchaKey: string;

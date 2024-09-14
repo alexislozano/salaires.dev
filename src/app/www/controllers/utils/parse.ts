@@ -1,4 +1,4 @@
-import { HTTPException } from "hono";
+import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 
 export function parse<S extends z.ZodType>(data: unknown, schema: S): z.infer<S> {

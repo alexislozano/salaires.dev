@@ -1,4 +1,4 @@
-import { html } from "hono/helper";
+import { html } from "hono/html";
 import { PropsWithChildren } from "hono/jsx";
 import { Maybe } from "@utils";
 import { BLACK, PEACH, SAND } from "../components/palette.ts";

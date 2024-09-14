@@ -1,4 +1,4 @@
-import { html } from "hono/helper";
+import { html } from "hono/html";
 import { Maybe } from "@utils";
 import { BLACK, RED, WHITE } from "./palette.ts";
 
