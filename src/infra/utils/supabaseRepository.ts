@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { Env } from "@utils";
 import { Result } from "@utils";
 
@@ -29,11 +30,31 @@ export class SupabaseRepository {
         });
     }
 
-    get(url: string): Promise<Response> {
-        return fetch(`${this.baseUrl}${url}`, {
+    async fetchAll<Entity, EntityError, Schema extends z.ZodTypeAny>({ url, schema, convert, service }: {
+        url: string;
+        schema: Schema;
+        convert: (_: z.infer<Schema>) => Result<Entity, EntityError>;
+        service: string;
+    }): Promise<Result<Entity[], string>> {
+        const response = await fetch(`${this.baseUrl}${url}`, {
             method: "GET",
             headers: this.headers()
         });
+        if (! response.ok) { return Result.err(`${service}: could not send request`); }
+        
+        const supabaseEntities = z
+            .array(schema)
+            .safeParse(await response.json());
+        if (! supabaseEntities.success) { return Result.err(`${service}: could not parse json`); }
+
+        const entities: Entity[] = [];
+        for (const supabaseEntity of supabaseEntities.data) {
+            const entity = convert(supabaseEntity);
+            if (Result.isErr(entity)) { return Result.err(`${service}: could not convert to domain`); }
+            entities.push(Result.unwrap(entity));
+        }
+
+        return Result.ok(entities);
     }
 
     patch(url: string, body: unknown): Promise<Response> {

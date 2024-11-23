@@ -2,7 +2,7 @@ import { z } from "zod";
 import { SupabaseRepository } from "../utils/mod.ts";
 import { Result } from "@utils";
 import { TokenRepository } from "./mod.ts";
-import { Id, Token } from "@domain";
+import { Id, IdError, Token } from "@domain";
 
 const SERVICE = "SupabaseTokenRepository";
 
@@ -18,23 +18,20 @@ export class SupabaseTokenRepository implements TokenRepository {
     }
 
     async delete(token: Token): Promise<Result<Id, string>> {
-        const fetchResponse = await this.repo.get(`tokens?token=eq.${Token.toString(token)}`);
-        if (! fetchResponse.ok) { return Result.err("could not send request"); }
+        const salaryIds = await this.repo.fetchAll({
+            url: `tokens?token=eq.${Token.toString(token)}`,
+            schema: supabaseTokenSchema,
+            convert: SupabaseToken.tryToId,
+            service: SERVICE
+        })
+        if (Result.isErr(salaryIds)) { return salaryIds; }
 
-        const supabaseTokens = z
-            .array(supabaseTokenSchema)
-            .safeParse(await fetchResponse.json());
-        if (! supabaseTokens.success) { return Result.err("could not parse json"); }
-
-        const supabaseToken = supabaseTokens.data.pop();
-        if (! supabaseToken) { return Result.err("could not find token"); }
-
-        const salaryId = Id.tryFromString(supabaseToken.salary_id);
-        if (Result.isErr(salaryId)) { return Result.err("could not convert to domain"); }
+        const salaryId = Result.unwrap(salaryIds).pop();
+        if (! salaryId) { return Result.err("could not find token"); }
         
         const deleteResponse = await this.repo.delete(`tokens?token=eq.${Token.toString(token)}`);
         if (! deleteResponse.ok) { return Result.err("could not send request"); }
-        return salaryId;
+        return Result.ok(salaryId);
     }
 
     insert(salaryId: Id, token: Token): Promise<Result<void, string>> {
@@ -58,5 +55,8 @@ const SupabaseToken = {
             salary_id: Id.toString(salaryId),
             token: Token.toString(token),
         };
+    },
+    tryToId(token: SupabaseToken): Result<Id, IdError> {
+        return Id.tryFromString(token.salary_id)
     }
 }

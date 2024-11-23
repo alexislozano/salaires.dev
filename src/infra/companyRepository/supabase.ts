@@ -4,6 +4,8 @@ import { CompanyRepository } from "./mod.ts";
 import { Company, CompanyError } from "@domain";
 import { z } from "zod";
 
+const SERVICE = "SupabaseCompanyRepository";
+
 export class SupabaseCompanyRepository implements CompanyRepository {
     private repo: SupabaseRepository;
 
@@ -15,23 +17,13 @@ export class SupabaseCompanyRepository implements CompanyRepository {
         return new SupabaseCompanyRepository(repo);
     }
 
-    async fetchAll(): Promise<Result<Company[], string>> {
-        const response = await this.repo.get("companies?select=*&order=company");
-        if (! response.ok) { return Result.err("could not send request"); }
-        
-        const supabaseCompanies = z
-            .array(supabaseCompanySchema)
-            .safeParse(await response.json());
-        if (! supabaseCompanies.success) { return Result.err("could not parse json"); }
-
-        const companies: Company[] = [];
-        for (const supabaseCompany of supabaseCompanies.data) {
-            const company = SupabaseCompany.tryToCompany(supabaseCompany);
-            if (Result.isErr(company)) { return Result.err("could not convert to domain"); }
-            companies.push(Result.unwrap(company));
-        }
-
-        return Result.ok(companies);
+    fetchAll(): Promise<Result<Company[], string>> {
+        return this.repo.fetchAll({
+            url: "companies?select=*&order=company",
+            schema: supabaseCompanySchema,
+            convert: SupabaseCompany.tryToCompany,
+            service: SERVICE
+        });
     }
 }
 

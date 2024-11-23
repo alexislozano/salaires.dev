@@ -4,6 +4,8 @@ import { TitleRepository } from "./mod.ts";
 import { Title, TitleError } from "@domain";
 import { z } from "zod";
 
+const SERVICE = "SupabaseTitleRepository";
+
 export class SupabaseTitleRepository implements TitleRepository {
     private repo: SupabaseRepository;
 
@@ -15,23 +17,13 @@ export class SupabaseTitleRepository implements TitleRepository {
         return new SupabaseTitleRepository(repo);
     }
 
-    async fetchAll(): Promise<Result<Title[], string>> {
-        const response = await this.repo.get("titles?select=*&order=title");
-        if (! response.ok) { return Result.err("could not send request"); }
-        
-        const supabaseTitles = z
-            .array(supabaseTitleSchema)
-            .safeParse(await response.json());
-        if (! supabaseTitles.success) { return Result.err("could not parse json"); }
-
-        const titles: Title[] = [];
-        for (const supabaseTitle of supabaseTitles.data) {
-            const title = SupabaseTitle.tryToTitle(supabaseTitle);
-            if (Result.isErr(title)) { return Result.err("could not convert to domain"); }
-            titles.push(Result.unwrap(title));
-        }
-
-        return Result.ok(titles);
+    fetchAll(): Promise<Result<Title[], string>> {
+        return this.repo.fetchAll({
+            url: "titles?select=*&order=title",
+            schema: supabaseTitleSchema,
+            convert: SupabaseTitle.tryToTitle,
+            service: SERVICE
+        });
     }
 }
 

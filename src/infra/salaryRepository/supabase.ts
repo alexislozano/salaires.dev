@@ -29,22 +29,19 @@ export class SupabaseSalaryRepository implements SalaryRepository {
 
     async fetchAll(order: Order<Key>): Promise<Result<Salary[], string>> {
         const supabaseOrder = SupabaseOrder.fromOrder(order);
-        const response = await this.repo.get(`salaries?select=*&status=eq.${Status.toString("published")}&order=${supabaseOrder.key}.${supabaseOrder.direction}`);
-        if (! response.ok) { return Result.err("SupabaseSalaryRepository: could not send request"); }
-        
-        const supabaseSalaries = z
-            .array(supabaseSalarySchema)
-            .safeParse(await response.json());
-        if (! supabaseSalaries.success) { return Result.err("SupabaseSalaryRepository: could not parse json"); }
+        const url = `salaries?select=*&status=eq.${Status.toString("published")}&order=${supabaseOrder.key}.${supabaseOrder.direction}`;
 
-        const salaries: Salary[] = [];
-        for (const supabaseSalary of supabaseSalaries.data) {
-            const salary = SupabaseSalary.tryToSalary(supabaseSalary);
-            if (Result.isErr(salary)) { return Result.err("SupabaseSalaryRepository: could not convert to domain"); }
-            salaries.push(Result.unwrap(salary));
-        }
+        const fetchResult = await this.repo.fetchAll({
+            url,
+            schema: supabaseSalarySchema,
+            convert: SupabaseSalary.tryToSalary,
+            service: SERVICE
+        });
 
-        return Result.ok(salaries.toSorted((a, b) => Salary.compare(a, b, order)));
+        return Result.map(
+            fetchResult,
+            salaries => salaries.toSorted((a, b) => Salary.compare(a, b, order))
+        );
     }
 
     insert(salary: Salary): Promise<Result<void, string>> {
