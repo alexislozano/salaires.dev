@@ -30,12 +30,11 @@ export class SupabaseRepository {
         });
     }
 
-    async fetchAll<Entity, EntityError, Schema extends z.ZodTypeAny>({ url, schema, convert, service }: {
+    private async fetch<Entity, Schema extends z.ZodTypeAny>({ url, schema, service }: {
         url: string;
         schema: Schema;
-        convert: (_: z.infer<Schema>) => Result<Entity, EntityError>;
         service: string;
-    }): Promise<Result<Entity[], string>> {
+    }): Promise<Result<Schema["_output"][], string>> {
         const response = await fetch(`${this.baseUrl}${url}`, {
             method: "GET",
             headers: this.headers()
@@ -47,14 +46,44 @@ export class SupabaseRepository {
             .safeParse(await response.json());
         if (! supabaseEntities.success) { return Result.err(`${service}: could not parse json`); }
 
+        return Result.ok(supabaseEntities.data);
+    }
+
+    async fetchAll<Entity, EntityError, Schema extends z.ZodTypeAny>({ url, schema, convert, service }: {
+        url: string;
+        schema: Schema;
+        convert: (_: z.infer<Schema>) => Result<Entity, EntityError>;
+        service: string;
+    }): Promise<Result<Entity[], string>> {
+        const supabaseEntities = await this.fetch({ url, schema, service });
+        if (Result.isErr(supabaseEntities)) { return supabaseEntities; }
+
         const entities: Entity[] = [];
-        for (const supabaseEntity of supabaseEntities.data) {
+        for (const supabaseEntity of Result.unwrap(supabaseEntities)) {
             const entity = convert(supabaseEntity);
             if (Result.isErr(entity)) { return Result.err(`${service}: could not convert to domain`); }
             entities.push(Result.unwrap(entity));
         }
 
         return Result.ok(entities);
+    }
+
+    async fetchOne<Entity, EntityError, Schema extends z.ZodTypeAny>({ url, schema, convert, service }: {
+        url: string;
+        schema: Schema;
+        convert: (_: z.infer<Schema>) => Result<Entity, EntityError>;
+        service: string;
+    }): Promise<Result<Entity, string>> {
+        const supabaseEntities = await this.fetch({ url, schema, service });
+        if (Result.isErr(supabaseEntities)) { return supabaseEntities; }
+
+        const supabaseEntity = Result.unwrap(supabaseEntities).pop();
+        if (! supabaseEntity) { return Result.err(`${service}: could not extract first element`); }
+
+        const entity = convert(supabaseEntity);
+        if (Result.isErr(entity)) { return Result.err(`${service}: could not convert to domain`); }
+            
+        return entity;
     }
 
     patch(url: string, body: unknown): Promise<Response> {

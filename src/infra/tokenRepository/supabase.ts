@@ -18,20 +18,17 @@ export class SupabaseTokenRepository implements TokenRepository {
     }
 
     async delete(token: Token): Promise<Result<Id, string>> {
-        const salaryIds = await this.repo.fetchAll({
+        const salaryId = await this.repo.fetchOne({
             url: `tokens?token=eq.${Token.toString(token)}`,
             schema: supabaseTokenSchema,
             convert: SupabaseToken.tryToId,
             service: SERVICE
         })
-        if (Result.isErr(salaryIds)) { return salaryIds; }
-
-        const salaryId = Result.unwrap(salaryIds).pop();
-        if (! salaryId) { return Result.err("could not find token"); }
+        if (Result.isErr(salaryId)) { return salaryId; }
         
         const deleteResponse = await this.repo.delete(`tokens?token=eq.${Token.toString(token)}`);
         if (! deleteResponse.ok) { return Result.err("could not send request"); }
-        return Result.ok(salaryId);
+        return salaryId;
     }
 
     insert(salaryId: Id, token: Token): Promise<Result<void, string>> {
