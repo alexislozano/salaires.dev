@@ -23,11 +23,16 @@ export class SupabaseRepository {
         return new SupabaseRepository();
     }
 
-    delete(url: string): Promise<Response> {
-        return fetch(`${this.baseUrl}${url}`, {
+    async delete({ url, service }: {
+        url: string;
+        service: string;
+    }): Promise<Result<void, string>> {
+        const response = await fetch(`${this.baseUrl}${url}`, {
             method: "DELETE",
             headers: this.headers()
         });
+        if (! response.ok) { return Result.err(`${service}: could not send request`); }
+        return Result.ok(undefined);
     }
 
     private async fetch<Entity, Schema extends z.ZodTypeAny>({ url, schema, service }: {

@@ -26,8 +26,12 @@ export class SupabaseTokenRepository implements TokenRepository {
         })
         if (Result.isErr(salaryId)) { return salaryId; }
         
-        const deleteResponse = await this.repo.delete(`tokens?token=eq.${Token.toString(token)}`);
-        if (! deleteResponse.ok) { return Result.err("could not send request"); }
+        const deleteResult = await this.repo.delete({
+            url: `tokens?token=eq.${Token.toString(token)}`,
+            service: SERVICE
+        });
+        if (Result.isErr(deleteResult)) { return deleteResult; }
+
         return salaryId;
     }
 
