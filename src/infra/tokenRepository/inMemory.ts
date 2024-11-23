@@ -1,14 +1,13 @@
+import { InMemoryRepository } from "../utils/mod.ts";
 import { TokenRepository } from "./mod.ts";
 import { Id, Token } from "@domain";
 import { Result } from "@utils";
 
 export class InMemoryTokenRepository implements TokenRepository {
-    private tokens: { id: Id, token: Token }[];
-    private error: boolean;
+    private repo: InMemoryRepository<{ id: Id, token: Token }>;
 
     private constructor(tokens: { id: Id, token: Token }[], error: boolean) {
-        this.tokens = tokens;
-        this.error = error;
+        this.repo = new InMemoryRepository(tokens, error);
     }
 
     static new() {
@@ -19,30 +18,16 @@ export class InMemoryTokenRepository implements TokenRepository {
         return new InMemoryTokenRepository([], true);
     }
 
-    delete(token: Token): Promise<Result<Id, string>> {
-        if (this.error) {
-            return Promise.resolve(Result.err("error flag is on"));
-        }
-
-        const index = this.tokens
-            .findIndex(t => t.token.raw === token.raw);
-
-        if (index == -1) {
-            return Promise.resolve(Result.err("token not found"));
-        }
-
-        const [{ id }] = this.tokens.splice(index, 1);
-
-        return Promise.resolve(Result.ok(id));
+    async delete(token: Token): Promise<Result<Id, string>> {
+        const deleteResult = await this.repo.delete({ filter: t => t.token.raw === token.raw });
+        
+        return Result.map(
+            deleteResult,
+            ({ id }) => id
+        );
     }
 
     insert(id: Id, token: Token): Promise<Result<void, string>> {
-        if (this.error) {
-            return Promise.resolve(Result.err("error flag is on"));
-        }
-
-        this.tokens.push({ id, token });
-
-        return Promise.resolve(Result.ok(undefined));
+        return this.repo.insert({ id, token });
     }
 }

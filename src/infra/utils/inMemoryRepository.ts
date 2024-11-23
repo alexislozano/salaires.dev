@@ -45,4 +45,22 @@ export class InMemoryRepository<Entity> {
 
         return Promise.resolve(Result.ok(undefined));
     }
+
+    delete({ filter }: {
+        filter: (_: Entity) => boolean
+    }): Promise<Result<Entity, string>> {
+        if (this.error) {
+            return Promise.resolve(Result.err("error flag is on"));
+        }
+
+        const index = this.entities.findIndex(filter);
+
+        if (index == -1) {
+            return Promise.resolve(Result.err("salary not found"));
+        }
+
+        const [entity] = this.entities.splice(index, 1);
+
+        return Promise.resolve(Result.ok(entity))
+    }
 }
