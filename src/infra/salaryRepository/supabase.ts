@@ -21,10 +21,12 @@ export class SupabaseSalaryRepository implements SalaryRepository {
         return new SupabaseSalaryRepository(repo);
     }
 
-    async confirm(id: Id): Promise<Result<void, string>> {
-        const response = await this.repo.patch(`salaries?id=eq.${Id.toString(id)}`, SupabaseStatus.fromStatus("confirmed"));
-        if (! response.ok) { return Result.err("SupabaseSalaryRepository: could not send request"); }
-        return Result.ok(undefined);
+    confirm(id: Id): Promise<Result<void, string>> {
+        return this.repo.patch({
+            url: `salaries?id=eq.${Id.toString(id)}`,
+            body: SupabaseStatus.fromStatus("confirmed"),
+            service: SERVICE
+        });
     }
 
     async fetchAll(order: Order<Key>): Promise<Result<Salary[], string>> {

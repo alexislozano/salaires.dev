@@ -91,12 +91,18 @@ export class SupabaseRepository {
         return entity;
     }
 
-    patch(url: string, body: unknown): Promise<Response> {
-        return fetch(`${this.baseUrl}${url}`, {
+    async patch({ url, body, service }: {
+        url: string;
+        body: unknown;
+        service: string;
+    }): Promise<Result<void, string>> {
+        const response = await fetch(`${this.baseUrl}${url}`, {
             method: "PATCH",
             headers: this.headers(),
             body: JSON.stringify(body)
         });
+        if (! response.ok) { return Result.err(`${service}: could not send request`); }
+        return Result.ok(undefined);
     }
 
     async insert({ url, body, service }: {
