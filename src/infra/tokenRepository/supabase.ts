@@ -4,6 +4,8 @@ import { Result } from "@utils";
 import { TokenRepository } from "./mod.ts";
 import { Id, Token } from "@domain";
 
+const SERVICE = "SupabaseTokenRepository";
+
 export class SupabaseTokenRepository implements TokenRepository {
     private repo: SupabaseRepository;
 
@@ -35,12 +37,13 @@ export class SupabaseTokenRepository implements TokenRepository {
         return salaryId;
     }
 
-    async insert(salaryId: Id, token: Token): Promise<Result<void, string>> {
-        const response = await this.repo.post("tokens", SupabaseToken.fromSalaryIdAndToken(salaryId, token));
-        if (! response.ok) { return Result.err("could not send request"); }
-        return Result.ok(undefined);
+    insert(salaryId: Id, token: Token): Promise<Result<void, string>> {
+        return this.repo.insert({
+            url: "tokens",
+            body: SupabaseToken.fromSalaryIdAndToken(salaryId, token),
+            service: SERVICE
+        });
     }
-
 }
 
 const supabaseTokenSchema = z.object({

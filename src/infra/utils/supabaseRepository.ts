@@ -1,4 +1,5 @@
 import { Env } from "@utils";
+import { Result } from "@utils";
 
 export class SupabaseRepository {
     private baseUrl: string;
@@ -43,11 +44,17 @@ export class SupabaseRepository {
         });
     }
 
-    post(url: string, body: unknown): Promise<Response> {
-        return fetch(`${this.baseUrl}${url}`, {
+    async insert({ url, body, service }: {
+        url: string;
+        body: unknown;
+        service: unknown;
+    }): Promise<Result<void, string>> {
+        const response = await fetch(`${this.baseUrl}${url}`, {
             method: "POST",
             headers: this.headers(),
             body: JSON.stringify(body)
         });
+        if (! response.ok) { return Result.err(`${service}: could not send request`); }
+        return Result.ok(undefined);
     }
 }

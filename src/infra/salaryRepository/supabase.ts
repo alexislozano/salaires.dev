@@ -8,6 +8,8 @@ import { Maybe, Result } from "@utils";
 import { SupabaseRepository } from "../utils/mod.ts";
 import { z } from "zod";
 
+const SERVICE = "SupabaseSalaryRepository";
+
 export class SupabaseSalaryRepository implements SalaryRepository {
     private repo: SupabaseRepository;
 
@@ -45,10 +47,12 @@ export class SupabaseSalaryRepository implements SalaryRepository {
         return Result.ok(salaries.toSorted((a, b) => Salary.compare(a, b, order)));
     }
 
-    async insert(salary: Salary): Promise<Result<void, string>> {
-        const response = await this.repo.post("salaries", SupabaseSalary.fromSalary(salary));
-        if (! response.ok) { return Result.err("SupabaseSalaryRepository: could not send request"); }
-        return Result.ok(undefined);
+    insert(salary: Salary): Promise<Result<void, string>> {
+        return this.repo.insert({
+            url: "salaries",
+            body: SupabaseSalary.fromSalary(salary),
+            service: SERVICE
+        });
     }
 }
 
