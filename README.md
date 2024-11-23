@@ -39,6 +39,10 @@ create table salaries (
     company_xp int8,
     total_xp int8,
     status varchar not null,
+    remote_variant text,
+    remote_location text,
+    remote_day_count int2,
+    remote_base text
 );
 
 alter table salaries enable row level security;
