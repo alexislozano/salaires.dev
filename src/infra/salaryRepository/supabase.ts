@@ -27,7 +27,7 @@ export class SupabaseSalaryRepository implements SalaryRepository {
 
     async fetchAll(order: Order<Key>): Promise<Result<Salary[], string>> {
         const supabaseOrder = SupabaseOrder.fromOrder(order);
-        const response = await this.repo.fetch(`salaries?select=*&status=eq.${Status.toString("published")}&order=${supabaseOrder.key}.${supabaseOrder.direction}`);
+        const response = await this.repo.get(`salaries?select=*&status=eq.${Status.toString("published")}&order=${supabaseOrder.key}.${supabaseOrder.direction}`);
         if (! response.ok) { return Result.err("SupabaseSalaryRepository: could not send request"); }
         
         const supabaseSalaries = z

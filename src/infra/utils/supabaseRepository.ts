@@ -28,7 +28,7 @@ export class SupabaseRepository {
         });
     }
 
-    fetch(url: string): Promise<Response> {
+    get(url: string): Promise<Response> {
         return fetch(`${this.baseUrl}${url}`, {
             method: "GET",
             headers: this.headers()

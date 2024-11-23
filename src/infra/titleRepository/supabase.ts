@@ -16,7 +16,7 @@ export class SupabaseTitleRepository implements TitleRepository {
     }
 
     async fetchAll(): Promise<Result<Title[], string>> {
-        const response = await this.repo.fetch("titles?select=*&order=title");
+        const response = await this.repo.get("titles?select=*&order=title");
         if (! response.ok) { return Result.err("could not send request"); }
         
         const supabaseTitles = z

@@ -16,7 +16,7 @@ export class SupabaseTokenRepository implements TokenRepository {
     }
 
     async delete(token: Token): Promise<Result<Id, string>> {
-        const fetchResponse = await this.repo.fetch(`tokens?token=eq.${Token.toString(token)}`);
+        const fetchResponse = await this.repo.get(`tokens?token=eq.${Token.toString(token)}`);
         if (! fetchResponse.ok) { return Result.err("could not send request"); }
 
         const supabaseTokens = z

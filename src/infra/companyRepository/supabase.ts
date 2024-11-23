@@ -16,7 +16,7 @@ export class SupabaseCompanyRepository implements CompanyRepository {
     }
 
     async fetchAll(): Promise<Result<Company[], string>> {
-        const response = await this.repo.fetch("companies?select=*&order=company");
+        const response = await this.repo.get("companies?select=*&order=company");
         if (! response.ok) { return Result.err("could not send request"); }
         
         const supabaseCompanies = z

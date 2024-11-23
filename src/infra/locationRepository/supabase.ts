@@ -16,7 +16,7 @@ export class SupabaseLocationRepository implements LocationRepository {
     }
 
     async fetchAll(): Promise<Result<Location[], string>> {
-        const response = await this.repo.fetch("locations?select=*&order=location");
+        const response = await this.repo.get("locations?select=*&order=location");
         if (! response.ok) { return Result.err("could not send request"); }
         
         const supabaseLocations = z
