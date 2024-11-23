@@ -1,14 +1,13 @@
+import { InMemoryRepository } from "../utils/mod.ts";
 import { SalaryRepository } from "./mod.ts";
 import { Id, Key, Order, Salary } from "@domain";
 import { Result } from "@utils";
 
 export class InMemorySalaryRepository implements SalaryRepository {
-    private salaries: Salary[];
-    private error: boolean;
+    private repo: InMemoryRepository<Salary>;
 
     private constructor(salaries: Salary[], error: boolean) {
-        this.salaries = salaries;
-        this.error = error;
+        this.repo = new InMemoryRepository(salaries, error);
     }
 
     static new() {
@@ -20,39 +19,22 @@ export class InMemorySalaryRepository implements SalaryRepository {
     }
 
     confirm(id: Id): Promise<Result<void, string>> {
-        if (this.error) {
-            return Promise.resolve(Result.err("error flag is on"));
-        }
-
-        const index = this.salaries
-            .findIndex(s => s.id.raw === id.raw);
-
-        if (index == -1) {
-            return Promise.resolve(Result.err("salary not found"));
-        }
-
-        this.salaries[index] = Salary.confirm(this.salaries[index]);
-
-        return Promise.resolve(Result.ok(undefined));
+        return this.repo.patch({
+            filter: s => s.id.raw === id.raw,
+            patch: Salary.confirm
+        });
     }
 
-    fetchAll(order: Order<Key>): Promise<Result<Salary[], string>> {
-        if (this.error) {
-            return Promise.resolve(Result.err("error flag is on"));
-        }
+    async fetchAll(order: Order<Key>): Promise<Result<Salary[], string>> {
+        const fetchResult = await this.repo.fetchAll();
 
-        const salaries = this.salaries.toSorted((a, b) => Salary.compare(a, b, order));
-
-        return Promise.resolve(Result.ok(salaries));
+        return Result.map(
+            fetchResult,
+            salaries => salaries.toSorted((a, b) => Salary.compare(a, b, order))
+        )
     }
 
     insert(salary: Salary): Promise<Result<void, string>> {
-        if (this.error) {
-            return Promise.resolve(Result.err("error flag is on"));
-        }
-
-        this.salaries.push(salary);
-
-        return Promise.resolve(Result.ok(undefined));
+        return this.repo.insert(salary);
     }
 }
