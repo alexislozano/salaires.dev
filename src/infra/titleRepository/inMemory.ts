@@ -1,14 +1,13 @@
+import { InMemoryRepository } from "../utils/mod.ts";
 import { TitleRepository } from "./mod.ts";
 import { Title } from "@domain";
 import { Result } from "@utils";
 
 export class InMemoryTitleRepository implements TitleRepository {
-    private titles: Title[];
-    private error: boolean;
+    private repo: InMemoryRepository<Title>;
 
     private constructor(titles: Title[], error: boolean) {
-        this.titles = titles;
-        this.error = error;
+        this.repo = new InMemoryRepository(titles, error);
     }
 
     static new() {
@@ -20,14 +19,10 @@ export class InMemoryTitleRepository implements TitleRepository {
     }
 
     insert(title: Title) {
-        this.titles.push(title);
+        this.repo.insert(title);
     }
 
     fetchAll(): Promise<Result<Title[], string>> {
-        if (this.error) {
-            return Promise.resolve(Result.err("error flag is on"));
-        }
-
-        return Promise.resolve(Result.ok(this.titles));
+        return this.repo.fetchAll();
     }
 }

@@ -1,14 +1,13 @@
+import { InMemoryRepository } from "../utils/mod.ts";
 import { LocationRepository } from "./mod.ts";
 import { Location } from "@domain";
 import { Result } from "@utils";
 
 export class InMemoryLocationRepository implements LocationRepository {
-    private locations: Location[];
-    private error: boolean;
+    private repo: InMemoryRepository<Location>;
 
     private constructor(locations: Location[], error: boolean) {
-        this.locations = locations;
-        this.error = error;
+        this.repo = new InMemoryRepository(locations, error);
     }
 
     static new() {
@@ -20,14 +19,10 @@ export class InMemoryLocationRepository implements LocationRepository {
     }
 
     insert(location: Location) {
-        this.locations.push(location);
+        this.repo.insert(location);
     }
 
     fetchAll(): Promise<Result<Location[], string>> {
-        if (this.error) {
-            return Promise.resolve(Result.err("error flag is on"));
-        }
-
-        return Promise.resolve(Result.ok(this.locations));
+        return this.repo.fetchAll();
     }
 }
