@@ -29,7 +29,7 @@ Pour créer les tables et vues dont salaires.dev a besoin, vous pouvez lancer le
 ```sql
 create table salaries (
     id uuid primary key not null default uuid_generate_v4(),
-    email varchar not null,
+    email varchar,
     location varchar not null,
     company varchar not null,
     title varchar,

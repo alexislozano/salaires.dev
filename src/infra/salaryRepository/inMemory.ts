@@ -1,6 +1,6 @@
 import { InMemoryRepository } from "../utils/mod.ts";
 import { SalaryRepository } from "./mod.ts";
-import { Id, Key, Order, Salary } from "@domain";
+import { ConfirmedSalary, Id, Key, Order, PublishedSalary, Salary, WaitingSalary } from "@domain";
 import { Result } from "@utils";
 
 export class InMemorySalaryRepository implements SalaryRepository {
@@ -20,21 +20,39 @@ export class InMemorySalaryRepository implements SalaryRepository {
 
     confirm(id: Id): Promise<Result<void, string>> {
         return this.repo.patch({
-            filter: s => s.id.raw === id.raw,
+            filter,
             patch: Salary.confirm
         });
+
+        function filter(s: Salary): s is WaitingSalary {
+            return Salary.isWaiting(s) && s.id.raw === id.raw;
+        }
     }
 
-    async fetchAll(order: Order<Key>): Promise<Result<Salary[], string>> {
+    async fetchAll(order: Order<Key>): Promise<Result<PublishedSalary[], string>> {
         const fetchResult = await this.repo.fetchAll();
 
         return Result.map(
             fetchResult,
-            salaries => salaries.toSorted((a, b) => Salary.compare(a, b, order))
+            salaries => salaries
+                .filter(Salary.isPublished)
+                .toSorted((a, b) => Salary.compare(a, b, order)
+            )
         )
     }
 
     insert(salary: Salary): Promise<Result<void, string>> {
         return this.repo.insert(salary);
+    }
+
+    publish(id: Id): Promise<Result<void, string>> {
+        return this.repo.patch({
+            filter,
+            patch: Salary.publish
+        });
+
+        function filter(s: Salary): s is ConfirmedSalary {
+            return Salary.isConfirmed(s) && s.id.raw === id.raw;
+        }
     }
 }

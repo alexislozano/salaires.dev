@@ -27,9 +27,9 @@ export class InMemoryRepository<Entity> {
         return Promise.resolve(Result.ok(this.entities));
     }
 
-    patch({ filter, patch }: {
-        filter: (_: Entity) => boolean;
-        patch: (_: Entity) => Entity;
+    patch<T extends Entity>({ filter, patch }: {
+        filter: (t: Entity) => t is T;
+        patch: (_: T) => Entity;
     }): Promise<Result<undefined, string>> {
         if (this.error) {
             return Promise.resolve(Result.err("error flag is on"));
@@ -41,7 +41,7 @@ export class InMemoryRepository<Entity> {
             return Promise.resolve(Result.err("salary not found"));
         }
 
-        this.entities[index] = patch(this.entities[index]);
+        this.entities[index] = patch(this.entities[index] as T);
 
         return Promise.resolve(Result.ok(undefined));
     }

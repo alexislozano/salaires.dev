@@ -1,10 +1,10 @@
-import { Key, Order, Salary } from "@domain";
+import { Key, Order, PublishedSalary } from "@domain";
 import { Maybe } from "@utils";
 import { Template } from "./Template.tsx";
 import { SalaryTable } from "../fragments/mod.ts";
 
 type Props = {
-    salaries: Salary[],
+    salaries: PublishedSalary[],
     order: Order<Key>,
     notification: Maybe<string>
 };

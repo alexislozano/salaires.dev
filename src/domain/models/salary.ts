@@ -6,15 +6,13 @@ import { Email } from "./email.ts";
 import { Id } from "./id.ts";
 import { Level } from "./level.ts";
 import { Location } from "./location.ts";
-import { Status } from "./status.ts";
 import { Remote } from "./remote.ts";
 import { Title } from "./title.ts";
 import { Xp } from "./xp.ts";
 import { Order } from "@domain";
 
-export type Salary = {
+type SalaryBase = {
     id: Id;
-    email: Email;
     company: Company;
     title: Maybe<Title>;
     location: Location;
@@ -24,8 +22,23 @@ export type Salary = {
     companyXp: Maybe<Xp>;
     totalXp: Maybe<Xp>;
     remote: Maybe<Remote>;
-    status: Status;
 };
+
+export type WaitingSalary = SalaryBase & {
+    email: Email;
+    status: "waiting";
+};
+
+export type ConfirmedSalary = SalaryBase & {
+    email: Email;
+    status: "confirmed";
+};
+
+export type PublishedSalary = SalaryBase & {
+    status: "published";
+}
+
+export type Salary = WaitingSalary | ConfirmedSalary | PublishedSalary;
 
 export const Salary = {
     compare(a: Salary, b: Salary, order: Order<Key>): number {
@@ -42,10 +55,10 @@ export const Salary = {
             default: throw new UnreachableCaseError(order.key);
         };
     },
-    confirm(salary: Salary): Salary {
+    confirm(salary: WaitingSalary): ConfirmedSalary {
         return { ...salary, status: "confirmed" };
     },
-    generate(): Salary {
+    generate(): WaitingSalary {
         return {
             id: Id.generate(),
             email: Email.generate(),
@@ -58,8 +71,20 @@ export const Salary = {
             companyXp: Maybe.none(),
             totalXp: Maybe.none(),
             remote: Maybe.none(),
-            status: Status.generate()
+            status: "waiting"
         };
+    },
+    isConfirmed(salary: Salary): salary is ConfirmedSalary {
+        return salary.status === "confirmed"
+    },
+    isPublished(salary: Salary): salary is PublishedSalary {
+        return salary.status === "published"
+    },
+    isWaiting(salary: Salary): salary is WaitingSalary {
+        return salary.status === "waiting"
+    },
+    publish(salary: ConfirmedSalary): PublishedSalary {
+        return { ...salary, status: "published" };
     },
 };
 

@@ -8,9 +8,6 @@ export const Status = {
     all(): Readonly<Status[]> {
         return ALL_STATUSES;
     },
-    generate(): Status {
-        return "waiting";
-    },
     toString(status: Status): string {
         switch (status) {
             case "waiting": return "WAITING";

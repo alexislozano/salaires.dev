@@ -5,7 +5,7 @@ import {
     TokenSender
 } from "@infra";
 import { Result } from "@utils";
-import { Captcha, Salary, Token } from "../models/mod.ts";
+import { Captcha, WaitingSalary, Token } from "../models/mod.ts";
 
 export async function insertSalary(
     captchaService: CaptchaService,
@@ -13,7 +13,7 @@ export async function insertSalary(
     tokenRepository: TokenRepository,
     tokenSender: TokenSender,
     captcha: Captcha,
-    salary: Salary,
+    salary: WaitingSalary,
 ): Promise<Result<void, string>> {
     const validationResult = await captchaService.validate(captcha);
     if (Result.isErr(validationResult)) { return validationResult; }

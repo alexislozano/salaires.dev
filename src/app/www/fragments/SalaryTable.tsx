@@ -1,11 +1,11 @@
-import { Company, Compensation, Direction, Key, Level, Location, Order, Remote, RemoteBase, RemoteLocation, Salary, SalaryDate, Title, Xp } from "@domain";
+import { Company, Compensation, Direction, Key, Level, Location, Order, PublishedSalary, Remote, RemoteBase, RemoteLocation, SalaryDate, Title, Xp } from "@domain";
 import { Maybe } from "@utils";
 import { UnreachableCaseError } from "@utils";
 import { Column, Table } from "../components/mod.ts";
 import { I18n } from "../i18n.ts";
 
 type Props = {
-    salaries: Salary[];
+    salaries: PublishedSalary[];
     order: Order<Key>;
 };
 
@@ -55,7 +55,7 @@ function buildLabels(key: Key): { label: string, subLabel: string } {
     }
 }
 
-function extract(salary: Salary, key: Key): string {
+function extract(salary: PublishedSalary, key: Key): string {
     switch (key) {
         case "company": return Company.toString(salary.company);
         case "title": return Maybe.match(salary.title, {

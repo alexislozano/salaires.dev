@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Maybe, Result } from "@utils";
-import { Captcha, Company, CompanyError, Compensation, CompensationError, Email, EmailError, Id, Level, LevelError, Location, LocationError, Remote, RemoteError, Salary, SalaryDate, Title, TitleError, Xp, XpError } from "@domain";
+import { Captcha, Company, CompanyError, Compensation, CompensationError, Email, EmailError, Id, Level, LevelError, Location, LocationError, Remote, RemoteError, SalaryDate, Title, TitleError, WaitingSalary, Xp, XpError } from "@domain";
 
 export type Parsed<T, E> =
     | { _type: "init" }
@@ -173,7 +173,7 @@ export const ValidatedForm = {
             captcha: Maybe.unwrap(captcha)
         });
     },
-    toSalary(form: ValidatedForm): Salary {
+    toSalary(form: ValidatedForm): WaitingSalary {
         return {
             id: Id.generate(),
             email: form.email,

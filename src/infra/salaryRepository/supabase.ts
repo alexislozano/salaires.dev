@@ -1,9 +1,22 @@
 import { SalaryRepository } from "./mod.ts";
-import { Email, Key, Order, Remote } from "@domain";
-import { Title } from "@domain";
-import { Location } from "@domain";
-import { Company, Xp } from "@domain";
-import { Id, Salary, Status, SalaryDate, Compensation, Level } from "@domain";
+import {
+    Company,
+    Compensation,
+    Email,
+    Id,
+    Key,
+    Level,
+    Location,
+    Order,
+    PublishedSalary,
+    Remote,
+    Salary,
+    SalaryDate,
+    Status,
+    Title,
+    Xp,
+    WaitingSalary
+} from "@domain";
 import { Maybe, Result } from "@utils";
 import { SupabaseRepository } from "../utils/mod.ts";
 import { z } from "zod";
@@ -29,7 +42,7 @@ export class SupabaseSalaryRepository implements SalaryRepository {
         });
     }
 
-    async fetchAll(order: Order<Key>): Promise<Result<Salary[], string>> {
+    async fetchAll(order: Order<Key>): Promise<Result<PublishedSalary[], string>> {
         const supabaseOrder = SupabaseOrder.fromOrder(order);
         const url = `salaries?select=*&status=eq.${Status.toString("published")}&order=${supabaseOrder.key}.${supabaseOrder.direction}`;
 
@@ -46,7 +59,7 @@ export class SupabaseSalaryRepository implements SalaryRepository {
         );
     }
 
-    insert(salary: Salary): Promise<Result<void, string>> {
+    insert(salary: WaitingSalary): Promise<Result<void, string>> {
         return this.repo.insert({
             url: "salaries",
             body: SupabaseSalary.fromSalary(salary),
@@ -57,7 +70,7 @@ export class SupabaseSalaryRepository implements SalaryRepository {
 
 const supabaseSalarySchema = z.object({
     id: z.string(),
-    email: z.string(),
+    email: z.string().nullable(),
     company: z.string(),
     title: z.string().nullable(),
     location: z.string(),
@@ -75,7 +88,7 @@ const supabaseSalarySchema = z.object({
 type SupabaseSalary = z.infer<typeof supabaseSalarySchema>;
 
 const SupabaseSalary = {
-    fromSalary(salary: Salary): SupabaseSalary {
+    fromSalary(salary: WaitingSalary): SupabaseSalary {
         return {
             id: Id.toString(salary.id),
             email: Email.toString(salary.email),
@@ -112,12 +125,17 @@ const SupabaseSalary = {
             };
         }
     },
-    tryToSalary(salary: SupabaseSalary): Result<Salary, void> {
+    tryToSalary(salary: SupabaseSalary): Result<PublishedSalary, void> {
+        if (salary.email) { return Result.err(undefined); }
+        
+        const status: Result<"published", string> = Result.bind(
+            Status.tryFromString(salary.status),
+            s => s === "published" ? Result.ok("published") : Result.err("not_published")
+        );
+        if (Result.isErr(status)) { return Result.err(undefined); }
+
         const id = Id.tryFromString(salary.id);
         if (Result.isErr(id)) { return Result.err(undefined); }
-
-        const email = Email.tryFromString(salary.email);
-        if (Result.isErr(email)) { return Result.err(undefined); }
 
         const company = Company.tryFromString(salary.company);
         if (Result.isErr(company)) { return Result.err(undefined); }
@@ -158,13 +176,9 @@ const SupabaseSalary = {
         });
         if (Result.isErr(remote)) { return Result.err(undefined); }
 
-        const status = Status.tryFromString(salary.status);
-        if (Result.isErr(status)) { return Result.err(undefined); }
-
         return Result.ok({
             _type: "salary",
             id: Result.unwrap(id),
-            email: Result.unwrap(email),
             company: Result.unwrap(company),
             title: Result.unwrap(title),
             location: Result.unwrap(location),
