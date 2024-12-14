@@ -5,7 +5,7 @@ type Props = {
     url: string;
 };
 
-export function Link(props: Props) {
+export function ButtonLink(props: Props) {
     return (
         <a
             href={props.url}

@@ -3,7 +3,7 @@ import { PropsWithChildren } from "hono/jsx";
 import { Maybe } from "@utils";
 import { BLACK, PEACH, SAND } from "../components/palette.ts";
 import { Notification } from "../components/mod.ts";
-import { Link } from "../components/mod.ts";
+import { ButtonLink } from "../components/mod.ts";
 import { I18n } from "../i18n.ts";
 
 type Props = PropsWithChildren<{
@@ -82,18 +82,21 @@ function Header() {
             backgroundColor: PEACH,
             borderBottom: `2px solid ${BLACK}`,
             display: "flex",
+            gap: "8px",
             justifyContent: "space-between",
+            flexWrap: "wrap",
             padding: "8px"
         }}>
             <div style={{
                 display: "flex",
                 gap: "8px"
             }}>
-                <Link label="salaires.dev" url="/" />
-                <Link label="API" url="/api/salaries" />
-                <Link label="Github" url="https://github.com/alexislozano/salaires.dev" />
+                <ButtonLink label="salaires.dev" url="/" />
+                <ButtonLink label="RGPD" url="/rgpd" />
+                <ButtonLink label="API" url="/api/salaries" />
+                <ButtonLink label="Github" url="https://github.com/alexislozano/salaires.dev" />
             </div>
-            <Link label={I18n.translate("i_add_my_salary")} url="/insert" />
+            <ButtonLink label={I18n.translate("i_add_my_salary")} url="/insert" />
         </nav>
     )
 }

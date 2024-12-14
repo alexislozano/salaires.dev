@@ -2,7 +2,7 @@ import { Context, Hono } from "hono";
 import { serveStatic } from "hono/deno";
 import { AdminNotifier, CompanyRepository, LocationRepository, SalaryRepository, TitleRepository, TokenRepository, CaptchaService, TokenSender } from "@infra";
 import { Env } from "@utils";
-import { home, insert, maintenance, noInsert, notFound, notification, sort, validate } from "./www/mod.ts";
+import { home, insert, maintenance, noInsert, notFound, notification, rgpd, sort, validate } from "./www/mod.ts";
 import * as api from "./api/mod.ts";
 
 export function serve(
@@ -22,6 +22,7 @@ export function serve(
     } else {
         app.get("/", (c: Context) => home.get(c, salaryRepo, tokenRepo, adminNotifier));
         app.get("/sort", (c: Context) => sort.get(c, salaryRepo));
+        app.get("/rgpd", (c: Context) => rgpd.get(c));
         app.delete("/notification", (c: Context) => notification.del(c));
         app.get("/api/salaries", (c: Context) => api.fetchSalaries(c, salaryRepo));
         app.use('/assets/hero.png', serveStatic({ path: "./assets/hero.png" }))

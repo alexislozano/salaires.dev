@@ -60,6 +60,7 @@ export type I18n =
     | "in"
     | "remote"
     | "office"
+    | "click_here"
     ;
 
 export const I18n = {
@@ -93,7 +94,7 @@ export const I18n = {
             case "email_should_be_pro": return "L'adresse email doit être professionnelle";
             case "token_confirmation_success": return "Le salaire a bien été confirmé, il sera publié prochainement";
             case "token_confirmation_error": return "Le salaire n'a pas pu être confirmé";
-            case "email_explanation": return "L'adresse email et l'entreprise renseignées doivent correspondre. De plus, vous devez avoir accès à l'adresse email renseignée pour cliquer sur le lien de confirmation qui y sera envoyé. Sans cela, le salaire ne sera pas publié.";
+            case "email_explanation": return "L'adresse email et l'entreprise renseignées doivent correspondre. De plus, vous devez avoir accès à l'adresse email renseignée pour cliquer sur le lien de confirmation qui y sera envoyé. Sans cela, le salaire ne sera pas publié. Pour plus d'informations sur les données récoltées par salaires.dev, ";
             case "junior": return "Junior";
             case "mid": return "Mid";
             case "senior": return "Senior";
@@ -124,6 +125,7 @@ export const I18n = {
             case "in": return "en";
             case "remote": return "télétravail";
             case "office": return "présentiel";
+            case "click_here": return "cliquez ici"
             default: throw new UnreachableCaseError(i18n);
         }
     }

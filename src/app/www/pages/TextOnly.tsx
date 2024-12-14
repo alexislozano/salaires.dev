@@ -10,9 +10,8 @@ export function TextOnly(props: Props) {
         <Template notification={Maybe.none()}>
             <div style={{
                 display: "flex",
-                height: "100%",
-                alignItems: "center",
-                justifyContent: "center"
+                justifyContent: "center",
+                padding: "32px"
             }}>
                 { props.text }
             </div>

@@ -5,7 +5,7 @@ export * from "./Form.tsx";
 export * from "./HCaptcha.tsx";
 export * from "./Input.tsx";
 export * from "./Label.tsx";
-export * from "./Link.tsx";
+export * from "./ButtonLink.tsx";
 export * from "./Notification.tsx";
 export * from "./Select.tsx";
 export * from "./Style.tsx";

@@ -1,6 +1,7 @@
+import { PropsWithChildren } from "hono/jsx";
 import { DARK_BLUE, LIGHT_BLUE } from "./palette.ts";
 
-type Props = { text: string };
+type Props = PropsWithChildren;
 
 export function Banner(props: Props) {
     return (
@@ -12,7 +13,7 @@ export function Banner(props: Props) {
             backgroundColor: LIGHT_BLUE,
             color: DARK_BLUE
         }}>
-            { props.text }
+            { props.children }
         </p>
     );
 };

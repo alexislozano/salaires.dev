@@ -22,7 +22,10 @@ export function Insert(props: Props) {
                 title={I18n.translate("i_add_my_salary")}
                 postUrl="/insert"
             >
-                <Banner text={I18n.translate("email_explanation")} />
+                <Banner>
+                    { I18n.translate("email_explanation") }
+                    <a href="/rgpd">{ I18n.translate("click_here") }</a>.
+                </Banner>
                 <EmailField internals={props.form.email} />
                 <CompanyField internals={props.form.company} companies={props.companies} />
                 <TitleField internals={props.form.title} titles={props.titles} />

@@ -13,6 +13,8 @@ const ENV_KEYS = [
     "SMTP_EMAIL",
     "SMTP_PASSWORD",
     "ADMIN_EMAIL",
+    "RGPD_EMAIL",
+    "RGPD_DAYS_BEFORE_DELETION"
 ] as const;
 
 type EnvKey = typeof ENV_KEYS[number];
