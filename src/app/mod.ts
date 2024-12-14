@@ -2,14 +2,7 @@ import { Context, Hono } from "hono";
 import { serveStatic } from "hono/deno";
 import { AdminNotifier, CompanyRepository, LocationRepository, SalaryRepository, TitleRepository, TokenRepository, CaptchaService, TokenSender } from "@infra";
 import { Env } from "@utils";
-import * as home from "./www/controllers/home.ts";
-import * as sort from "./www/controllers/sort.ts";
-import * as notification from "./www/controllers/notification.ts";
-import * as notFound from "./www/controllers/notFound.ts";
-import * as insert from "./www/controllers/insert.ts";
-import * as validate from "./www/controllers/validate.ts";
-import * as maintenance from "./www/controllers/maintenance.ts";
-import * as noInsert from "./www/controllers/noInsert.ts";
+import { home, insert, maintenance, noInsert, notFound, notification, sort, validate } from "./www/mod.ts";
 import * as api from "./api/mod.ts";
 
 export function serve(
