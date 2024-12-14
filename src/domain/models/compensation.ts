@@ -29,7 +29,7 @@ export const Compensation = {
         return compensation.raw;
     },
     toString(compensation: Compensation): string {
-        return `${compensation.raw / 1000}K`;
+        return `${Math.round(compensation.raw / 1000)}K`;
     },
     tryFromNumber(raw: number): Result<Compensation, CompensationError> {
         if (raw < 0) { return Result.err("negative"); }
