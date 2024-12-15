@@ -29,6 +29,6 @@ app.serve(
     adminNotifier
 );
 
-Deno.cron("Send RGPD email", { hour: { every: 24 } }, async () => {
+Deno.cron("Send RGPD email", "0 0 * * *", async () => {
     await cron.sendRgpdEmail(salaryRepo, rgpdNotifier);
 });
