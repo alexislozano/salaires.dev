@@ -23,6 +23,24 @@ export class SupabaseRepository {
         return new SupabaseRepository();
     }
 
+    async count({ url, service }: {
+        url: string;
+        service: string;
+    }): Promise<Result<number, string>> {
+        const response = await fetch(`${this.baseUrl}${url}`, {
+            method: "GET",
+            headers: this.headers()
+        });
+        if (! response.ok) { return Result.err(`${service}: could not send request`); }
+
+        const rows = z
+            .array(z.any())
+            .safeParse(await response.json());
+        if (! rows.success) { return Result.err(`${service}: could not parse json`); }
+
+        return Result.ok(rows.data.length)
+    }
+
     async delete({ url, service }: {
         url: string;
         service: string;

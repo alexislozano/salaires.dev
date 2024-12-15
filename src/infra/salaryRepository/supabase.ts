@@ -42,6 +42,15 @@ export class SupabaseSalaryRepository implements SalaryRepository {
         });
     }
 
+    countExpiredSalaries(expirationDate: Date): Promise<Result<number, string>> {
+        const url = `salaries?select=id&status=neq.${Status.toString("published")}&date=lt.${expirationDate.toISOString()}`;
+
+        return this.repo.count({
+            url,
+            service: SERVICE
+        });
+    }
+
     async fetchAll(order: Order<Key>): Promise<Result<PublishedSalary[], string>> {
         const supabaseOrder = SupabaseOrder.fromOrder(order);
         const url = `salaries?select=*&status=eq.${Status.toString("published")}&order=${supabaseOrder.key}.${supabaseOrder.direction}`;

@@ -5,5 +5,6 @@ export * from "./locationRepository/mod.ts";
 export * from "./titleRepository/mod.ts";
 export * from "./tokenRepository/mod.ts";
 export * from "./tokenSender/mod.ts";
+export * from "./rgpdNotifier/mod.ts";
 export * from "./salaryRepository/mod.ts";
 export * from "./utils/mod.ts";

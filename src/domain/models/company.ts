@@ -15,10 +15,11 @@ export const Company = {
             case "desc": return b.raw.localeCompare(a.raw);
         }
     },
-    generate(): Company {
+    generate(overrides?: Partial<Company>): Company {
         return {
             _type: "company",
-            raw: "Google"
+            raw: "Google",
+            ...overrides
         };
     },
     toString(company: Company): string {

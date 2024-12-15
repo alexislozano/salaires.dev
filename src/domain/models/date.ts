@@ -17,10 +17,11 @@ export const SalaryDate = {
     fromDate(raw: Date): SalaryDate {
         return { _type: "date", raw };
     },
-    generate(): SalaryDate {
+    generate(overrides?: Partial<SalaryDate>): SalaryDate {
         return {
             _type: "date",
-            raw: new Date(2022, 0, 1)
+            raw: new Date(2022, 0, 1),
+            ...overrides
         }
     },
     tryFromString(date: string): Result<SalaryDate, void> {

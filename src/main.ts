@@ -1,5 +1,6 @@
 import * as app from "@app";
-import { EmailAdminNotifier, EmailSender, SupabaseCompanyRepository, SupabaseLocationRepository, SupabaseRepository, SupabaseSalaryRepository, SupabaseTitleRepository, SupabaseTokenRepository, HCaptchaService, EmailTokenSender } from "@infra";
+import * as cron from "@cron";
+import { EmailAdminNotifier, EmailSender, SupabaseCompanyRepository, SupabaseLocationRepository, SupabaseRepository, SupabaseSalaryRepository, SupabaseTitleRepository, SupabaseTokenRepository, HCaptchaService, EmailTokenSender, EmailRgpdNotifier } from "@infra";
 import { Env } from "@utils";
 
 Env.init();
@@ -15,6 +16,7 @@ const captchaService = HCaptchaService.new();
 const tokenRepo = SupabaseTokenRepository.new(supabaseRepo);
 const tokenSender = EmailTokenSender.new(emailSender);
 const adminNotifier = EmailAdminNotifier.new(emailSender);
+const rgpdNotifier = EmailRgpdNotifier.new(emailSender);
 
 app.serve(
     salaryRepo,
@@ -26,3 +28,7 @@ app.serve(
     tokenSender,
     adminNotifier
 );
+
+Deno.cron("Send RGPD email", { hour: { every: 24 } }, async () => {
+    await cron.sendRgpdEmail(salaryRepo, rgpdNotifier);
+});

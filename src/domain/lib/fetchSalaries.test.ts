@@ -1,7 +1,7 @@
 import { assert, assertEquals } from "assert";
 import { InMemorySalaryRepository } from "@infra";
 import { Result } from "@utils";
-import { Direction, Key, Salary } from "@domain";
+import { Company, Direction, Key, Salary } from "@domain";
 import { fetchSalaries } from "./fetchSalaries.ts";
 
 const order = { key: Key.default(), direction: Direction.default() };
@@ -34,14 +34,8 @@ Deno.test("it should return published salaries otherwise", async () => {
 
 Deno.test("it should return ordered salaries", async () => {
     const salaryRepo = InMemorySalaryRepository.new();
-    const salary1 = {
-        ...Salary.generate(),
-        company: { _type: "company" as const, raw: "A" }
-    };
-    const salary2 = {
-        ...Salary.generate(),
-        company: { _type: "company" as const, raw: "B" }
-    };
+    const salary1 = Salary.generate({ company: Company.generate({ raw: "A" }) });
+    const salary2 = Salary.generate({ company: Company.generate({ raw: "B" }) });
     salaryRepo.insert(salary1);
     salaryRepo.insert(salary2);
     salaryRepo.confirm(salary1.id);

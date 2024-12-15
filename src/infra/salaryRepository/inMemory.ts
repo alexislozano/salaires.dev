@@ -1,6 +1,6 @@
 import { InMemoryRepository } from "../utils/mod.ts";
 import { SalaryRepository } from "./mod.ts";
-import { ConfirmedSalary, Id, Key, Order, PublishedSalary, Salary, WaitingSalary } from "@domain";
+import { ConfirmedSalary, Id, Key, Order, PublishedSalary, Salary, SalaryDate, WaitingSalary } from "@domain";
 import { Result } from "@utils";
 
 export class InMemorySalaryRepository implements SalaryRepository {
@@ -29,6 +29,18 @@ export class InMemorySalaryRepository implements SalaryRepository {
         }
     }
 
+    async countExpiredSalaries(expirationDate: Date): Promise<Result<number, string>> {
+        const fetchResult = await this.repo.fetchAll();
+
+        return Result.map(
+            fetchResult,
+            salaries => salaries
+                .filter(s => ! Salary.isPublished(s))
+                .filter(s =>  SalaryDate.toDate(s.date) < expirationDate)
+                .length
+        );
+    }
+
     async fetchAll(order: Order<Key>): Promise<Result<PublishedSalary[], string>> {
         const fetchResult = await this.repo.fetchAll();
 
@@ -41,7 +53,7 @@ export class InMemorySalaryRepository implements SalaryRepository {
         )
     }
 
-    insert(salary: Salary): Promise<Result<void, string>> {
+    insert(salary: WaitingSalary): Promise<Result<void, string>> {
         return this.repo.insert(salary);
     }
 

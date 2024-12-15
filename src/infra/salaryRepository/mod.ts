@@ -3,6 +3,7 @@ import { Id, Key, Order, PublishedSalary, WaitingSalary } from "@domain";
 
 export type SalaryRepository = {
     confirm: (id: Id) => Promise<Result<void, string>>;
+    countExpiredSalaries: (expirationDate: Date) => Promise<Result<number, string>>;
     fetchAll: (order: Order<Key>) => Promise<Result<PublishedSalary[], string>>;
     insert: (salary: WaitingSalary) => Promise<Result<void, string>>;
 }

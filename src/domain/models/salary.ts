@@ -58,7 +58,7 @@ export const Salary = {
     confirm(salary: WaitingSalary): ConfirmedSalary {
         return { ...salary, status: "confirmed" };
     },
-    generate(): WaitingSalary {
+    generate(overrides?: Partial<WaitingSalary>): WaitingSalary {
         return {
             id: Id.generate(),
             email: Email.generate(),
@@ -71,7 +71,8 @@ export const Salary = {
             companyXp: Maybe.none(),
             totalXp: Maybe.none(),
             remote: Maybe.none(),
-            status: "waiting"
+            status: "waiting",
+            ...overrides
         };
     },
     isConfirmed(salary: Salary): salary is ConfirmedSalary {

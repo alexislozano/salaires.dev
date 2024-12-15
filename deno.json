@@ -1,10 +1,11 @@
 {
     "tasks": {
-        "run": "deno run --allow-env --allow-net --allow-read --watch src/main.ts",
+        "run": "deno run --allow-env --allow-net --allow-read --unstable-cron --watch src/main.ts",
         "check": "deno check src/main.ts"
     },
     "imports": {
         "@app": "./src/app/mod.ts",
+        "@cron": "./src/cron/mod.ts",
         "@domain": "./src/domain/mod.ts",
         "@infra": "./src/infra/mod.ts",
         "@utils": "./src/utils/mod.ts",
