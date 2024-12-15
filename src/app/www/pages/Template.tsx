@@ -1,6 +1,6 @@
 import { html } from "hono/html";
 import { PropsWithChildren } from "hono/jsx";
-import { Maybe } from "@utils";
+import { Env, Maybe } from "@utils";
 import { BLACK, PEACH, SAND } from "../components/palette.ts";
 import { Notification } from "../components/mod.ts";
 import { ButtonLink } from "../components/mod.ts";
@@ -25,6 +25,7 @@ export function Template(props: Props) {
 }
 
 function Head() {
+    const appUrl = Env.get("APP_URL");
     return (
         <head>
             <meta charSet="utf-8" />
@@ -32,21 +33,21 @@ function Head() {
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title>salaires.dev</title>
             <meta name="description" content="Partagez et comparez votre salaire anonymement" />
-            <link rel="canonical" href="https://salaires.dev" />
+            <link rel="canonical" href={appUrl} />
             { /* twitter meta */ }
             <meta property="twitter:card" content="summary" />
             <meta property="twitter:title" content="salaires.dev" />
             <meta property="twitter:description" content="Partagez et comparez votre salaire anonymement" />
-            <meta property="twitter:image" content="https://salaires.dev/assets/hero.png" />
+            <meta property="twitter:image" content={`${appUrl}/assets/hero.png`} />
             <meta property="twitter:image-alt" content="Capture d'écran de salaires.dev" />
             { /* facebook / linkedin meta */ }
             <meta property="og:type" content="website" />
             <meta property="og:title" content="salaires.dev" />
             <meta property="og:description" content="Partagez et comparez votre salaire anonymement" />
-            <meta property="og:image" content="https://salaires.dev/assets/hero.png" />
-            <meta property="og:image:secure_url" content="https://salaires.dev/assets/hero.png" />
+            <meta property="og:image" content={`${appUrl}/assets/hero.png`} />
+            <meta property="og:image:secure_url" content={`${appUrl}/assets/hero.png`} />
             <meta property="og:image:alt" content="Capture d'écran de salaires.dev" />
-            <meta property="og:url" content="https://salaires.dev" />
+            <meta property="og:url" content={appUrl} />
         </head>
     )
 }
