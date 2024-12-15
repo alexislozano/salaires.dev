@@ -1,4 +1,4 @@
-import { SmtpClient } from "smtp";
+import { SmtpClient } from "smtp/smtp";
 import { Email } from "@domain";
 import { Env, Result } from "@utils";
 
@@ -28,9 +28,9 @@ export class EmailSender {
         const client = new SmtpClient();
 
         try {
-            await client.connectTLS({
+            await client.connect({
                 hostname: this.host,
-                port: 465,
+                mailPort: 465,
                 username: Email.toString(this.email),
                 password: this.password
             });
@@ -43,8 +43,7 @@ export class EmailSender {
                 from: Email.toString(this.email),
                 to: Email.toString(to),
                 subject,
-                content: body,
-                html: body
+                content: body
             });
             return Result.ok(undefined);
         } catch (_) {

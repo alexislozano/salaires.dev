@@ -1,55 +1,45 @@
 {
-  "version": "3",
-  "packages": {
-    "specifiers": {
-      "jsr:@hono/hono@^4.6.1": "jsr:@hono/hono@4.6.1",
-      "jsr:@std/assert@^1.0.5": "jsr:@std/assert@1.0.5",
-      "jsr:@std/bytes@^1.0.2": "jsr:@std/bytes@1.0.2",
-      "jsr:@std/crypto@^1.0.3": "jsr:@std/crypto@1.0.3",
-      "jsr:@std/datetime@^0.225.2": "jsr:@std/datetime@0.225.2",
-      "jsr:@std/dotenv@^0.225.2": "jsr:@std/dotenv@0.225.2",
-      "jsr:@std/internal@^1.0.3": "jsr:@std/internal@1.0.3",
-      "jsr:@std/uuid@^1.0.4": "jsr:@std/uuid@1.0.4",
-      "npm:create-hono": "npm:create-hono@0.13.1"
+  "version": "4",
+  "specifiers": {
+    "jsr:@hono/hono@^4.6.14": "4.6.14",
+    "jsr:@sholvoir/deno-smtp@~0.9.9": "0.9.9",
+    "jsr:@std/bytes@^1.0.2": "1.0.2",
+    "jsr:@std/crypto@^1.0.3": "1.0.3",
+    "jsr:@std/datetime@~0.225.2": "0.225.2",
+    "jsr:@std/dotenv@~0.225.3": "0.225.3",
+    "jsr:@std/uuid@^1.0.4": "1.0.4",
+    "npm:create-hono@*": "0.13.1"
+  },
+  "jsr": {
+    "@hono/hono@4.6.14": {
+      "integrity": "b39a5488266adf448fb1081bc3071a0d05145e72f3ab3ff83cf140e780c6c1de"
     },
-    "jsr": {
-      "@hono/hono@4.6.1": {
-        "integrity": "993704e3a2fa8e965c2fa46c57fc038bd277e781a982d3bf0fb278f6671b195f"
-      },
-      "@std/assert@1.0.5": {
-        "integrity": "e37da8e4033490ce613eec4ac1d78dba1faf5b02a3f6c573a28f15365b9b440f",
-        "dependencies": [
-          "jsr:@std/internal@^1.0.3"
-        ]
-      },
-      "@std/bytes@1.0.2": {
-        "integrity": "fbdee322bbd8c599a6af186a1603b3355e59a5fb1baa139f8f4c3c9a1b3e3d57"
-      },
-      "@std/crypto@1.0.3": {
-        "integrity": "a2a32f51ddef632d299e3879cd027c630dcd4d1d9a5285d6e6788072f4e51e7f"
-      },
-      "@std/datetime@0.225.2": {
-        "integrity": "45f0100554a912cd65f48089ef0a33aa1eb6ea21f08090840b539ab582827eaa"
-      },
-      "@std/dotenv@0.225.2": {
-        "integrity": "e2025dce4de6c7bca21dece8baddd4262b09d5187217e231b033e088e0c4dd23"
-      },
-      "@std/internal@1.0.3": {
-        "integrity": "208e9b94a3d5649bd880e9ca38b885ab7651ab5b5303a56ed25de4755fb7b11e"
-      },
-      "@std/uuid@1.0.4": {
-        "integrity": "f4233149cc8b4753cc3763fd83a7c4101699491f55c7be78dc7b30281946d7a0",
-        "dependencies": [
-          "jsr:@std/bytes@^1.0.2",
-          "jsr:@std/crypto@^1.0.3"
-        ]
-      }
+    "@sholvoir/deno-smtp@0.9.9": {
+      "integrity": "9bf5901a95d4542b5463702861b5dde16c0fd0122d3865bef6569cc757e8e429"
     },
-    "npm": {
-      "create-hono@0.13.1": {
-        "integrity": "sha512-KsvxqH7j5VNsJXvVRC/jaw3jkFcEp8ckQ9L87YUihbr46Nq7lg0vee/Hgk4x1BEsabAVX4oKkHii3xZSFJntiQ==",
-        "dependencies": {}
-      }
+    "@std/bytes@1.0.2": {
+      "integrity": "fbdee322bbd8c599a6af186a1603b3355e59a5fb1baa139f8f4c3c9a1b3e3d57"
+    },
+    "@std/crypto@1.0.3": {
+      "integrity": "a2a32f51ddef632d299e3879cd027c630dcd4d1d9a5285d6e6788072f4e51e7f"
+    },
+    "@std/datetime@0.225.2": {
+      "integrity": "45f0100554a912cd65f48089ef0a33aa1eb6ea21f08090840b539ab582827eaa"
+    },
+    "@std/dotenv@0.225.3": {
+      "integrity": "a95e5b812c27b0854c52acbae215856d9cce9d4bbf774d938c51d212711e8d4a"
+    },
+    "@std/uuid@1.0.4": {
+      "integrity": "f4233149cc8b4753cc3763fd83a7c4101699491f55c7be78dc7b30281946d7a0",
+      "dependencies": [
+        "jsr:@std/bytes",
+        "jsr:@std/crypto"
+      ]
+    }
+  },
+  "npm": {
+    "create-hono@0.13.1": {
+      "integrity": "sha512-KsvxqH7j5VNsJXvVRC/jaw3jkFcEp8ckQ9L87YUihbr46Nq7lg0vee/Hgk4x1BEsabAVX4oKkHii3xZSFJntiQ=="
     }
   },
   "remote": {
@@ -251,6 +241,20 @@
     "https://deno.land/x/zod@v3.23.8/locales/en.ts": "a7a25cd23563ccb5e0eed214d9b31846305ddbcdb9c5c8f508b108943366ab4c",
     "https://deno.land/x/zod@v3.23.8/mod.ts": "ec6e2b1255c1a350b80188f97bd0a6bac45801bb46fc48f50b9763aa66046039",
     "https://deno.land/x/zod@v3.23.8/types.ts": "1b172c90782b1eaa837100ebb6abd726d79d6c1ec336350c8e851e0fd706bf5c",
+    "https://deno.land/x/zod@v3.24.1/ZodError.ts": "27b41119736fcdc69cc72e63838bed1e9e1210c7ce721211f02256e06b443b55",
+    "https://deno.land/x/zod@v3.24.1/errors.ts": "5285922d2be9700cc0c70c95e4858952b07ae193aa0224be3cbd5cd5567eabef",
+    "https://deno.land/x/zod@v3.24.1/external.ts": "a6cfbd61e9e097d5f42f8a7ed6f92f93f51ff927d29c9fbaec04f03cbce130fe",
+    "https://deno.land/x/zod@v3.24.1/helpers/enumUtil.ts": "54efc393cc9860e687d8b81ff52e980def00fa67377ad0bf8b3104f8a5bf698c",
+    "https://deno.land/x/zod@v3.24.1/helpers/errorUtil.ts": "7a77328240be7b847af6de9189963bd9f79cab32bbc61502a9db4fe6683e2ea7",
+    "https://deno.land/x/zod@v3.24.1/helpers/parseUtil.ts": "c14814d167cc286972b6e094df88d7d982572a08424b7cd50f862036b6fcaa77",
+    "https://deno.land/x/zod@v3.24.1/helpers/partialUtil.ts": "998c2fe79795257d4d1cf10361e74492f3b7d852f61057c7c08ac0a46488b7e7",
+    "https://deno.land/x/zod@v3.24.1/helpers/typeAliases.ts": "0fda31a063c6736fc3cf9090dd94865c811dfff4f3cb8707b932bf937c6f2c3e",
+    "https://deno.land/x/zod@v3.24.1/helpers/util.ts": "30c273131661ca5dc973f2cfb196fa23caf3a43e224cdde7a683b72e101a31fc",
+    "https://deno.land/x/zod@v3.24.1/index.ts": "d27aabd973613985574bc31f39e45cb5d856aa122ef094a9f38a463b8ef1a268",
+    "https://deno.land/x/zod@v3.24.1/locales/en.ts": "a7a25cd23563ccb5e0eed214d9b31846305ddbcdb9c5c8f508b108943366ab4c",
+    "https://deno.land/x/zod@v3.24.1/mod.ts": "ec6e2b1255c1a350b80188f97bd0a6bac45801bb46fc48f50b9763aa66046039",
+    "https://deno.land/x/zod@v3.24.1/standard-schema.ts": "4abb2e7bd784fb95d219584673971bb317e74fb4fd0c74c196b558ba46df4456",
+    "https://deno.land/x/zod@v3.24.1/types.ts": "ed67267a459b6e0d3ceb904072d222c58eda6a6f03f85cae3fba8d1188ce809e",
     "https://esm.sh/hono@4.2.2/jsx/jsx-runtime": "e1fcaf4252c4074055ed4e32b02c92b1408a05263aa33e2025a3cb74c8e3d093",
     "https://esm.sh/v135/hono@4.2.2/denonext/html.js": "0beb3b50cb48d4afa77cda7c8fa2485b39d6a657e8b91c3c749d5819b499b261",
     "https://esm.sh/v135/hono@4.2.2/denonext/jsx/dom/jsx-dev-runtime.js": "36dedeec06b6d78e3415abe8251a0e19354fb59172499d1ef29a41e383f80b45",
@@ -261,10 +265,11 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@hono/hono@^4.6.1",
-      "jsr:@std/assert@^1.0.5",
-      "jsr:@std/datetime@^0.225.2",
-      "jsr:@std/dotenv@^0.225.2",
+      "jsr:@hono/hono@^4.6.14",
+      "jsr:@sholvoir/deno-smtp@~0.9.9",
+      "jsr:@std/assert@^1.0.9",
+      "jsr:@std/datetime@~0.225.2",
+      "jsr:@std/dotenv@~0.225.3",
       "jsr:@std/uuid@^1.0.4"
     ]
   }
