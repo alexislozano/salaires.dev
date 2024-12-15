@@ -25,7 +25,7 @@ export function serve(
         app.get("/rgpd", (c: Context) => rgpd.get(c));
         app.delete("/notification", (c: Context) => notification.del(c));
         app.get("/api/salaries", (c: Context) => api.fetchSalaries(c, salaryRepo));
-        app.use('/assets/hero.png', serveStatic({ path: "./assets/hero.png" }))
+        app.get('/assets/hero.png', serveStatic({ path: "./assets/hero.png" }));
 
         if (Env.get("NO_INSERT") === "true") {
             app.get("/insert", (c: Context) => noInsert.get(c));
