@@ -38,7 +38,17 @@ export type PublishedSalary = SalaryBase & {
     status: "published";
 }
 
-export type Salary = WaitingSalary | ConfirmedSalary | PublishedSalary;
+export type ArchivedSalary = SalaryBase & {
+    email: Email;
+    status: "archived";
+}
+
+export type Salary =
+    | WaitingSalary
+    | ConfirmedSalary
+    | PublishedSalary
+    | ArchivedSalary
+    ;
 
 export const Salary = {
     compare(a: Salary, b: Salary, order: Order<Key>): number {

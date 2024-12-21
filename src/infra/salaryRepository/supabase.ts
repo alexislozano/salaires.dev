@@ -43,7 +43,7 @@ export class SupabaseSalaryRepository implements SalaryRepository {
     }
 
     countExpiredSalaries(expirationDate: Date): Promise<Result<number, string>> {
-        const url = `salaries?select=id&status=neq.${Status.toString("published")}&date=lt.${expirationDate.toISOString()}`;
+        const url = `salaries?select=id&status=in.(${Status.toString("waiting")},${Status.toString("confirmed")})&date=lt.${expirationDate.toISOString()}`;
 
         return this.repo.count({
             url,
